@@ -1,0 +1,117 @@
+/*
+ * @author: Tuna
+ * @date: Feb 11, 2023
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 32px;
+    color: #777777;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    font-family: "Lato", sans-serif;
+}
+
+.header {
+    height: 95vh;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 0 100%);
+    background-image: linear-gradient(to right bottom,
+    rgba(38, 245, 150, 0.8), rgba(4, 153, 242, 0.8)), url("../img/bilkent-main.jpg");
+}
+
+.header-inner-box {
+    top: 48%;
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}
+
+.heading-primary {
+    color: #ffffff;
+    margin-bottom: 70px;
+    text-transform: uppercase;
+    backface-visibility: hidden;
+}
+
+@keyframes moveInTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+.heading-primary-main {
+    display: block;
+    font-size: 80px;
+    font-weight: 400;
+    letter-spacing: 35px;
+    animation-duration: 1.5s;
+    animation-name: moveInTop;
+}
+
+@keyframes moveInBottom {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(0);
+    }
+}
+
+.heading-primary-sub {
+    display: block;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 32px;
+    animation-duration: 1.5s;
+    animation-name: moveInBottom;
+}
+
+.button:link,
+.button:visited {
+    position: relative;
+    padding: 15px 40px;
+    transition: all .2s;
+    border-radius: 100px;
+    display: inline-block;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.button:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .2);
+    transform: translateY(-3px);
+}
+
+.button:active {
+    box-shadow: 0 05px 02px rgba(0, 0, 0, .2);
+    transform: translateY(+2px);
+}
+
+.button-sign-in {
+    background-color: #ffffff;
+    color: #777777;
+}
+
+.animate-button-in-bottom {
+    animation: moveInBottom .5s ease-out .75s;
+    animation-fill-mode: backwards;
+}
