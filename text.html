@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CV</title>
+</head>
+<body>
+    <h2> Create your cv as a text file and save it. </h2>
+    <p> Enter your information: </p>
+    <textarea id="cvData" rows="40" cols="100">
+        YOUR NAME
+Job Title
+
+PROFILE
+Lorem ipsum dolor sit amet, ligula suspendisse nulla pretium, rhoncus tempor fermentum, enim integer ad vestibulum volutpat. Nisl rhoncus turpis est, vel elit, congue wisi enim nunc ultricies sit, magna tincidunt.
+
+EXPERIENCE
+Job Title, Company Name; City, State — 2018–Present
+Ac dolor ac adipiscing amet bibendum nullam, lacus molestie ut libero nec, dia, pharetra sodales, feugiat ullamcorper id tempor id vitae. Mauris pretium alique, lectus tincidunt. Porttitor mollis imperdiet libero senectus pulvinar. Etiam moles mauris ligula laoreet, vehicula eleifend.
+Job Title, Company Name; City, State — 2009–2017
+Consectetuer arcu ipsum ornare pellentesque vehicula, in vehicula diam, ornar magna erat felis wisi a risus. Justo fermentum id. Malesuada eleifend, molestie, a a vel et. Mauris at suspendisse, neque aliquam faucibus adipiscing, vivamus. Wisi mattis leo suscipit nec amet.
+Job Title, Company Name; City, State — 2006–2008
+Donec arcu risus diam amet sit. Congue tortor risus vestibulum commodo nisl, luctus augue amet quis aenean maecenas sit, donec velit iusto, morbi felis elit et. Vestibulum volutpat dui lacus consectetuer, mauris at suspendisse.
+Job Title, Company Name; City, State — 2003–2005
+Ut facilisis ante in dui ac suscipit, turpis voluptatum donec, suspendisse, quasi luctus amet urna tempor amet sit. Cras volutpat mattis hasellus justo sed, feugi nunc praesent. Quam ac ligula risus lectus dapibus, nunc lectus velit, vel, vestibu in tellus nam, eros amet hasellus facilisis.
+Job Title, Company Name; City, State — 2000–2002
+Curabitur labore. Ac augue donec, sed a dolor luctus, congue arcu id diam prae, pretium ac, ullamcorper non hac in quisque hac.
+
+EDUCATION
+University of State, City, State — Degree, Year
+
+SKILLS
+Vitae et, nunc hasellus hasellus, donec dolor, id elit donec hasellus ac pede, quam ame. Arcu nibh maecenas ac, nullam duis elit, ligula pellentesque viverra morbi tellus molest, mi. Sodales nunc suscipit sit pretium aliquet integer.
+
+    1234 Main Street Anytown, State ZIP   123-456-7890
+        yourmail@gmail.com    @Social_Media
+    </textarea>
+    <br/>
+    <input type="text" id="fileName" placeholder="Enter File Name">
+    <br/>
+    <button onclick = "downloadFile()"> save File </button>
+    <script>
+        const downloadFile = () => {
+            let link = document.createElement("a");
+            let content = document.querySelector("textarea").value;
+            let file = new Blob([content], { type: 'text/plain' });
+            link.href = URL.createObjectURL(file);
+            link.download = document.getElementById("fileName").value;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        };
+    </script>
+</body>
+</html>
