@@ -10,33 +10,28 @@ CS 319 Term Project
 
 ## User Types
 ### Admin
+- Access all features and source codes
+### Super User
+- Create and edit profiles
+- Assign roles (Student, Instructor etc.)
+- Delete profiles
 ### Student:
-- Apply to internships
-- Create and edit profile
 - Upload internship report
-- Upload internship acceptance document
-- Evaluate companies/internship
 - Ask for help
-- Withdraw the course (?)
+- View their reports' current statuses
 ### Instructor:
 - Evaluate and grade reports
 - Ask for revisions
 - Set and extend deadlines
-### Department Chair:
-- Assign reports to graders/instructors
 ### Department Secretary:
 - Communicate with students
-### Company (Internship offerer):
-- Offer internships to Bilkent students
-- Display company's info (address, contact, paid-or-not etc.)
-- Upload necessary documents about the student/intern
-### Bilkent Internship Center:
-- See uploaded acceptance documents for insurance process
-### Bilkent Carrier Center (?):
-- Display internship opportunities
+- Fill forms with the information coming from companies and grader
+- Assign reports to graders/instructors equally
+- Reassign reports if there is a problem
+- Give a warning to instructor if they are late
+### Department Chair:
+- Different name but same features with the Department Secretary
+### General Features
+- Turn filled forms to pdf form
+- Fill a excel file including the student names with its satisfactory condition
 
-## General Features
-- Supports both Turkish and English
-- Sends auto-generated emails
-- Filter internships (by location, major etc.)
-- Share student reports to graders equally and randomly
