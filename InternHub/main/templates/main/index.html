@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" href="{% static "main/index.css" %}">
+{% endblock %}
+
+{% block body %}
+    <div class="login-page">
+        <div class="form">
+            <form class="login-form">
+                <label>
+                    <input type="text" placeholder="email"/>
+                </label>
+                <label>
+                    <input type="password" placeholder="password"/>
+                </label>
+                <button>Login</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
