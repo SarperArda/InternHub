@@ -1,20 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    Login
-{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" href="{% static "main/index.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "main/index.css" %}">
 {% endblock %}
 
 {% block body %}
     <div class="login-page">
         <div class="form">
+            <div class="logo">
+                <img src="{% static "img/logo.png" %}" alt="Logo">
+            </div>
+            <h1>InternHub</h1>
             <form class="login-form">
                 <label>
-                    <input type="text" placeholder="email"/>
+                    <input type="text" placeholder="username"/>
                 </label>
                 <label>
                     <input type="password" placeholder="password"/>

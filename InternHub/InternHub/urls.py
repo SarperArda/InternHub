@@ -20,3 +20,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls'))
 ]
+
+
+admin.site.site_header = 'InternHub Administration'
+admin.site.index_title = 'Administration Page'
+admin.site.site_title = 'InternHub'

@@ -1,69 +1,80 @@
-body {
-	margin: 0;
-	padding: 0;
-	background: #F2F4F8;
-	font-family: sans-serif;
+/* Login Page Style */
+
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-image: linear-gradient(to right top, #415380, #40799e, #539eb3, #7ac2c2, #aee5d1);
+    background-size: cover;
+    font-family: sans-serif;
 }
 
 .login-page {
-	width: 360px;
-	padding: 8% 0 0;
-	margin: auto;
+    width: 360px;
+    padding: 8% 0 0;
+    margin: auto;
 }
 
 .form {
-	position: relative;
-	z-index: 1;
-	background: #FFFFFF;
-	max-width: 360px;
-	margin: 0 auto 100px;
-	padding: 45px;
-	text-align: center;
-	box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    position: relative;
+    z-index: 1;
+    background: #F2F2F2;
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    border-radius: 10px;
+}
+
+.logo {
+    margin-bottom: 35px;
+}
+
+.logo img {
+    height: 155px;
+}
+
+h1 {
+    margin: 0 0 30px;
+    font-size: 40px;
+    color: #344266;
 }
 
 .form input {
-	font-family: "Roboto", sans-serif;
-	outline: 0;
-	background: #f2f2f2;
-	width: 100%;
-	border: 0;
-	margin: 0 0 15px;
-	padding: 15px;
-	box-sizing: border-box;
-	font-size: 14px;
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: #E4E4E4;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 5px;
 }
 
 .form button {
-	font-family: "Roboto", sans-serif;
-	text-transform: uppercase;
-	outline: 0;
-	background: #4CAF50;
-	width: 100%;
-	border: 0;
-	padding: 15px;
-	color: #FFFFFF;
-	font-size: 14px;
-	cursor: pointer;
+    margin-top: 15px;
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: #3894A1;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #F2F2F2;
+    font-size: 14px;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
-.form button:hover,.form button:active,.form button:focus {
-	background: #43A047;
+.form button:hover, .form button:active, .form button:focus {
+    background: #65BDC9;
 }
 
 .form input:focus {
-	border: 1px solid #4CAF50;
-}
-
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color: #C7C7C7;
-}
-::-moz-placeholder { /* Firefox 19+ */
-  color: #C7C7C7;
-}
-:-ms-input-placeholder { /* IE 10+ */
-  color: #C7C7C7;
-}
-:-moz-placeholder { /* Firefox 18- */
-  color: #C7C7C7;
+    border: 1px solid #65BDC9;
 }
