@@ -1,5 +1,13 @@
 /* Login Page Style */
 
+:root {
+    --deep-azure: #415380;
+    --white-smoke: #F2F2F2;
+    --titanium-white: #E4E4E4;
+    --frozen-wave: #52A7CC;
+    --celadon-blue: #007BA7;
+}
+
 html {
     margin: 0;
     padding: 0;
@@ -18,7 +26,7 @@ html {
 .form {
     position: relative;
     z-index: 1;
-    background: #F2F2F2;
+    background: var(--white-smoke);
     max-width: 360px;
     margin: 0 auto 100px;
     padding: 45px;
@@ -38,13 +46,13 @@ html {
 h1 {
     margin: 0 0 30px;
     font-size: 40px;
-    color: #344266;
+    color: var(--deep-azure);
 }
 
 .form input {
     font-family: "Roboto", sans-serif;
     outline: 0;
-    background: #E4E4E4;
+    background: var(--titanium-white);
     width: 100%;
     border: 0;
     margin: 0 0 15px;
@@ -59,11 +67,11 @@ h1 {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: #3894A1;
+    background: var(--celadon-blue);
     width: 100%;
     border: 0;
     padding: 15px;
-    color: #F2F2F2;
+    color: var(--white-smoke);
     font-size: 14px;
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
@@ -71,10 +79,12 @@ h1 {
     border-radius: 5px;
 }
 
-.form button:hover, .form button:active, .form button:focus {
-    background: #65BDC9;
+.form button:hover,
+.form button:active,
+.form button:focus {
+    background: var(--frozen-wave);
 }
 
 .form input:focus {
-    border: 1px solid #65BDC9;
+    border: 1px solid var(--celadon-blue);
 }
