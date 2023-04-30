@@ -1,0 +1,42 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.menu {
+    background-color: #A8EAD5;
+    height: 100%;
+    left: 0;
+    top: 0;
+    padding: 20px;
+    position: fixed;
+    width: 320px;
+    z-index: 2;
+}
+
+.menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+}
+
+.menu-button {
+    margin-bottom: 1px;
+    font-family: "Roboto", sans-serif;
+    text-align: left;
+    outline: 0;
+    background: #A8EAD5;
+    width: 100%;
+    border: 0;
+    padding: 20px;
+    color: #121214;
+    font-size: 15px;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.menu-button:hover, .menu-button:active, .menu-button:focus {
+    background-color: #3EBDC6
+}
