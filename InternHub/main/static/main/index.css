@@ -4,7 +4,7 @@ html {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-image: linear-gradient(to right top, #415380, #40799e, #539eb3, #7ac2c2, #aee5d1);
+    background-image: linear-gradient(to right top, #415380, #40799E, #539EB3, #7AC2C2, #AEE5D1);
     background-size: cover;
     font-family: sans-serif;
 }
