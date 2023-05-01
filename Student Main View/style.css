@@ -7,7 +7,6 @@
     --black-pearl: #1E1E2C;
     --black-blueberry: #2D2D44;
     --turquoise: #33E1ED;;
-
 }
 
 body {
@@ -17,7 +16,7 @@ body {
     font-family: sans-serif;
 }
 
-.navbar { 
+.bar { 
     background-color: var(--black-pearl);
     overflow: hidden;
     position: relative;
@@ -26,7 +25,7 @@ body {
     width: 100%;
 }
 
-.navbar h1 {
+.bar h1 {
     font-family: "Roboto", sans-serif;
     font-size: 30px;
     color: var(--snowbelt);
@@ -36,13 +35,21 @@ body {
 }
 
 .menu {
-    display:inline-block;
+    display:grid;
+    width: 100%;
     height: 90%;
     position: fixed;
+    text-align: center;
+    grid-auto-columns: 3;
+    grid-template-columns: 325px auto 325px;
 }
 
-.menu .alper {
-    display: inline-block;
+.menu .left {
+    grid-row: 1;
+    grid-column: 1;
+}
+
+.menu .left .left-nav { 
     background-color: var(--black-blueberry);
     right: 0;
     padding: 10px 0 20px 0;
@@ -50,14 +57,13 @@ body {
     width: 325px;
     height: 100%;
 }
-
-.menu ul {
+.menu .left-ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-.menu button {
+.menu .left-ul button {
     position: relative;
     font-family: "Roboto", sans-serif;
     text-align: left;
@@ -74,29 +80,31 @@ body {
 
 }
 
-.menu button:hover,
-.menu button:focus,
-.menu button:active {
+.menu .left-ul button:hover,
+.menu .left-ul button:focus,
+.menu .left-ul button:active {
     background-color: var(--deep-azure);
 }
 
-.announcements{
+.menu .middle {
+    grid-row: 1;
+    grid-column: 2;
+    background-color: var(--azure-sky);
+    right: 0;
+    padding: 0 0 0 0;
     position: relative;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--snowbelt);
-    overflow: auto;
 }
-/*
-.menu .deniz{
-    display: inline-block;
+
+.menu .right{
+    grid-row: 1;
+    grid-column: 3;
+}
+
+.menu .right-nav {
     background-color: var(--black-blueberry);
-    right: 0;
-    padding: 10px 0 20px 0;
-    position: fixed;
-    width: 250px;
+    position: relative;
+    width: 325px;
     height: 100%;
 }
-*/
