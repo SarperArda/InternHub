@@ -40,7 +40,6 @@ body {
     height: 90%;
     position: fixed;
     text-align: center;
-    grid-auto-columns: 3;
     grid-template-columns: 325px auto 325px;
 }
 
