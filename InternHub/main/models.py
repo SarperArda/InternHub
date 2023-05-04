@@ -1,83 +1,136 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
+    PermissionsMixin, User, Group, Permission
 
 
-class CustomUserManager(BaseUserManager):
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+class Departments(models.TextChoices):
+    CS = 'CS', 'Computer Engineering'
+    EEE = 'EEE', 'Electrical and Electronics Engineering'
+    IE = 'IE', 'Industrial Engineering'
+    ME = 'ME', 'Mechanical Engineering'
 
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
 
-        return self.create_user(email, password, **extra_fields)
-
-    def create_user(self, email, password=None, **extra_fields):
+class InternHubUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **kwargs):
         if not email:
-            raise ValueError('The Email field must be set')
-
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+            raise ValueError('Users must have a valid email address')
+        user = self.model(email=self.normalize_email(email), **kwargs)
         user.set_password(password)
-        user.save()
-
+        user.save(using=self._db)
         return user
 
-    def create_student(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('user_type', 'student')
-        return self.create_user(email, password, **extra_fields)
-
-    def create_instructor(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('user_type', 'instructor')
-        return self.create_user(email, password, **extra_fields)
+    def create_superuser(self, email, password, **kwargs):
+        kwargs.setdefault('is_staff', True)
+        kwargs.setdefault('is_superuser', True)
+        return self.create_user(email, password, **kwargs)
 
 
-class CustomUser(AbstractBaseUser):
+class InternHubUser(AbstractBaseUser, PermissionsMixin):
+    name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30, blank=True)
-    last_name = models.CharField(max_length=30, blank=True)
+    id = models.CharField(max_length=8, unique=True, primary_key=True)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
 
-    USER_TYPES = (
-        ('student', 'Student'),
-        ('instructor', 'Instructor'),
-    )
-    user_type = models.CharField(
-        _('user type'), max_length=50, choices=USER_TYPES, default='student'
-    )
+    created_at = models.DateTimeField(editable=False, default=timezone.now)
+    updated_at = models.DateTimeField(editable=False, default=timezone.now)
 
-    USERNAME_FIELD = 'email'
+    objects = InternHubUserManager()
 
-    objects = CustomUserManager()
-
-    def has_perm(self, perm, obj=None):
-        if self.is_superuser:
-            return True
-        return False
-
-    def has_module_perms(self, app_label):
-        if self.is_superuser:
-            return True
-        return False
-
-
-class Student(CustomUser):
-    student_id = models.CharField(max_length=50, blank=True)
+    USERNAME_FIELD = 'id'
+    REQUIRED_FIELDS = [
+        'id',
+        'name',
+    ]
 
     class Meta:
-        verbose_name = _('student')
-        verbose_name_plural = _('students')
+        abstract = True
+
+    def save(self, *args, **kwargs):
+        self.updated_at = timezone.now()
+        return super().save(*args, **kwargs)
+
+    def get_full_name(self):
+        return self.name
+
+    def __str__(self):
+        return self.id
 
 
-class Instructor(CustomUser):
-    department = models.CharField(max_length=50, blank=True)
+class Student(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='students')
+    user_permissions = models.ManyToManyField(Permission, related_name='student_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='student')
+
+    department = models.CharField(max_length=3, choices=Departments.choices)
 
     class Meta:
-        verbose_name = _('instructor')
-        verbose_name_plural = _('instructors')
+        verbose_name = 'Student'
+        verbose_name_plural = 'Students'
+
+
+class Chair(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='chairs')
+    user_permissions = models.ManyToManyField(Permission, related_name='chair_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='chair')
+
+    is_staff = models.BooleanField(default=True)
+    department = models.CharField(max_length=3, choices=Departments.choices)
+
+    class Meta:
+        verbose_name = 'Chair'
+        verbose_name_plural = 'Chairs'
+
+
+class Instructor(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='instructors')
+    user_permissions = models.ManyToManyField(Permission, related_name='instructor_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='instructor')
+
+    department = models.CharField(max_length=3, choices=Departments.choices)
+
+    class Meta:
+        verbose_name = 'Instructor'
+        verbose_name_plural = 'Instructors'
+
+
+class DepartmentSecretary(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='dep_secretaries')
+    user_permissions = models.ManyToManyField(Permission, related_name='dep_secretary_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='dep_secretary')
+
+    department = models.CharField(max_length=3, choices=Departments.choices)
+    is_staff = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Department Secretary'
+        verbose_name_plural = 'Department Secretaries'
+
+
+class Dean(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='deans')
+    user_permissions = models.ManyToManyField(Permission, related_name='dean_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='dean')
+
+    is_staff = models.BooleanField(default=True)
+    department = models.CharField(max_length=3, choices=Departments.choices)
+
+    class Meta:
+        verbose_name = 'Dean'
+        verbose_name_plural = 'Deans'
+
+
+class SuperUser(InternHubUser):
+    groups = models.ManyToManyField(Group, related_name='superusers')
+    user_permissions = models.ManyToManyField(Permission, related_name='superuser_permissions')
+    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='superuser')
+
+    is_staff = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Superuser'
+        verbose_name_plural = 'Superusers'
