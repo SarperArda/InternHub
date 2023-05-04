@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin, User, Group, Permission
+from django.contrib.auth import get_user_model
 
 
 class Departments(models.TextChoices):
@@ -15,10 +16,19 @@ class InternHubUserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
         if not email:
             raise ValueError('Users must have a valid email address')
-        user = self.model(email=self.normalize_email(email), **kwargs)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+        intern_hub_user = self.model(email=self.normalize_email(email), **kwargs)
+        intern_hub_user.set_password(password)
+
+        User = get_user_model()
+        user = User.objects.create_user(email=email, password=password, id=intern_hub_user.id)
+        user.name = intern_hub_user.name
+        user.is_active = intern_hub_user.is_active
+        user.is_staff = intern_hub_user.is_staff
+        user.is_superuser = intern_hub_user.is_superuser
+        user.save()
+
+        intern_hub_user.save(using=self._db)
+        return intern_hub_user
 
     def create_superuser(self, email, password, **kwargs):
         kwargs.setdefault('is_staff', True)
@@ -57,14 +67,13 @@ class InternHubUser(AbstractBaseUser, PermissionsMixin):
         return self.name
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class Student(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='students')
     user_permissions = models.ManyToManyField(Permission, related_name='student_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='student')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     department = models.CharField(max_length=3, choices=Departments.choices)
 
     class Meta:
@@ -75,8 +84,7 @@ class Student(InternHubUser):
 class Chair(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='chairs')
     user_permissions = models.ManyToManyField(Permission, related_name='chair_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='chair')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
     department = models.CharField(max_length=3, choices=Departments.choices)
 
@@ -88,8 +96,7 @@ class Chair(InternHubUser):
 class Instructor(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='instructors')
     user_permissions = models.ManyToManyField(Permission, related_name='instructor_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='instructor')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     department = models.CharField(max_length=3, choices=Departments.choices)
 
     class Meta:
@@ -100,8 +107,7 @@ class Instructor(InternHubUser):
 class DepartmentSecretary(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='dep_secretaries')
     user_permissions = models.ManyToManyField(Permission, related_name='dep_secretary_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='dep_secretary')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     department = models.CharField(max_length=3, choices=Departments.choices)
     is_staff = models.BooleanField(default=True)
 
@@ -113,8 +119,7 @@ class DepartmentSecretary(InternHubUser):
 class Dean(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='deans')
     user_permissions = models.ManyToManyField(Permission, related_name='dean_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='dean')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
     department = models.CharField(max_length=3, choices=Departments.choices)
 
@@ -126,8 +131,7 @@ class Dean(InternHubUser):
 class SuperUser(InternHubUser):
     groups = models.ManyToManyField(Group, related_name='superusers')
     user_permissions = models.ManyToManyField(Permission, related_name='superuser_permissions')
-    user_ptr = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True, related_name='superuser')
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=True)
 
