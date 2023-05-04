@@ -1,11 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
-    PermissionsMixin, User, Group, Permission
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, User, Group, Permission
 
 
-class Departments(models.TextChoices):
+class EngineeringDepartments(models.TextChoices):
     CS = 'CS', 'Computer Engineering'
     EEE = 'EEE', 'Electrical and Electronics Engineering'
     IE = 'IE', 'Industrial Engineering'
@@ -13,33 +12,39 @@ class Departments(models.TextChoices):
 
 
 class InternHubUserManager(BaseUserManager):
-    def create_user(self, email, password=None, **kwargs):
-        if not email:
-            raise ValueError('Users must have a valid email address')
-        intern_hub_user = self.model(email=self.normalize_email(email), **kwargs)
-        intern_hub_user.set_password(password)
+    def create_user(self, bilkent_id, password=None, **kwargs):
+        if not bilkent_id:
+            raise ValueError('Users must have a valid bilkent id')
 
-        User = get_user_model()
-        user = User.objects.create_user(email=email, password=password, id=intern_hub_user.id)
-        user.name = intern_hub_user.name
-        user.is_active = intern_hub_user.is_active
-        user.is_staff = intern_hub_user.is_staff
-        user.is_superuser = intern_hub_user.is_superuser
+        new_user = self.model(bilkent_id=bilkent_id, **kwargs)
+        new_user.set_password(password)
+
+        user_model = get_user_model()
+        user = user_model.objects.create_user(username=bilkent_id, password=password)
+        user.name = new_user.name
+        user.email = new_user.email
+        user.is_active = new_user.is_active
+        user.is_staff = new_user.is_staff
+        user.is_superuser = new_user.is_superuser
         user.save()
 
-        intern_hub_user.save(using=self._db)
-        return intern_hub_user
+        new_user.user = user
+        new_user.save(using=self._db)
+        return new_user
 
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, bilkent_id, password, **kwargs):
         kwargs.setdefault('is_staff', True)
         kwargs.setdefault('is_superuser', True)
-        return self.create_user(email, password, **kwargs)
+        return self.create_user(bilkent_id, password, **kwargs)
 
 
 class InternHubUser(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
-    id = models.CharField(max_length=8, unique=True, primary_key=True)
+    class Meta:
+        abstract = True
+
+    name = models.CharField(max_length=50, null=True)
+    email = models.EmailField(max_length=50, null=True)
+    bilkent_id = models.CharField(max_length=8, primary_key=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -48,33 +53,26 @@ class InternHubUser(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(editable=False, default=timezone.now)
     updated_at = models.DateTimeField(editable=False, default=timezone.now)
 
+    groups = models.ManyToManyField(Group, related_name='%(class)s')
+    user_permissions = models.ManyToManyField(Permission, related_name='%(class)_permissions')
+
     objects = InternHubUserManager()
 
-    USERNAME_FIELD = 'id'
+    USERNAME_FIELD = 'bilkent_id'
     REQUIRED_FIELDS = [
-        'id',
-        'name',
+        'bilkent_id',
     ]
-
-    class Meta:
-        abstract = True
 
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
         return super().save(*args, **kwargs)
 
-    def get_full_name(self):
-        return self.name
-
-    def __str__(self):
-        return str(self.id)
+    def __str__(self) -> str:
+        return f'{self.bilkent_id}: {self.name}'
 
 
 class Student(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='students')
-    user_permissions = models.ManyToManyField(Permission, related_name='student_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
-    department = models.CharField(max_length=3, choices=Departments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Student'
@@ -82,11 +80,8 @@ class Student(InternHubUser):
 
 
 class Chair(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='chairs')
-    user_permissions = models.ManyToManyField(Permission, related_name='chair_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
-    department = models.CharField(max_length=3, choices=Departments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Chair'
@@ -94,10 +89,7 @@ class Chair(InternHubUser):
 
 
 class Instructor(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='instructors')
-    user_permissions = models.ManyToManyField(Permission, related_name='instructor_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
-    department = models.CharField(max_length=3, choices=Departments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Instructor'
@@ -105,11 +97,8 @@ class Instructor(InternHubUser):
 
 
 class DepartmentSecretary(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='dep_secretaries')
-    user_permissions = models.ManyToManyField(Permission, related_name='dep_secretary_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
-    department = models.CharField(max_length=3, choices=Departments.choices)
     is_staff = models.BooleanField(default=True)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Department Secretary'
@@ -117,11 +106,8 @@ class DepartmentSecretary(InternHubUser):
 
 
 class Dean(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='deans')
-    user_permissions = models.ManyToManyField(Permission, related_name='dean_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
-    department = models.CharField(max_length=3, choices=Departments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Dean'
@@ -129,9 +115,6 @@ class Dean(InternHubUser):
 
 
 class SuperUser(InternHubUser):
-    groups = models.ManyToManyField(Group, related_name='superusers')
-    user_permissions = models.ManyToManyField(Permission, related_name='superuser_permissions')
-    user = models.OneToOneField(User, on_delete=models.CASCADE,null=True)
     is_staff = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=True)
 
