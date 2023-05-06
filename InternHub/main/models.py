@@ -11,15 +11,14 @@ class EngineeringDepartments(models.TextChoices):
 
 class RoleMixin(models.Model):
     class Role(models.TextChoices):
-        SUPERUSER = "SUPERUSER", "Superuser"
-        STUDENT = "STUDENT", "Student"
-        DEAN = "DEAN", "Dean"
-        CHAIR = "CHAIR", "Chair"
-        INSTRUCTOR = "INSTRUCTOR", "Instructor"
-        DEPARTMENTSECRETARY = "DEPARTMENT_SECRETARY", "Department Secretary"
+        SUPERUSER = 'SUPERUSER', 'Superuser'
+        STUDENT = 'STUDENT', 'Student'
+        DEAN = 'DEAN', 'Dean'
+        CHAIR = 'CHAIR', 'Chair'
+        INSTRUCTOR = 'INSTRUCTOR', 'Instructor'
+        DEPARTMENTSECRETARY = 'DEPARTMENT_SECRETARY', 'Department Secretary'
 
-    role = models.CharField(
-        max_length=50, choices=Role.choices, blank=True)
+    role = models.CharField(max_length=50, choices=Role.choices, blank=True)
 
     class Meta:
         abstract = True
@@ -34,7 +33,7 @@ class RoleMixin(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, user_id, password=None, first_name=None, last_name=None, **kwargs):
+    def create_user(self, email, user_id, password=None, first_name=None, last_name=None):
         if not email:
             raise ValueError('Users must have a valid email')
 
@@ -58,6 +57,7 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email),
             password=password,
         )
+
         user.is_staff = True
         user.is_active = True
         user.is_superuser = True
@@ -76,6 +76,7 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -85,11 +86,13 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     REQUIRED_FIELDS = ['email']
 
     objects = UserManager()
+    user_permissions = models.ManyToManyField(
+        Permission, related_name='%(class)spermissions', null=True, blank=True)
 
     def __str__(self):
         if self.first_name or self.last_name is None:
             return self.user_id
-        return self.first_name + " " + self.last_name
+        return self.first_name + ' ' + self.last_name
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
@@ -97,13 +100,9 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     def has_module_perms(self, app_label):
         return True
 
-    user_permissions = models.ManyToManyField(
-        Permission, related_name='%(class)spermissions')
-
 
 class Student(User):
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Student'
@@ -112,8 +111,7 @@ class Student(User):
 
 class Chair(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Chair'
@@ -121,8 +119,7 @@ class Chair(User):
 
 
 class Instructor(User):
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Instructor'
@@ -131,8 +128,7 @@ class Instructor(User):
 
 class DepartmentSecretary(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Department Secretary'
@@ -141,8 +137,7 @@ class DepartmentSecretary(User):
 
 class Dean(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
+    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Dean'

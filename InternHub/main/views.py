@@ -15,32 +15,31 @@ def login_view(request):
         form = LoginForm(request.POST)
         password = request.POST.get('password')
 
-        try: 
+        try:
             user = User.objects.get(user_id=user_id)
         except User.DoesNotExist:
             error_message = 'User does not exist.'
             user = None
 
         if user is not None:
-            authenticated_user = authenticate(request,user_id=user_id, password=password)
+            authenticated_user = authenticate(request, user_id=user_id, password=password)
             if authenticated_user is not None:
                 login(request, authenticated_user)
                 return redirect('home')
             else:
                 error_message = 'Invalid id or password.'
 
-    return render(request, 'main/login.html', {'form': form,
-                                               'error_message': error_message})
+    return render(request, 'main/login.html', {'form': form, 'error_message': error_message})
 
 
 def logout_view(request):
     logout(request)
     return redirect('login')
 
+
 class HomeView(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = ''
-    
 
     def get(self, request):
         announcements = Announcement.objects.all().order_by("-date")
