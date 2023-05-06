@@ -147,3 +147,12 @@ class Dean(User):
     class Meta:
         verbose_name = 'Dean'
         verbose_name_plural = 'Deans'
+
+
+class Announcement(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

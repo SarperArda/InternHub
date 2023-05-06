@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}InternHub{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static "main/home.css" %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="page-header">
+            <h1>InternHub</h1>
+        </div>
+        <div class="main-container">
+            <div class="side-menu">
+                <nav>
+                    <ul>
+                        <li>
+                            <button>Reports</button>
+                        </li>
+                        <li>
+                            <button>Feedbacks</button>
+                        </li>
+                        <li>
+                            <button>Evaluate company</button>
+                        </li>
+                        <li>
+                            <button>Company approval validation application</button>
+                        </li>
+                        <li>
+                            <button>Company request application</button>
+                        </li>
+                        <li>
+                            <button>Profile</button>
+                        </li>
+                        <li>
+                            <button>Contact</button>
+                        </li>
+                        <li>
+                            <button><a href="{% url 'logout' %}">Log out</a></button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="news-section">
+                <h2>Announcements</h2>
+                    {% if announcements|length == 0 %}
+                        <p>No announcements</p>
+                    {% else %}
+                        <ul>
+                        {% for announcement in announcements %}
+                            <li>
+                                <div class="announcement">
+                                    <h3>{{ announcement.title }}</h3>
+                                    <p>{{ announcement.content }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+            </div>
+            <div class="profile-section">
+                <h2>Profile</h2>
+                <nav>
+                    <!-- placeholder -->
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
