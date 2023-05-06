@@ -1,0 +1,90 @@
+/* Login Page Style */
+
+:root {
+    --color-deep-azure: #415380;
+    --color-white-smoke: #F2F2F2;
+    --color-titanium-white: #E4E4E4;
+    --color-frozen-wave: #52A7CC;
+    --color-celadon-blue: #007BA7;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-image: linear-gradient(to right top, #415380, #40799E, #539EB3, #7AC2C2, #AEE5D1);
+    background-size: cover;
+    font-family: sans-serif;
+}
+
+.login-page {
+    width: 360px;
+    padding: 8% 0 0;
+    margin: auto;
+}
+
+.form {
+    position: relative;
+    z-index: 1;
+    background: var(--color-white-smoke);
+    max-width: 360px;
+    margin: 0 auto 100px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+    border-radius: 10px;
+}
+
+.logo {
+    margin-bottom: 35px;
+}
+
+.logo img {
+    height: 155px;
+}
+
+.form h1 {
+    margin: 0 0 30px;
+    font-size: 40px;
+    color: var(--color-deep-azure);
+}
+
+.form input {
+    font-family: "Roboto", sans-serif;
+    outline: 0;
+    background: var(--color-titanium-white);
+    width: 100%;
+    border: 0;
+    margin: 0 0 5px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.form button {
+    margin-top: 15px;
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    outline: 0;
+    background: var(--color-celadon-blue);
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: var(--color-white-smoke);
+    font-size: 14px;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.form button:hover,
+.form button:active,
+.form button:focus {
+    background: var(--color-frozen-wave);
+}
+
+.form input:focus {
+    border: 1px solid var(--color-celadon-blue);
+}
