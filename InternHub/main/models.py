@@ -1,7 +1,5 @@
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, User, Group, Permission
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
 
 
 class EngineeringDepartments(models.TextChoices):
@@ -11,113 +9,141 @@ class EngineeringDepartments(models.TextChoices):
     ME = 'ME', 'Mechanical Engineering'
 
 
-class InternHubUserManager(BaseUserManager):
-    def create_user(self, bilkent_id, password=None, **kwargs):
-        if not bilkent_id:
-            raise ValueError('Users must have a valid bilkent id')
+class RoleMixin(models.Model):
+    class Role(models.TextChoices):
+        SUPERUSER = "SUPERUSER", "Superuser"
+        STUDENT = "STUDENT", "Student"
+        DEAN = "DEAN", "Dean"
+        CHAIR = "CHAIR", "Chair"
+        INSTRUCTOR = "INSTRUCTOR", "Instructor"
+        DEPARTMENTSECRETARY = "DEPARTMENT_SECRETARY", "Department Secretary"
 
-        new_user = self.model(bilkent_id=bilkent_id, **kwargs)
-        new_user.set_password(password)
+    role = models.CharField(
+        max_length=50, choices=Role.choices, blank=True)
 
-        user_model = get_user_model()
-        user = user_model.objects.create_user(username=bilkent_id, password=password)
-        user.name = new_user.name
-        user.email = new_user.email
-        user.is_active = new_user.is_active
-        user.is_staff = new_user.is_staff
-        user.is_superuser = new_user.is_superuser
-        user.save()
-
-        new_user.user = user
-        new_user.save(using=self._db)
-        return new_user
-
-    def create_superuser(self, bilkent_id, password, **kwargs):
-        kwargs.setdefault('is_staff', True)
-        kwargs.setdefault('is_superuser', True)
-        return self.create_user(bilkent_id, password, **kwargs)
-
-
-class InternHubUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         abstract = True
 
-    name = models.CharField(max_length=50, null=True)
-    email = models.EmailField(max_length=50, null=True)
-    bilkent_id = models.CharField(max_length=8, primary_key=True)
+    def save(self, *args, **kwargs):
+        role = self.__class__.__name__.upper()
+        if role == 'USER':
+            self.role = self.Role.SUPERUSER
+        else:
+            self.role = self.Role[role]
+        super().save(*args, **kwargs)
 
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, user_id, password=None, first_name=None, last_name=None, **kwargs):
+        if not email:
+            raise ValueError('Users must have a valid email')
+
+        if not user_id:
+            raise ValueError('Users must have a valid id')
+
+        user = self.model(
+            user_id=user_id,
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, user_id, password=None):
+        user = self.create_user(
+            user_id=user_id,
+            email=self.normalize_email(email),
+            password=password,
+        )
+        user.is_staff = True
+        user.is_active = True
+        user.is_superuser = True
+        user.is_admin = True
+        user.role = RoleMixin.Role.SUPERUSER
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
+    base_role = RoleMixin.Role.SUPERUSER
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    email = models.EmailField(max_length=50, unique=True)
+    user_id = models.CharField(max_length=8, unique=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    created_at = models.DateTimeField(editable=False, default=timezone.now)
-    updated_at = models.DateTimeField(editable=False, default=timezone.now)
+    USERNAME_FIELD = 'user_id'
+    REQUIRED_FIELDS = ['email']
 
-    groups = models.ManyToManyField(Group, related_name='%(class)s')
-    user_permissions = models.ManyToManyField(Permission, related_name='%(class)_permissions')
+    objects = UserManager()
 
-    objects = InternHubUserManager()
+    def __str__(self):
+        if self.first_name or self.last_name is None:
+            return self.user_id
+        return self.first_name + " " + self.last_name
 
-    USERNAME_FIELD = 'bilkent_id'
-    REQUIRED_FIELDS = [
-        'bilkent_id',
-    ]
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
 
-    def save(self, *args, **kwargs):
-        self.updated_at = timezone.now()
-        return super().save(*args, **kwargs)
+    def has_module_perms(self, app_label):
+        return True
 
-    def __str__(self) -> str:
-        return f'{self.bilkent_id}: {self.name}'
+    user_permissions = models.ManyToManyField(
+        Permission, related_name='%(class)spermissions')
 
 
-class Student(InternHubUser):
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+class Student(User):
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Student'
         verbose_name_plural = 'Students'
 
 
-class Chair(InternHubUser):
-    is_staff = models.BooleanField(default=True)
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+class Chair(User):
+    is_staff = True
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Chair'
         verbose_name_plural = 'Chairs'
 
 
-class Instructor(InternHubUser):
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+class Instructor(User):
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Instructor'
         verbose_name_plural = 'Instructors'
 
 
-class DepartmentSecretary(InternHubUser):
-    is_staff = models.BooleanField(default=True)
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+class DepartmentSecretary(User):
+    is_staff = True
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Department Secretary'
         verbose_name_plural = 'Department Secretaries'
 
 
-class Dean(InternHubUser):
-    is_staff = models.BooleanField(default=True)
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+class Dean(User):
+    is_staff = True
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Dean'
         verbose_name_plural = 'Deans'
-
-
-class SuperUser(InternHubUser):
-    is_staff = models.BooleanField(default=True)
-    is_superuser = models.BooleanField(default=True)
-
-    class Meta:
-        verbose_name = 'Superuser'
-        verbose_name_plural = 'Superusers'
