@@ -34,9 +34,6 @@ class RoleMixin(models.Model):
 
 class UserManager(BaseUserManager):
     def create_user(self, email, user_id, password=None, first_name=None, last_name=None):
-        if not email:
-            raise ValueError('Users must have a valid email')
-
         if not user_id:
             raise ValueError('Users must have a valid id')
 
@@ -68,11 +65,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
-    base_role = RoleMixin.Role.SUPERUSER
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
-    email = models.EmailField(max_length=50, unique=True)
-    user_id = models.CharField(max_length=8, unique=True)
+
+    email = models.EmailField(max_length=50, unique=True, null=True)
+    user_id = models.CharField(max_length=8, unique=True, null=False)
 
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
@@ -83,11 +80,11 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'user_id'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = []
 
     objects = UserManager()
-    user_permissions = models.ManyToManyField(
-        Permission, related_name='%(class)spermissions', null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(Permission, related_name='%(class)spermissions', blank=True)
 
     def __str__(self):
         if self.first_name or self.last_name is None:
@@ -102,7 +99,18 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
 
 
 class Student(User):
+    class Courses(models.TextChoices):
+        CS299 = 'CS299', 'CS299'
+        CS399 = 'CS399', 'CS399'
+        EEE299 = 'EEE299', 'EEE299'
+        EEE399 = 'EEE399', 'EEE399'
+        ME299 = 'ME299', 'ME299'
+        ME399 = 'ME399', 'ME399'
+        IE299 = 'IE299', 'IE299'
+        IE399 = 'IE399', 'IE399'
+
     department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
+    course = models.CharField(max_length=6, choices=Courses.choices, blank=True)
 
     class Meta:
         verbose_name = 'Student'
