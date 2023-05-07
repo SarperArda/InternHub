@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}InternHub{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static "main/home.css" %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        {% include 'navbar.html'%}
+        <div class="main-container">
+            {% include 'side_menu.html'%}
+            <div class="main-section">
+                <h2>Make Announcement</h2>
+                <form action="{% url 'announcement' %}" method="POST">
+                    {% csrf_token %}
+                    {% for field in form%}
+                        <div class = "form-control">
+                            {{field.label_tag}}
+                            {{field}}
+                            {{field.errors}}
+                        </div>
+                    {% endfor %}
+                <button type="submit">Announce!</button>
+                </form>
+            </div>
+            <div class="profile-section">
+                <h2>Profile</h2>
+                <nav>
+                    <!-- placeholder -->
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
