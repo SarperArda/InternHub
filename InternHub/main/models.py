@@ -8,6 +8,15 @@ class EngineeringDepartments(models.TextChoices):
     IE = 'IE', 'Industrial Engineering'
     ME = 'ME', 'Mechanical Engineering'
 
+class Courses(models.TextChoices):
+    CS299 = 'CS299', 'CS299'
+    CS399 = 'CS399', 'CS399'
+    EEE299 = 'EEE299', 'EEE299'
+    EEE399 = 'EEE399', 'EEE399'
+    ME299 = 'ME299', 'ME299'
+    ME399 = 'ME399', 'ME399'
+    IE299 = 'IE299', 'IE299'
+    IE399 = 'IE399', 'IE399'
 
 class RoleMixin(models.Model):
     class Role(models.TextChoices):
@@ -96,61 +105,6 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
 
     def has_module_perms(self, app_label):
         return True
-
-
-class Student(User):
-    class Courses(models.TextChoices):
-        CS299 = 'CS299', 'CS299'
-        CS399 = 'CS399', 'CS399'
-        EEE299 = 'EEE299', 'EEE299'
-        EEE399 = 'EEE399', 'EEE399'
-        ME299 = 'ME299', 'ME299'
-        ME399 = 'ME399', 'ME399'
-        IE299 = 'IE299', 'IE299'
-        IE399 = 'IE399', 'IE399'
-
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
-    course = models.CharField(max_length=6, choices=Courses.choices, blank=True)
-
-    class Meta:
-        verbose_name = 'Student'
-        verbose_name_plural = 'Students'
-
-
-class Chair(User):
-    is_staff = True
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
-
-    class Meta:
-        verbose_name = 'Chair'
-        verbose_name_plural = 'Chairs'
-
-
-class Instructor(User):
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
-
-    class Meta:
-        verbose_name = 'Instructor'
-        verbose_name_plural = 'Instructors'
-
-
-class DepartmentSecretary(User):
-    is_staff = True
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
-
-    class Meta:
-        verbose_name = 'Department Secretary'
-        verbose_name_plural = 'Department Secretaries'
-
-
-class Dean(User):
-    is_staff = True
-    department = models.CharField(max_length=3, choices=EngineeringDepartments.choices)
-
-    class Meta:
-        verbose_name = 'Dean'
-        verbose_name_plural = 'Deans'
-
 
 class Announcement(models.Model):
     title = models.CharField(max_length=100)

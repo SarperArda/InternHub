@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Student, Dean, Chair, Instructor, DepartmentSecretary, User
+from student.models import Student
+from dean.models import Dean
+from chair.models import Chair
+from instructor.models import Instructor
+from departmentSecretary.models import DepartmentSecretary
+from .models import User
 
 
 # Registering user models to admin
