@@ -22,13 +22,13 @@
             <li>
                 <button>Contact</button>
             </li>
-            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" %}
+            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
                 <li>
-                    <a href="{% url 'announcement' %}"><button>Make Announcement</button></a>
+                    <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
                 </li>
             {% endif %}
             <li>
-                <a href="{% url 'logout' %}"><button>Log out</button></a>
+                <a href="{% url 'users:logout' %}"><button>Log out</button></a>
             </li>
         </ul>
     </nav>
