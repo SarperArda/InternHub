@@ -49,7 +49,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self,user_id, password=None):
+    def create_superuser(self, user_id, password=None):
         user = self.create_user(
             user_id=user_id,
             password=password,
@@ -99,6 +99,15 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
         return True
 
 
+class Instructor(User):
+    department = models.CharField(
+        max_length=3, choices=EngineeringDepartments.choices)
+
+    class Meta:
+        verbose_name = 'Instructor'
+        verbose_name_plural = 'Instructors'
+
+
 class Student(User):
     class Courses(models.TextChoices):
         CS299 = 'CS299', 'CS299'
@@ -114,6 +123,8 @@ class Student(User):
         max_length=3, choices=EngineeringDepartments.choices)
     course = models.CharField(
         max_length=6, choices=Courses.choices, blank=True)
+    grader = models.ForeignKey(
+        Instructor, on_delete=models.CASCADE, null=True, related_name='student')
 
     class Meta:
         verbose_name = 'Student'
@@ -128,15 +139,6 @@ class Chair(User):
     class Meta:
         verbose_name = 'Chair'
         verbose_name_plural = 'Chairs'
-
-
-class Instructor(User):
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
-
-    class Meta:
-        verbose_name = 'Instructor'
-        verbose_name_plural = 'Instructors'
 
 
 class DepartmentSecretary(User):
