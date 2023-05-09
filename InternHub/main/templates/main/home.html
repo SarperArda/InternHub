@@ -4,15 +4,52 @@
 {% block title %}InternHub{% endblock %}
 
 {% block styling %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{% static "main/home.css" %}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 {% endblock %}
 
 {% block body %}
     <div>
-        {% include 'navbar.html' %}
         <div class="main-container">
-            {% include 'side_menu.html' %}
+            <div class="side-menu">
+                <nav>
+                    <ul>
+                        <li class="title-li">
+                            <a class="title" href="{% url 'main:home' %}">InternHub</a>
+                        </li>
+                        <li>
+                            <button>Reports</button>
+                        </li>
+                        <li>
+                            <button>Feedbacks</button>
+                        </li>
+                        <li>
+                            <button>Evaluate company</button>
+                        </li>
+                        <li>
+                            <button>Company approval validation application</button>
+                        </li>
+                        <li>
+                            <button>Company request application</button>
+                        </li>
+                        <li>
+                            <button>Profile</button>
+                        </li>
+                        <li>
+                            <button>Contact</button>
+                        </li>
+                        {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
+                            <li>
+                                <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'users:logout' %}"><button>Log out</button></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
             <div class="news-section">
                 <h2>Announcements</h2>
                     {% if announcements|length == 0 %}
@@ -33,13 +70,8 @@
             <div class="profile-section">
                 <h2>Profile</h2>
                 <nav>
-                    <!-- placeholder -->
-                    <span class="material-symbols-outlined">
-                        account_circle
-                    </span>
-                    <span class="material-symbols-outlined">
-                            settings
-                    </span>    
+                    <i class="fa-solid fa-gear"></i>
+                    <i class="fa-solid fa-user"></i>
                 </nav>
             </div>
         </div>
