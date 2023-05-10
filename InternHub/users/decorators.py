@@ -16,3 +16,10 @@ def allowed_users(allowed_roles=[]):
         return wrapper_func
     
     return decorator
+
+
+def decorate_get_all(model_cls):
+    def get_all(*args, **kwargs):
+        return model_cls.objects.all()
+
+    return get_all

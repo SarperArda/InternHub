@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
+from .decorators import decorate_get_all
 # Create your models here.
 
 
@@ -114,42 +115,107 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
         return True
 
 
+
+class Student(User):
+    course = models.ForeignKey(
+        Course, on_delete=models.SET_NULL, null=True, related_name='students')
+
+    class Meta:
+        verbose_name = 'Student'
+        verbose_name_plural = 'Students'
+
 class Instructor(User):
+    is_staff = True
+    students = models.ManyToManyField(Student, blank=True, editable=False, null=True,
+                                      related_name='instructor_of_student')
+
+    def assign_students_to_instructor(self, student):
+        self.students.add(student)
+
+    def remove_students_to_instructor(self, student):
+        self.students.remove(student)
+
+    def update_instructor_association(self, is_add, student):
+        if is_add:
+            self.assign_students_to_instructor(student)
+        else:
+            self.students.remove(student)
 
     class Meta:
         verbose_name = 'Instructor'
         verbose_name_plural = 'Instructors'
 
 
-class Student(User):
-    course = models.ForeignKey(
-        Course, on_delete=models.SET_NULL, null=True, related_name='students')
-    assigned_instructor = models.ForeignKey(
-        Instructor, on_delete=models.SET_NULL, null=True, related_name='students')
-
-    class Meta:
-        verbose_name = 'Student'
-        verbose_name_plural = 'Students'
-
-
-class Chair(User):
-    is_staff = True
-
-    class Meta:
-        verbose_name = 'Chair'
-        verbose_name_plural = 'Chairs'
-
-
 class DepartmentSecretary(User):
     is_staff = True
+    def get_students_of_secretary(self):
+        return Student.objects.all().filter(department=self.department)
 
+    def get_instructors_of_secretary(self):
+        return Instructor.objects.all().filter(department=self)
+
+    @staticmethod
+    def get_secretary_of_department(department):
+        return DepartmentSecretary.objects.get(department=department)
+
+    @staticmethod
+    def assign_tos (instructor, student):
+        if student.instructor_of_student.count() == 0:
+            instructor.assign_students_to_instructor(student)
+        else:
+            student.instructor_of_student.first().remove_students_to_instructor(student)
+            instructor.assign_students_to_instructor(student)
     class Meta:
         verbose_name = 'Department Secretary'
         verbose_name_plural = 'Department Secretaries'
 
 
+class Chair(User):
+    is_staff = True
+
+    def get_students_of_chair(self):
+        return Student.objects.all().filter(department=self.department)
+
+    def get_instructors_of_chair(self):
+        return Instructor.objects.all().filter(department=self.department)
+
+    def get_secretary_of_chair(self):
+        return DepartmentSecretary.objects.get(department=self.department)
+
+    @staticmethod
+    def get_chair_of_department(department):
+        return Chair.objects.get(department=department)
+
+    class Meta:
+        verbose_name = 'Chair'
+        verbose_name_plural = 'Chairs'
+
 class Dean(User):
     is_staff = True
+
+    @staticmethod
+    def get_dean():
+        return Dean.objects.all().first()
+
+    @staticmethod
+    @decorate_get_all(Chair)
+    def get_all_chairs():
+        pass
+
+    @staticmethod
+    @decorate_get_all(Student)
+    def get_all_students():
+        pass
+
+    @staticmethod
+    @decorate_get_all(Instructor)
+    def get_all_instructors():
+        pass
+
+    @staticmethod
+    @decorate_get_all(DepartmentSecretary)
+    def get_all_secretaries():
+        pass
 
     class Meta:
         verbose_name = 'Dean'
