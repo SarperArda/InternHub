@@ -16,9 +16,9 @@
                 <li>
                     {{ company.name }}
                     {{ company.field }}
-                    {% if company.departments %}
-                        {{ company.departments|join:', ' }}
-                    {% endif %}
+                    {% for department in company.departments.all %}
+                        {{ department.name }}
+                    {% endfor %}
                 </li>
             {% endfor %}
         </ul>

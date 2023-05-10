@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import Student
+from users.models import Student, Course
 from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
 # Create your models here.
 
@@ -41,19 +41,26 @@ class EvaluationForm(Form):
 
 
 class Internship(models.Model):
+    ##Models
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, null=True, related_name='internship')
-    course = models.TextChoices('courser', '299', '399')
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='course')
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, null=True, related_name='company')
+    
+    ##Forms
     grading_form = models.OneToOneField(
         GradingForm, on_delete=models.CASCADE, null=True, related_name='grading_form')
     evaluation_form = models.OneToOneField(
         EvaluationForm, on_delete=models.CASCADE, null=True, related_name='evaluation_form')
     confidential_company_form = models.OneToOneField(
         ConfidentialCompanyForm, on_delete=models.CASCADE, null=True, related_name='confidential_company_form')
+    
+    ##Current status of the internship
     status = models.TextChoices(
         'status', 'PENDING SATISFACTORY UNSATISFACTORY')
+    
+    ##Company Related Demands
     company_approval = models.OneToOneField(
         CompanyApprovalValidationApplication, on_delete=models.CASCADE, null=True, related_name='company_approval')
     company_evaluation = models.OneToOneField(

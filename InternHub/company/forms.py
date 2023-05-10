@@ -1,14 +1,15 @@
 from django import forms
-from users.models import EngineeringDepartments
+from users.models import EngineeringDepartment
 from .models import Company
 
 
 class CompanyForm(forms.ModelForm):
-    department_choices = EngineeringDepartments.choices
-
-    department = forms.MultipleChoiceField(
-        choices=department_choices, widget=forms.CheckboxSelectMultiple)
+    departments = forms.ModelMultipleChoiceField(
+        queryset=EngineeringDepartment.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
 
     class Meta:
         model = Company
-        fields = ['name', 'address', 'field', 'city', 'department']
+        fields = ['name', 'address', 'field', 'city', 'departments']

@@ -3,11 +3,25 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 # Create your models here.
 
 
-class EngineeringDepartments(models.TextChoices):
-    CS = 'CS', 'Computer Engineering'
-    EEE = 'EEE', 'Electrical and Electronics Engineering'
-    IE = 'IE', 'Industrial Engineering'
-    ME = 'ME', 'Mechanical Engineering'
+class EngineeringDepartment(models.Model):
+    code = models.CharField(max_length=5, unique=True)
+    name = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        Course.objects.create(code=self.code + "299", name="Summer Training 1")
+        Course.objects.create(code=self.code + "399", name="Summer Training 2")
+
+
+class Course(models.Model):
+    code = models.CharField(max_length=6, unique=True)
+    name = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return self.code
 
 
 class RoleMixin(models.Model):
@@ -70,7 +84,8 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
 
     email = models.EmailField(max_length=50, unique=True, null=True)
     user_id = models.CharField(max_length=8, unique=True, null=False)
-
+    department = models.ForeignKey(
+        EngineeringDepartment, on_delete=models.SET_NULL, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
 
@@ -100,8 +115,6 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
 
 
 class Instructor(User):
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Instructor'
@@ -109,22 +122,10 @@ class Instructor(User):
 
 
 class Student(User):
-    class Courses(models.TextChoices):
-        CS299 = 'CS299', 'CS299'
-        CS399 = 'CS399', 'CS399'
-        EEE299 = 'EEE299', 'EEE299'
-        EEE399 = 'EEE399', 'EEE399'
-        ME299 = 'ME299', 'ME299'
-        ME399 = 'ME399', 'ME399'
-        IE299 = 'IE299', 'IE299'
-        IE399 = 'IE399', 'IE399'
-
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
-    course = models.CharField(
-        max_length=6, choices=Courses.choices, blank=True)
-    grader = models.ForeignKey(
-        Instructor, on_delete=models.CASCADE, null=True, related_name='student')
+    course = models.ForeignKey(
+        Course, on_delete=models.SET_NULL, null=True, related_name='students')
+    assigned_instructor = models.ForeignKey(
+        Instructor, on_delete=models.SET_NULL, null=True, related_name='students')
 
     class Meta:
         verbose_name = 'Student'
@@ -133,8 +134,6 @@ class Student(User):
 
 class Chair(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Chair'
@@ -143,8 +142,6 @@ class Chair(User):
 
 class DepartmentSecretary(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Department Secretary'
@@ -153,8 +150,6 @@ class DepartmentSecretary(User):
 
 class Dean(User):
     is_staff = True
-    department = models.CharField(
-        max_length=3, choices=EngineeringDepartments.choices)
 
     class Meta:
         verbose_name = 'Dean'
