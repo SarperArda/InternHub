@@ -108,7 +108,7 @@ body {
 .news-section h2 {
     font-family: "Roboto", sans-serif;
     font-size: 30px;
-    color: var();
+    color: var(--color-dark-grey);
     text-align: center;
     margin: 15px 0 5px 35px;
     position: relative;
