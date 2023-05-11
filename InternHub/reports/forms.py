@@ -3,6 +3,7 @@ from users.models import EngineeringDepartment, Course, Student
 from company.models import Company
 from reports.models import Internship
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 
 yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
@@ -65,7 +66,7 @@ class SummerTrainingGradingForm(forms.Form):
     student_name = forms.CharField(max_length=100)
     student_surname = forms.CharField(max_length=100)
     student_id = forms.CharField(min_length=8, max_length=8, required=True)
-    partB_satisfactory = forms.ModelChoiceField(
+    partB_satisfactory = forms.ChoiceField(
         choices=[choice for choice in satisfactory_choices if choice[0] != 'Unsatisfactory'],
         widget=forms.RadioSelect,
         required=True,
@@ -83,13 +84,13 @@ class SummerTrainingGradingForm(forms.Form):
         label= 'The Assessment/quality score of Report',
         min_value=0, max_value=10
         )
-    partC_evaluation = forms.ModelChoiceField(
+    partC_evaluation = forms.ChoiceField(
         label='Overall Evaluation',
         choices=[choice for choice in satisfactory_choices if choice[0] != 'Revision Required'],
         widget=forms.RadioSelect,
         required=True,
     )
-    date_submission = forms.DateTimeField(default=datetime.now)
+    date_submission = forms.DateTimeField()
     def clean(self):
         cleaned_data = super().clean()
 
