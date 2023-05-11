@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}InternHub{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static "main/home.css" %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        {% include 'navbar.html' %}
+        <div class="main-container">
+            {% include 'side_menu.html' %}
+            <div class="news-section">
+                <h2>Announcements</h2>
+                    {% if announcements|length == 0 %}
+                        <p>No announcements</p>
+                    {% else %}
+                        <ul>
+                        {% for announcement in announcements %}
+                            <li>
+                                <div class="announcement">
+                                    <h3>{{ announcement.title }}</h3>
+                                    <p>{{ announcement.content }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+            </div>
+            <div class="profile-section">
+                <h2>Profile</h2>
+                <nav>
+                    <!-- placeholder -->
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

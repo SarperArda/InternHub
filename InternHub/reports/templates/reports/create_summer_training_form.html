@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Summer Training Form{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static 'reports/login.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+        <div class="form">
+            <h1>InternHub</h1>
+            <form method="post" class="form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit!</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
