@@ -1,0 +1,35 @@
+<div class="side-menu">
+    <nav>
+        <ul>
+            <li>
+                <button>Reports</button>
+            </li>
+            <li>
+                <button>Feedbacks</button>
+            </li>
+            <li>
+                <button>Evaluate company</button>
+            </li>
+            <li>
+                <button>Company approval validation application</button>
+            </li>
+            <li>
+                <button>Company request application</button>
+            </li>
+            <li>
+                <button>Profile</button>
+            </li>
+            <li>
+                <button>Contact</button>
+            </li>
+            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" %}
+                <li>
+                    <a href="{% url 'announcement' %}"><button>Make Announcement</button></a>
+                </li>
+            {% endif %}
+            <li>
+                <a href="{% url 'logout' %}"><button>Log out</button></a>
+            </li>
+        </ul>
+    </nav>
+</div>
