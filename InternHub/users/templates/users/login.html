@@ -4,14 +4,14 @@
 {% block title %}Login{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="{% static "users/login.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'users/login.css' %}">
 {% endblock %}
 
 {% block body %}
     <div class="login-page">
         <div class="form">
             <div class="logo">
-                <img src="{% static "img/logo.png" %}" alt="logo-bilkent">
+                <img src="{% static 'img/logo.png' %}" alt="logo-bilkent">
             </div>
             <h1>InternHub</h1>
             {% if error_message %}<p>{{ error_message }}</p>{% endif %}
