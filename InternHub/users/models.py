@@ -13,12 +13,10 @@ class EngineeringDepartment(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        Course.objects.create(code=self.code + "299", name="Summer Training 1")
-        Course.objects.create(code=self.code + "399", name="Summer Training 2")
 
 
 class Course(models.Model):
-    code = models.CharField(max_length=6, unique=True)
+    code = models.CharField(max_length=3, unique=True)
     name = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
@@ -114,20 +112,8 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     def has_module_perms(self, app_label):
         return True
 
-
-
-class Student(User):
-    course = models.ForeignKey(
-        Course, on_delete=models.SET_NULL, null=True, related_name='students')
-
-    class Meta:
-        verbose_name = 'Student'
-        verbose_name_plural = 'Students'
-
 class Instructor(User):
     is_staff = True
-    students = models.ManyToManyField(Student, blank=True, editable=False, null=True,
-                                      related_name='instructor_of_student')
 
     def assign_students_to_instructor(self, student):
         self.students.add(student)
@@ -145,6 +131,13 @@ class Instructor(User):
         verbose_name = 'Instructor'
         verbose_name_plural = 'Instructors'
 
+class Student(User):
+
+    class Meta:
+        verbose_name = 'Student'
+        verbose_name_plural = 'Students'
+
+
 
 class DepartmentSecretary(User):
     is_staff = True
@@ -160,10 +153,10 @@ class DepartmentSecretary(User):
 
     @staticmethod
     def assign_tos (instructor, student):
-        if student.instructor_of_student.count() == 0:
+        if student.grading_instructor is None:
             instructor.assign_students_to_instructor(student)
         else:
-            student.instructor_of_student.first().remove_students_to_instructor(student)
+            student.grading_instructor.remove_students_to_instructor(student)
             instructor.assign_students_to_instructor(student)
     class Meta:
         verbose_name = 'Department Secretary'

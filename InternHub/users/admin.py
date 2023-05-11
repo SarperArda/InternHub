@@ -66,7 +66,7 @@ class StudentAdmin(RoleAdmin):
 
     fieldsets = (
         (None, {'fields': ('user_id', 'first_name', 'last_name',)}),
-        ('Personal info', {'fields': ('email', 'department', 'course',)}),
+        ('Personal info', {'fields': ('email', 'department',)}),
         ('Permissions', {'fields': ('is_active',
          'is_staff', 'is_superuser', 'user_permissions',)}),
     )
@@ -75,16 +75,16 @@ class StudentAdmin(RoleAdmin):
         (None, {
             'classes': ('wide',),
             'fields': ('user_id', 'first_name', 'last_name', 'email',
-                       'department', 'course', 'password1', 'password2',),
+                       'department', 'password1', 'password2',),
         }),
     )
 
     list_display = ('user_id', 'first_name',
-                    'last_name', 'department', 'course',)
-    list_filter = ('department', 'course',)
+                    'last_name', 'department', )
+    list_filter = ('department', )
     search_fields = ('user_id', 'first_name',
-                     'last_name', 'department', 'course',)
-    ordering = ('department', 'course', 'user_id',)
+                     'last_name', 'department',)
+    ordering = ('department', 'user_id',)
 
 
 # Admin panel styling
