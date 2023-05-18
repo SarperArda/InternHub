@@ -1,8 +1,11 @@
 from django.db import models
 from users.models import Student, Course, Instructor
 from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 
+yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
+satisfactory_choices = ('Satisfactory','Satisfactory'), ('Revision Required','Revision Required'), ('Unsatisfactory','Unsatisfactory')
 
 class Status(models.TextChoices):
     PENDING = 'PE', 'Pending'
@@ -29,36 +32,48 @@ class Feedback(Task):
         Submission, on_delete=models.CASCADE, null=True, related_name='feedback')
 
 
-class Form(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True)
-    submission_date = models.DateTimeField(auto_now=True)
+class FormModel(models.Model):
+    creation_date = models.DateTimeField(auto_now_add=True, editable=False)
+    submission_date = models.DateTimeField(auto_now=True, editable=False)
     description = models.CharField(max_length=100, null=True)
 
 
-class GradingForm(Form):
-    due_date = models.DateTimeField(null=True)
-    student_submission = models.OneToOneField(
-        Submission, on_delete=models.CASCADE, null=True, related_name='grading_form')
+class ConfidentialCompany(models.Model):
     status = models.CharField(
         max_length=2,
         choices=Status.choices,
         default=Status.PENDING,
     )
+    grade = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True)
+    company_name = models.CharField(max_length=100)
+    is_work_related = models.CharField(max_length=3, choices=yes_no_choices)
+    supervisor_background = models.CharField(max_length=3, choices=yes_no_choices)
 
+class WorkAndReportEvaluation(models.Model):
+    grade_of_performing_work = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True)
+    grade_of_solving_engineering_problems = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)]
+                                                                , blank=True)
+    grade_of_recognizing_ethics = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)]
+                                                      ,blank=True)
+    grade_of_acquiring_knowledge = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                                       blank=True)
+    grade_of_applying_knowledge = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                                      blank=True)
+    grade_of_has_awareness = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                                 blank=True)
+    grade_of_making_judgements = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                                     blank=True)
+    grade_of_preparing_reports = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
+                                                     blank=True)
 
-class ConfidentialCompanyForm(Form):
-    status = models.CharField(
-        max_length=2,
-        choices=Status.choices,
-        default=Status.PENDING,
-    )
-
-
-class EvaluationForm(Form):
-    grade = models.IntegerField(null=True)
-    is_work_related = models.BooleanField(null=True)
-    supervisor_background = models.BooleanField(null=True)
-
+    exp_is_able_to_perform_work = models.CharField(max_length=100, blank=True, null=True)
+    exp_is_able_to_solve_engineering_problems = models.CharField(max_length=100, blank=True, null=True )
+    exp_is_recognize_ethics = models.CharField(max_length=100, blank=True, null=True)
+    exp_is_able_to_acquire_knowledge = models.CharField(max_length=100, blank=True, null=True)
+    exp_is_able_to_apply_new_knowledge = models.CharField(max_length=100, blank=True, null=True)
+    exp_has_awareness = models.CharField(max_length=100, blank=True, null=True)
+    exp_is_make_informed_judgments = models.CharField(max_length=100, blank=True, null=True)
+    exp_is_able_to_prepare_reports = models.CharField(max_length=100, blank=True, null=True)
 
 class Internship(models.Model):
     # Models
@@ -72,12 +87,10 @@ class Internship(models.Model):
         Company, on_delete=models.SET_NULL, null=True, related_name='internship')
 
     # Forms
-    grading_form = models.OneToOneField(
-        GradingForm, on_delete=models.SET_NULL, null=True, related_name='internship')
-    evaluation_form = models.OneToOneField(
-        EvaluationForm, on_delete=models.SET_NULL, null=True, related_name='internship')
+    work_and_report_evaluation_form = models.OneToOneField(WorkAndReportEvaluation, on_delete=models.SET_NULL,
+                                                           null=True, related_name='internship')
     confidential_company_form = models.OneToOneField(
-        ConfidentialCompanyForm, on_delete=models.SET_NULL, null=True, related_name='internship')
+        ConfidentialCompany, on_delete=models.SET_NULL, null=True, related_name='internship')
 
     # Current status of the internship
     status = models.CharField(
