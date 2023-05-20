@@ -8,7 +8,7 @@
     --color-celadon-blue: #007BA7;
 }
 
-html {
+html, body {
     margin: 0;
     padding: 0;
     height: 100%;
