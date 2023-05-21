@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
 from .decorators import decorate_get_all
+
+
 # Create your models here.
 
 
@@ -112,6 +114,7 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     def has_module_perms(self, app_label):
         return True
 
+
 class Instructor(User):
     is_staff = True
 
@@ -131,16 +134,16 @@ class Instructor(User):
         verbose_name = 'Instructor'
         verbose_name_plural = 'Instructors'
 
-class Student(User):
 
+class Student(User):
     class Meta:
         verbose_name = 'Student'
         verbose_name_plural = 'Students'
 
 
-
 class DepartmentSecretary(User):
     is_staff = True
+
     def get_students_of_secretary(self):
         return Student.objects.all().filter(department=self.department)
 
@@ -152,12 +155,13 @@ class DepartmentSecretary(User):
         return DepartmentSecretary.objects.get(department=department)
 
     @staticmethod
-    def assign_tos (instructor, student):
+    def assign_tos(instructor, student):
         if student.grading_instructor is None:
             instructor.assign_students_to_instructor(student)
         else:
             student.grading_instructor.remove_students_to_instructor(student)
             instructor.assign_students_to_instructor(student)
+
     class Meta:
         verbose_name = 'Department Secretary'
         verbose_name_plural = 'Department Secretaries'
@@ -182,6 +186,7 @@ class Chair(User):
     class Meta:
         verbose_name = 'Chair'
         verbose_name_plural = 'Chairs'
+
 
 class Dean(User):
     is_staff = True
