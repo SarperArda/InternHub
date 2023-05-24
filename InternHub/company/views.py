@@ -25,7 +25,6 @@ class CreateCompanyView(LoginRequiredMixin, FormView):
         return HttpResponseRedirect(success_url)
     
     
-
 class CompaniesView(LoginRequiredMixin, ListView):
     template_name = 'company/companies.html'
     model = Company

@@ -157,3 +157,9 @@ class ReportsView(ListView):
     model = StudentReport
     template_name = 'reports/view_reports.html'
     context_object_name = 'reports'
+
+class MainView(LoginRequiredMixin,FormView):
+    template_name = 'reports/main.html'
+
+    def get(self, request):
+        return render(request, 'reports/main.html')

@@ -19,10 +19,21 @@
                             <a class="title" href="{% url 'main:home' %}">InternHub</a>
                         </li>
                         <li>
-                            <button>Reports</button>
+                            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
+                            <li>
+                                <a href="{% url 'reports:main'%}"><button>Reports</button></a>
+                            </li>
+                            {% endif %}
                         </li>
                         <li>
                             <button>Feedbacks</button>
+                        </li>
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:companies'%}"><button>Companies</button></a>
+                            </li>
+                            {% endif %}
                         </li>
                         <li>
                             <button>Evaluate company</button>
