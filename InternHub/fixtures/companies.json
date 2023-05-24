@@ -1,0 +1,42 @@
+[
+    {
+        "model": "company.company",
+        "pk": 1,
+        "fields": {
+            "name": "Software Solutions Inc",
+            "field": "Software",
+            "status": "ACCEPTED",
+            "departments": [1]
+        }
+    },
+    {
+        "model": "company.company",
+        "pk": 2,
+        "fields": {
+            "name": "Mechanics Corp",
+            "field": "Mechanics",
+            "status": "ACCEPTED",
+            "departments": [2]
+        }
+    },
+    {
+        "model": "company.company",
+        "pk": 3,
+        "fields": {
+            "name": "Electronical Engineering Services",
+            "field": "Electronics",
+            "status": "ACCEPTED",
+            "departments": [3]
+        }
+    },
+    {
+        "model": "company.company",
+        "pk": 4,
+        "fields": {
+            "name": "Industrial Innovations Ltd",
+            "field": "Industry",
+            "status": "ACCEPTED",
+            "departments": [4]
+        }
+    }
+]

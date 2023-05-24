@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CAVA Evaluation{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static '' %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>Company Approval Validation Request Detail</h1>
+        <p>Company Name: {{ request.requested_company.name }}</p>
+        <p>Requested By: {{ request.student.first_name}} {{ request.student.last_name}}</p>
+        <p>Department of Student: {{ request.student.department }}</p>
+        <p>Uploaded pdf: <a href="{{ request.file.url }}">{{ request.file.name }}</a></p>
+        <form method="post" action="{% url 'company:cava-detail' request.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+
+        <a href="{% url 'company:cava-requests' %}">Back to list</a>
+    </div>
+{% endblock %}

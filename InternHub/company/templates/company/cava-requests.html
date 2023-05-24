@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Company Requests{% endblock %}
+{% block title %}CAVA Requests{% endblock %}
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="">
@@ -11,7 +11,7 @@
     {% for request in requests %}
     <div>
         <p>
-            <a href="{% url 'company:request-detail' request.id %}">{{ request.company.name }}</a>
+            <a href="{% url 'company:cava-detail' request.id %}">{{ request.user.first_name }} {{ request.requested_company.name}}</a>
         </p>
     </div>
     {% endfor %}

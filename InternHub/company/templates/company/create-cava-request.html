@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CAVA Request{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <form method="post" class="cava-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Request Company Approval Validation Form</button>
+        </form>
+    </div>
+{% endblock %}

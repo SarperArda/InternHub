@@ -1,0 +1,34 @@
+[
+    {
+        "model": "users.engineeringdepartment",
+        "pk": 1,
+        "fields": {
+            "code": "CS",
+            "name": "Computer Science"
+        }
+    },
+    {
+        "model": "users.engineeringdepartment",
+        "pk": 2,
+        "fields": {
+            "code": "ME",
+            "name": "Mechanical Engineering"
+        }
+    },
+    {
+        "model": "users.engineeringdepartment",
+        "pk": 3,
+        "fields": {
+            "code": "EEE",
+            "name": "Electrical Electronical Engineering"
+        }
+    },
+    {
+        "model": "users.engineeringdepartment",
+        "pk": 4,
+        "fields": {
+            "code": "IE",
+            "name": "Industrial Engineering"
+        }
+    }
+]
