@@ -19,15 +19,12 @@ class CreateCompanyView(LoginRequiredMixin, FormView):
     })
 
     def post(self, request):  
+        form = CompanyForm(request.POST)
+        form.save()
         success_url = '/company/companies/'  
         return HttpResponseRedirect(success_url)
     
     
-    '''
-    def form_valid(self, form):
-        form.save()
-        return super().form_valid(form)
-    '''
 
 class CompaniesView(LoginRequiredMixin, ListView):
     template_name = 'company/companies.html'
