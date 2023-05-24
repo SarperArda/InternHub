@@ -107,3 +107,6 @@ class Internship(models.Model):
     
 class StudentReport(models.Model):
     report = models.FileField(upload_to='reports/', null=True)
+
+class InstructorFeedback(models.Model):
+    feedback = models.FileField(upload_to='feedbacks/', null=True)

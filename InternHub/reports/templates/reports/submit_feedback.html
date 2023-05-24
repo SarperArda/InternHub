@@ -1,0 +1,8 @@
+<body>  
+    <form action="/reports/submit-feedback/" method= "POST" enctype= "multipart/form-data">  
+        {% csrf_token %}
+        {{form}}
+        <button>Submit</button>
+    </form>
+</body>
+</html>

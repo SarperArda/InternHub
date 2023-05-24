@@ -7,9 +7,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Internship
 from .forms import WorkAndReportEvaluationForm
 from .forms import StudentReportForm
+from .forms import FeedbackForm
 from users.models import Student
 from django.http import HttpResponseRedirect
 from .models import StudentReport
+from .models import InstructorFeedback
 # Create your views here.
 
 
@@ -134,4 +136,18 @@ class CreateSubmitReport(LoginRequiredMixin, FormView):
             'form': submitted_form
         })
 
-
+class CreateFeedback(LoginRequiredMixin, FormView):
+    def get(self, request):
+        form = FeedbackForm()
+        return render(request, 'reports/submit_feedback.html',{
+            'form': form
+        })
+    def post(self, request):
+        submitted_form = FeedbackForm(request.POST, request.FILES)
+        if submitted_form.is_valid():
+            feedback = InstructorFeedback(feedback=request.FILES['instructor_feedback'])
+            feedback.save()
+            return HttpResponseRedirect('/reports/submit-feedback/')
+        return render(request, 'reports/submit_feedback.html', {
+            'form': submitted_form
+        })

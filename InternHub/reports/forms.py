@@ -240,3 +240,6 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
 class StudentReportForm(forms.Form):
     student_report = forms.FileField()
 
+class FeedbackForm(forms.Form):
+    instructor_feedback = forms.FileField()
+
