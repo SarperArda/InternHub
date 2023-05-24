@@ -133,4 +133,4 @@ LOGIN_URL = 'users/login'
 LOGIN_REDIRECT_URL = 'main:home'
 
 MEDIA_ROOT = BASE_DIR / 'uploads'
-MEDIA_URL = '/files/'
+MEDIA_URL = '/user-files/'

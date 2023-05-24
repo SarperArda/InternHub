@@ -1,0 +1,17 @@
+<!DOCTYPE>
+<html   lang="en" >
+<head>
+    <title>Reports View</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>  
+    <ul>  
+        {%for report in reports%}
+        <li>
+            <a href="{{ reports.report.url }}"></a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -12,6 +12,7 @@ from users.models import Student
 from django.http import HttpResponseRedirect
 from .models import StudentReport
 from .models import InstructorFeedback
+from django.views.generic import ListView
 # Create your views here.
 
 
@@ -151,3 +152,8 @@ class CreateFeedback(LoginRequiredMixin, FormView):
         return render(request, 'reports/submit_feedback.html', {
             'form': submitted_form
         })
+
+class ReportsView(ListView):
+    model = StudentReport
+    template_name = 'reports/view_reports.html'
+    context_object_name = 'reports'
