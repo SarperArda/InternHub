@@ -76,6 +76,9 @@ class WorkAndReportEvaluation(models.Model):
     exp_is_able_to_prepare_reports = models.CharField(max_length=100, blank=True, null=True)
 
 class Internship(models.Model):
+    # Slug
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
+
     # Models
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, null=True, related_name='internship')
@@ -104,6 +107,11 @@ class Internship(models.Model):
         CompanyApprovalValidationApplication, on_delete=models.SET_NULL, null=True, related_name='internship')
     company_evaluation = models.OneToOneField(
         EvaluationByStudent, on_delete=models.SET_NULL, null=True, related_name='internship')
+    
+    # Student Report
+    student_report = models.OneToOneField(
+        Submission, on_delete=models.SET_NULL, null = True, related_name='internship'
+    )
     
 class StudentReport(models.Model):
     report = models.FileField(upload_to='reports/', null=True)

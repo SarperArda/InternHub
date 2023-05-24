@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Company Request{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <form method="post" class="company-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Request Company</button>
+        </form>
+    </div>
+{% endblock %}

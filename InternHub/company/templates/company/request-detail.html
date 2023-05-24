@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Company Evaluation{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static '' %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>Company Request Detail</h1>
+        <p>Company Name: {{ request.company.name }}</p>
+        <p>Requested By: {{ request.user.first_name}} {{ request.user.last_name}}</p>
+        <p>Field: {{ request.company.field }}</p>
+        <p>Departments:</p>
+            <ul>
+            {% for department in request.company.departments.all %}
+                <li>{{ department.name }}</li>
+            {% endfor %}
+            </ul>
+        <form method="post" action="{% url 'company:request-detail' request.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+
+        <a href="{% url 'company:company-requests' %}">Back to list</a>
+    </div>
+{% endblock %}

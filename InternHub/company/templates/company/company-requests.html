@@ -1,0 +1,20 @@
+
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Company Requests{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    {% for request in requests %}
+    <div>
+        <p>
+            <a href="{% url 'company:request-detail' request.id %}">{{ request.company.name }}</a>
+        </p>
+    </div>
+    {% endfor %}
+{% endblock %}

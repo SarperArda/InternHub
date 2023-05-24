@@ -1,11 +1,10 @@
 from django import forms
 from users.models import EngineeringDepartment, Course, Student
 from company.models import Company
-from reports.models import Internship
+from reports.models import Internship, Submission, Feedback
 from django.core.exceptions import ValidationError
 from datetime import datetime
-from .models import WorkAndReportEvaluation
-from .models import ConfidentialCompany
+from .models import WorkAndReportEvaluation, ConfidentialCompany
 
 yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
 satisfactory_choices = ('Satisfactory','Satisfactory'), ('Revision Required','Revision Required'), ('Unsatisfactory','Unsatisfactory') 
@@ -237,9 +236,13 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
                 "min_value": "Grade cannot be less than 0"
             },
         }
-class StudentReportForm(forms.Form):
-    student_report = forms.FileField()
+class StudentReportForm(forms.ModelForm):
+    class Meta:
+        model = Submission
+        fields = '__all__'
 
-class FeedbackForm(forms.Form):
-    instructor_feedback = forms.FileField()
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = '__all__'
 
