@@ -104,3 +104,6 @@ class Internship(models.Model):
         CompanyApprovalValidationApplication, on_delete=models.SET_NULL, null=True, related_name='internship')
     company_evaluation = models.OneToOneField(
         EvaluationByStudent, on_delete=models.SET_NULL, null=True, related_name='internship')
+    
+class StudentReport(models.Model):
+    report = models.FileField(upload_to='reports/', null=True)

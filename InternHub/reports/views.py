@@ -6,7 +6,10 @@ from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Internship
 from .forms import WorkAndReportEvaluationForm
+from .forms import StudentReportForm
 from users.models import Student
+from django.http import HttpResponseRedirect
+from .models import StudentReport
 # Create your views here.
 
 
@@ -115,5 +118,20 @@ class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
     #def get_context_data(self, **kwargs):
     #    super().get_context_data()
 
+class CreateSubmitReport(LoginRequiredMixin, FormView):
+    def get(self, request):
+        form = StudentReportForm()
+        return render(request, 'reports/submit_report.html',{
+            'form': form
+        })
+    def post(self, request):
+        submitted_form = StudentReportForm(request.POST, request.FILES)
+        if submitted_form.is_valid():
+            report = StudentReport(report=request.FILES['student_report'])
+            report.save()
+            return HttpResponseRedirect('/reports/submit-report/')
+        return render(request, 'reports/submit_report.html', {
+            'form': submitted_form
+        })
 
 

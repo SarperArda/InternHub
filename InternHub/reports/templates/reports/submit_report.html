@@ -1,0 +1,15 @@
+<!DOCTYPE>
+<html   lang="en" >
+<head>
+    <title>Submit Report</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>  
+    <form action="/reports/submit-report/" method= "POST" enctype= "multipart/form-data">  
+        {% csrf_token %}
+        {{form}}
+        <button>Submit</button>
+    </form>
+</body>
+</html>

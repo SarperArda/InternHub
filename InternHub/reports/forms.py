@@ -237,3 +237,6 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
                 "min_value": "Grade cannot be less than 0"
             },
         }
+class StudentReportForm(forms.Form):
+    student_report = forms.FileField()
+
