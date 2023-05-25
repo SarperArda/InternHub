@@ -22,6 +22,8 @@ from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 from users.decorators import allowed_users
 from django.utils import timezone
+from users.views import RoleRequiredMixin
+from reports.models import Status
 # Create your views here.
 
 
@@ -130,30 +132,22 @@ class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
     #def get_context_data(self, **kwargs):
     #    super().get_context_data()
 
-class CreateSubmitReport(LoginRequiredMixin, FormView):
-    def get(self, request):
-        form = StudentReportForm() 
-        return render(request, 'reports/submit_report.html',{
-            'form': form
-    })
+class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
+    form_class = StudentReportForm
+    template_name = 'reports/submit_report.html'
+    success_url = '/reports/submit-report/'
+    allowed_roles = ['STUDENT']
     
-    def post(self, request):
-        submitted_form = StudentReportForm(request.POST, request.FILES)
-        if submitted_form.is_valid():
-            report = Submission(file=request.FILES['file'])
-            report.creation_date = timezone.now()
-            report.description = 'submission'
-            ##it should be changed
-            report.due_date = timezone.now()
-            report.status = 'PENDING'
+    def form_valid(self, form, *args, **kwargs):
+        submitted_report = form.save(commit=False)
+        submitted_report.creation_date = timezone.now()
+        internship_pk = self.kwargs.get('pk')
+        submitted_report.internship = get_object_or_404(Internship, pk=internship_pk)
             
-            id = request.user.user_id
-            
-            report.save()
-            return HttpResponseRedirect('/reports/submit-report/')
-        return render(request, 'reports/submit_report.html', {
-            'form': submitted_form
-        })
+        submitted_report.status = Status.PENDING
+        submitted_report.save()
+
+        return super().form_valid(form)
 
 class ReportsView(ListView):
     model = StudentReport
