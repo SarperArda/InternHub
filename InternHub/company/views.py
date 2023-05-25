@@ -13,13 +13,15 @@ from django.utils import timezone
 from reports.models import Internship, Status
 from users.models import Student
 from django.core.exceptions import ValidationError
+from users.views import RoleRequiredMixin
 # Create your views here.
 
 
-class CreateCompanyRequestView(LoginRequiredMixin, FormView):
+class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/create-company-request.html'
     form_class = CompanyForm
     success_url = reverse_lazy('company:companies')
+    allowed_roles = ['STUDENT']
 
     def form_valid(self, form):
         company = form.save(commit=False)
@@ -34,10 +36,6 @@ class CreateCompanyRequestView(LoginRequiredMixin, FormView):
         )
         return super().form_valid(form)
 
-    @method_decorator(allowed_users(['STUDENT']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
 
 class CompaniesView(LoginRequiredMixin, ListView):
     template_name = 'company/companies.html'
@@ -48,21 +46,19 @@ class CompaniesView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(status='APPROVED')
 
 
-class ListCompanyRequestsView(LoginRequiredMixin, ListView):
+class ListCompanyRequestsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'company/company-requests.html'
     model = CompanyRequest
     context_object_name = 'requests'
     ordering = 'id'
-
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    allowed_users = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
 
-class CompanyRequestDetailView(LoginRequiredMixin, DetailView):
+class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyRequest
     template_name = 'company/request-detail.html'
     context_object_name = 'request'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
     def post(self, request, *args, **kwargs):
         company_request = self.get_object()
@@ -78,15 +74,12 @@ class CompanyRequestDetailView(LoginRequiredMixin, DetailView):
 
         return redirect('company:company-requests')
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-
-class CreateCAVAView(LoginRequiredMixin, FormView):
+class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/create-cava-request.html'
     form_class = CAVAForm
     success_url = reverse_lazy('main:home')
+    allowed_roles = ['STUDENT']
 
     def form_valid(self, form):
         student = Student.objects.get(user_id=self.request.user.user_id)
@@ -120,28 +113,19 @@ class CreateCAVAView(LoginRequiredMixin, FormView):
             })
         return kwargs
 
-    """
-    @method_decorator(allowed_users(['STUDENT']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    """
 
-
-class ListCAVASView(LoginRequiredMixin, ListView):
+class ListCAVASView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'company/cava-requests.html'
     model = CompanyApprovalValidationApplication
     context_object_name = 'requests'
     ordering = 'id'
-
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
     def get_queryset(self):
         return CompanyApprovalValidationApplication.objects.filter(status='PENDING')
 
 
-class CAVADetailView(LoginRequiredMixin, DetailView):
+class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'company/cava-request-detail.html'
     model = CompanyApprovalValidationApplication
     context_object_name = 'request'
@@ -174,11 +158,7 @@ class CAVADetailView(LoginRequiredMixin, DetailView):
 
         return redirect('company:cava-requests')
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-
+##ToDo Add Roles
 class CompanyEvaluationView(LoginRequiredMixin, FormView):
     template_name = 'company/evaluate-company.html'
     form_class = CompanyEvaluationForm
@@ -190,6 +170,7 @@ class CompanyEvaluationView(LoginRequiredMixin, FormView):
         internship.save()
         return super().form_valid(form)
 
+##ToDo Add Roles
 class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
     template_name = 'company/company-evaluations.html'
     model = Internship
@@ -198,7 +179,6 @@ class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         student = Student.objects.get(user_id=self.request.user.user_id)
         return self.model.objects.filter(student=student)
-
 
 
 class MainView(LoginRequiredMixin, FormView):
