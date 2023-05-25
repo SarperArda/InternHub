@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block body %}
-<<<<<<< HEAD
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
@@ -53,106 +52,9 @@
                                     <span class="fs-4 ms-3 d-none d-sm-inline">Logout</span>
                                 </a>
                             </li>
-=======
-    <div>
-        <div class="main-container">
-            <div class="side-menu">
-                <nav>
-                    <ul>
-                        <li class="title-li">
-                            <a class="title" href="{% url 'main:home' %}">InternHub</a>
-                        </li>
-                        <li>
-                        <li>
-                            <a href="{% url 'reports:main'%}"><button>Reports</button></a>
-                        </li>
-                        </li>
-                        <li>
-                            <button>Feedbacks</button>
-                        </li>
-                        <li>
-                            {% if request%}
-                            <li>
-                                <a href="{% url 'company:main'%}"><button>Company</button></a>
-                            </li>
-                            {% endif %}
-                        </li>
-                        <li>
-                            <button>Profile</button>
-                        </li>
-                        
-                        <li>
-                            <button>Contact</button>
-                        </li>
-                        {% if request.user|can_make_announcement %}
-                            <li>
-                                <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a href="{% url 'users:logout' %}"><button>Log out</button></a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="news-section">
-                <h2>Announcements</h2>
-                    {% if announcements|length == 0 %}
-                        <p>No announcements</p>
-                    {% else %}
-                        <ul>
-                        {% for announcement in announcements %}
-                            <li>
-                                <div class="announcement">
-                                    <h3>{{ announcement.title }}</h3>
-                                    <p>{{ announcement.content }}</p>
-                                </div>
-                            </li>
-                        {% endfor %}
->>>>>>> main
                         </ul>
                     </div>
                 </div>
-            </div>
-            <div class="col-auto col-6">
-                <h1 class="display-6 text-center" style="padding-top: 25px; padding-bottom: 10px;">Announcements</h1>
-                <hr class="my-4 text-dark">
-                <p class="lead">InternHub is a platform for students to find internships and for companies
-                    to
-                    find interns.</p>
-                <p>InternHub is a platform for students to find internships and for companies to find
-                    interns.</p>
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </div>
-<<<<<<< HEAD
-            <div class="col bg-dark text-white">
-                <h1 class="display-6 text-white text-center" style="padding-top: 25px; padding-bottom: 10px;">
-                    Profile</h1>
-                <hr class="my-4 text-white">
-                <p class="lead">InternHub is a platform for students to find internships and for companies
-                    to
-                    find interns.</p>
-                <p>InternHub is a platform for students to find internships and for companies to find
-                    interns.</p>
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-=======
-            <div class="profile-section">
-                <h2>Profile</h2>
-                <ul>
-                    <li>
-                        <i class="fa-solid fa-user" id="profile"> </i>
-                        <span id="info">
-                            <p>{{ full_name }}</p>
-                        </span>
-                    </li>
-                    <li class="title-deadline">Deadlines
-                        <i class="fa-solid fa-calendar" id="deadline"> </i>
-                            <span id="info">
-                                <p>Deadline</p>
-                            </span>
-                    </li>
-                </ul>
->>>>>>> main
             </div>
         </div>
     </div>
