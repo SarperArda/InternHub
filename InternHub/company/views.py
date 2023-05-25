@@ -129,6 +129,7 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'company/cava-request-detail.html'
     model = CompanyApprovalValidationApplication
     context_object_name = 'request'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
     def post(self, request, *args, **kwargs):
         cava_request = self.get_object()
