@@ -9,10 +9,15 @@ from .forms import WorkAndReportEvaluationForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
 from users.models import Student
-from django.http import HttpResponseRedirect
-from .models import StudentReport
+from .models import StudentReport, WorkAndReportEvaluation
 from .models import InstructorFeedback
 from django.views.generic import ListView
+from django.views.generic import UpdateView, CreateView, View
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, get_object_or_404
+from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 
 
@@ -163,3 +168,32 @@ class MainView(LoginRequiredMixin,FormView):
 
     def get(self, request):
         return render(request, 'reports/main.html')
+
+class WorkAndReportEvaluationFormCreation(CreateView):
+    model = WorkAndReportEvaluation
+    form_class = WorkAndReportEvaluationForm
+    template_name = 'reports/create_work_and_report_ev_form.html'
+
+    def get_success_url(self):
+        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+
+class WorkAndReportEvaluationFormUpdate(UpdateView):
+    model = WorkAndReportEvaluation
+    form_class = WorkAndReportEvaluationForm
+    template_name = 'reports/create_work_and_report_ev_form.html'
+
+    def get_success_url(self):
+        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+
+class EditWorkAndReportEvaluation(View):
+    def get(self, request, **kwargs):
+        try:
+            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
+                #print(self.kwargs['pk'])
+                # Redirect to update view
+                return redirect('reports:update_wre', pk=self.kwargs['pk'])
+            else:
+                return redirect('reports:create_wre', pk=self.kwargs['pk'])
+        except ObjectDoesNotExist:
+            # Redirect to create view
+            return redirect('reports:create_wre', pk=self.kwargs['pk'])

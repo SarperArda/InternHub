@@ -5,7 +5,7 @@
         "fields": {
             "name": "Software Solutions Inc",
             "field": "Software",
-            "status": "ACCEPTED",
+            "status": "APPROVED",
             "departments": [1]
         }
     },
@@ -15,7 +15,7 @@
         "fields": {
             "name": "Mechanics Corp",
             "field": "Mechanics",
-            "status": "ACCEPTED",
+            "status": "APPROVED",
             "departments": [2]
         }
     },
@@ -25,7 +25,7 @@
         "fields": {
             "name": "Electronical Engineering Services",
             "field": "Electronics",
-            "status": "ACCEPTED",
+            "status": "APPROVED",
             "departments": [3]
         }
     },
@@ -35,7 +35,7 @@
         "fields": {
             "name": "Industrial Innovations Ltd",
             "field": "Industry",
-            "status": "ACCEPTED",
+            "status": "APPROVED",
             "departments": [4]
         }
     }

@@ -1,6 +1,6 @@
 from django import forms
 from users.models import EngineeringDepartment, Course
-from company.models import Company, CompanyApprovalValidationApplication
+from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
 from django.core.exceptions import ValidationError
 
 
@@ -38,3 +38,8 @@ class CAVAForm(forms.ModelForm):
     class Meta:
         model = CompanyApprovalValidationApplication
         fields = ['course', 'file', 'requested_company']
+
+class EvaluationForm(forms.ModelForm):
+    class Meta:
+        model = EvaluationByStudent
+        fields = ['grade']

@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic.edit import FormView
-from .forms import CompanyForm, CAVAForm
+from .forms import CompanyForm, CAVAForm, CompanyEvaluationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
 from .models import Company, CompanyRequest, CompanyApprovalValidationApplication
@@ -178,6 +178,14 @@ class CAVADetailView(LoginRequiredMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+class CompanyEvaluationView(LoginRequiredMixin, FormView):
+    template_name = 'company/evaluate-company.html'
+    form_class = CompanyEvaluationForm
+    success_url = reverse_lazy('main:home')
+
+    def form_valid(self, form):
+        pass
+    
 class MainView(LoginRequiredMixin,FormView):
     template_name = 'company/main.html'
 
