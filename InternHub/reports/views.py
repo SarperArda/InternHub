@@ -24,6 +24,7 @@ from django.utils import timezone
 from users.views import RoleRequiredMixin
 from reports.models import Status
 from django.urls import reverse_lazy
+from reports.models import SubmissionStatus
 # Create your views here.
 
 
@@ -254,35 +255,31 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     
 
     def post(self, request, *args, **kwargs):
-        report_request = self.get_object()
+        internship = self.get_object()
         action = request.POST.get('action')
+        report = internship.student_report
 
         # Todo Send notification
         if action == 'approve':
-            report_request.status = 'pending'
-            student = report_request.student
-            course = report_request.course
-
-            report_request.course = None
-            report_request.student = None
-            report_request.save()
-
-            internship = Internship.objects.create(
-                student=student,
-                course=course,
-                student_report=report_request,
-            )
+            report.status = SubmissionStatus.SATISFACTORY
+            
 
         elif action == 'reject':
-            report_request.delete()
+            report.status = SubmissionStatus.REVISION_REQUIRED
+            ##ToDo: Create Feedback and set due date for new  save 
         
         elif action == 'extend':
             form = ExtensionForm(request.POST)
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
-                if report_request.student_report is not None:
-                    report_request.student_report.due_date = due_date
-                    report_request.student_report.save()
+                if report.student_report is not None:
+                    report.student_report.due_date = due_date
+                    report.student_report.save()
+                else:
+                    report.student_report = Submission()
+                    report.student_report.due_date = due_date
+                    report.student_report.save()
+                    report.save()
 
         return redirect('reports:view_internships')
     
