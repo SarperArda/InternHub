@@ -1,18 +1,15 @@
 /* Login Page Style */
 
 :root {
-    --color-deep-azure: #415380;
     --color-white-smoke: #F2F2F2;
     --color-titanium-white: #E4E4E4;
-    --color-frozen-wave: #52A7CC;
-    --color-celadon-blue: #007BA7;
 }
 
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-image: linear-gradient(to right top, #415380, #40799E, #539EB3, #7AC2C2, #AEE5D1);
+    background-image: linear-gradient(to right top, #232323, #48394c, #7d4b6a, #bb5b78, #f47174);
     background-size: cover;
     font-family: sans-serif;
 }
@@ -35,6 +32,13 @@ html, body {
     border-radius: 10px;
 }
 
+.form ul {
+    list-style: none;
+    text-align: center;
+    color: red;
+    padding: 0;
+}
+
 .logo {
     margin-bottom: 35px;
 }
@@ -46,7 +50,7 @@ html, body {
 .form h1 {
     margin: 0 0 30px;
     font-size: 40px;
-    color: var(--color-deep-azure);
+    color: #48394c;
 }
 
 .form input {
@@ -67,7 +71,7 @@ html, body {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: var(--color-celadon-blue);
+    background: #bb5b78;
     width: 100%;
     border: 0;
     padding: 15px;
@@ -82,9 +86,9 @@ html, body {
 .form button:hover,
 .form button:active,
 .form button:focus {
-    background: var(--color-frozen-wave);
+    background:  #f47174;
 }
 
 .form input:focus {
-    border: 1px solid var(--color-celadon-blue);
+    border: 1px solid #bb5b78;
 }

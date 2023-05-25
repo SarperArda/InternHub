@@ -104,7 +104,7 @@ class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
         Permission, related_name='%(class)spermissions', blank=True)
 
     def __str__(self):
-        if self.first_name or self.last_name is None:
+        if self.first_name is None or self.last_name is None:
             return self.user_id
         return self.first_name + ' ' + self.last_name
 

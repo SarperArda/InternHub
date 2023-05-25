@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Past Internships{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    {% for internship in internships %}
+        <div>
+            <p>
+                <a href="{% url 'company:evaluate-company' internship.id %}">{{ internship.company.name }}</a>
+            </p>
+            {% if internship.company_evaluation %}
+                <p>Previous Evaluation: {{ internship.company_evaluation.grade }}</p>
+            {% else %}
+                <p>You have not evaluated this company.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

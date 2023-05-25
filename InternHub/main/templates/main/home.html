@@ -1,80 +1,113 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
 
 {% block title %}InternHub{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
 {% endblock %}
 
 {% block body %}
-    <div>
-        <div class="main-container">
-            <div class="side-menu">
-                <nav>
-                    <ul>
-                        <li class="title-li">
-                            <a class="title" href="{% url 'main:home' %}">InternHub</a>
-                        </li>
-                        <li>
-                            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
-                            <li>
-                                <a href="{% url 'reports:main'%}"><button>Reports</button></a>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
+                <div class="bg-dark p2">
+                    <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                        <b class="display-4">
+                            <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                        </b>
+                    </a>
+                    <hr class="bg-white border-2 border-top border-white">
+                    <div class="container">
+                        <div class="content">
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2">
+                                    <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#reports-collapse"
+                                            aria-expanded="true">
+                                        <i class="fs-5 fa-regular fa-file"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline"
+                                              style="padding-left: 4px">Reports</span>
+                                    </button>
+                                    <div class="collapse" id="reports-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li><a href="#" class="text-white rounded">Submit</a></li>
+                                            <li><a href="#" class="text-white rounded">Feedbacks</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item py-2 py-sm-2">
+                                    <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#company-collapse"
+                                            aria-expanded="true">
+                                        <i class="fs-5 fa-regular fa-building"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline"
+                                              style="padding-left: 4px">Company</span>
+                                    </button>
+                                    <div class="collapse" id="company-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li><a href="#" class="text-white rounded">Company list</a></li>
+                                            <li><a href="#" class="text-white rounded">company form</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <ul class="nav nav-pills flex-column mt-4">
+                            <li class="nav-item py-2 py-sm-2">
+                                <a href="#" class="nav-link text-white">
+                                    <i class="fs-5 fa-regular fa-envelope"></i>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline"
+                                          style="padding-left: 4px">Contact</span>
+                                </a>
                             </li>
-                            {% endif %}
-                        </li>
-                        <li>
-                            <button>Feedbacks</button>
-                        </li>
-                        <li>
-                            {% if request%}
-                            <li>
-                                <a href="{% url 'company:main'%}"><button>Company</button></a>
+                            <li class="nav-item py-2 py-sm-2">
+                                <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                    <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline"
+                                          style="padding-left: 5px">Logout</span>
+                                </a>
                             </li>
-                            {% endif %}
-                        </li>
-                        <li>
-                            <button>Profile</button>
-                        </li>
-                        <li>
-                            <button>Contact</button>
-                        </li>
-                        {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
-                            <li>
-                                <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a href="{% url 'users:logout' %}"><button>Log out</button></a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="news-section">
-                <h2>Announcements</h2>
-                    {% if announcements|length == 0 %}
-                        <p>No announcements</p>
-                    {% else %}
-                        <ul>
-                        {% for announcement in announcements %}
-                            <li>
-                                <div class="announcement">
-                                    <h3>{{ announcement.title }}</h3>
-                                    <p>{{ announcement.content }}</p>
-                                </div>
-                            </li>
-                        {% endfor %}
                         </ul>
-                    {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="profile-section">
-                <h2>Profile</h2>
-                <nav>
-                    <i class="fa-solid fa-gear"></i>
-                    <i class="fa-solid fa-user"></i>
-                </nav>
+            <div class="col-auto col-6">
+                <h1 class="display-6 text-center" style="padding-top: 25px; padding-bottom: 10px;">Announcements</h1>
+                <hr class="my-4 border-2 text-dark">
+                <ul class="list-group">
+                    {% for announcement in announcements %}
+                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ announcement.title }}</h5>
+                                <small>{{ announcement.sender }}</small>
+                            </div>
+                            <p class="mb-1">{{ announcement.content }}</p>
+                            <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col text-white" id="right-bar">
+                <h1 class="display-6 fw-semibold text-center" id="profile">
+                    Profile</h1>
+                <hr class="my-4 border-2 text-black">
+                <div class="container" id="profile-info">
+                    <div class="row">
+                        {% if check %}
+                            <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ internship.course }}</span>
+                        {% endif %}
+                    </div>
+                    <hr class="my-4 border-2 text-black">
+                    <h1 class="display-6 text-center fw-semibold" id="due-date">
+                        Due Date</h1>
+                </div>
             </div>
         </div>
     </div>

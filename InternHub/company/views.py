@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.generic.edit import FormView
-from .forms import CompanyForm, CAVAForm
+from .forms import CompanyForm, CAVAForm, CompanyEvaluationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import ListView
 from .models import Company, CompanyRequest, CompanyApprovalValidationApplication
@@ -11,15 +11,18 @@ from django.urls import reverse_lazy
 from users.decorators import allowed_users
 from django.utils import timezone
 from reports.models import Internship, Status
-from users.models import Student
+from users.models import Student, User, DepartmentSecretary
 from django.core.exceptions import ValidationError
+from users.views import RoleRequiredMixin
+from announcements.models import Notification
 # Create your views here.
 
 
-class CreateCompanyRequestView(LoginRequiredMixin, FormView):
+class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/create-company-request.html'
     form_class = CompanyForm
     success_url = reverse_lazy('company:companies')
+    allowed_roles = ['STUDENT']
 
     def form_valid(self, form):
         company = form.save(commit=False)
@@ -28,15 +31,21 @@ class CreateCompanyRequestView(LoginRequiredMixin, FormView):
 
         form.save_m2m()
 
+        student = Student.objects.get(user_id=self.request.user.user_id)
+
         company_request = CompanyRequest.objects.create(
             company=company,
-            user=self.request.user
+            student=student,
+        )
+
+        department_secretary = User.objects.get(
+            user_id="hasat")
+        Notification.create_notification(
+            title="New Company Request",
+            content=f"Student {str(self.request.user)} has submitted a new company request for {company.name}.",
+            receiver=department_secretary
         )
         return super().form_valid(form)
-
-    @method_decorator(allowed_users(['STUDENT']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
 
 class CompaniesView(LoginRequiredMixin, ListView):
@@ -48,65 +57,81 @@ class CompaniesView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(status='APPROVED')
 
 
-class ListCompanyRequestsView(LoginRequiredMixin, ListView):
+class ListCompanyRequestsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'company/company-requests.html'
     model = CompanyRequest
     context_object_name = 'requests'
     ordering = 'id'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-
-class CompanyRequestDetailView(LoginRequiredMixin, DetailView):
+class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyRequest
     template_name = 'company/request-detail.html'
     context_object_name = 'request'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
     def post(self, request, *args, **kwargs):
         company_request = self.get_object()
+        student = company_request.student
         action = request.POST.get('action')
 
         if action == 'approve':
             company_request.company.status = 'APPROVED'
             company_request.company.save()
             company_request.delete()
+
+            Notification.create_notification(
+                title="Company Request Approved",
+                content="Your company request has been approved.",
+                receiver=student
+            )
         elif action == 'reject':
             company_request.company.delete()
             company_request.delete()
 
+            Notification.create_notification(
+                title="Company Request Rejected",
+                content="Your company request has been rejected.",
+                receiver=student
+            )
+
         return redirect('company:company-requests')
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
 
-
-class CreateCAVAView(LoginRequiredMixin, FormView):
+class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/create-cava-request.html'
     form_class = CAVAForm
     success_url = reverse_lazy('main:home')
+    allowed_roles = ['STUDENT']
 
     def form_valid(self, form):
         student = Student.objects.get(user_id=self.request.user.user_id)
         course = form.instance.course
 
         pending_internship = Internship.objects.filter(
-            student=student, 
-            course=course, 
+            student=student,
+            course=course,
             status=Status.PENDING
         ).exists()
 
         if pending_internship:
             # Raise a ValidationError if a pending internship exists
-            raise ValidationError("You have a pending internship for this course. You cannot submit another CAVA.")
-        
-        
+            raise ValidationError(
+                "You have a pending internship for this course. You cannot submit another CAVA.")
+
         cava = form.save(commit=False)
         cava.status = 'PENDING'
         cava.student = student
         cava.demand_date = timezone.now()
+
+        department_secretary = User.objects.get(
+            user_id="hasat")
+        Notification.create_notification(
+            title="CAVA Request Submitted",
+            content='Student {{student.first_name}} {{student.last_name}} has submitted a CAVA request.'
+              'Please review the details in your dashboard. Thank you.',
+            receiver=department_secretary
+        )
 
         cava.save()
         return super().form_valid(form)
@@ -120,31 +145,23 @@ class CreateCAVAView(LoginRequiredMixin, FormView):
             })
         return kwargs
 
-    """
-    @method_decorator(allowed_users(['STUDENT']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    """
 
-
-class ListCAVASView(LoginRequiredMixin, ListView):
+class ListCAVASView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'company/cava-requests.html'
     model = CompanyApprovalValidationApplication
     context_object_name = 'requests'
     ordering = 'id'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-    
     def get_queryset(self):
         return CompanyApprovalValidationApplication.objects.filter(status='PENDING')
 
 
-class CAVADetailView(LoginRequiredMixin, DetailView):
+class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'company/cava-request-detail.html'
     model = CompanyApprovalValidationApplication
     context_object_name = 'request'
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
     def post(self, request, *args, **kwargs):
         cava_request = self.get_object()
@@ -168,17 +185,46 @@ class CAVADetailView(LoginRequiredMixin, DetailView):
                 course=course,
                 company_approval=cava_request,
             )
+            Notification.create_notification(
+                title="Company Approval Validation Approved",
+                content="Your company approval validation has been approved.",
+                receiver=student
+            )
 
         elif action == 'reject':
+            Notification.create_notification(
+                title="Company Approval Validation Rejected",
+                content="Your company approval validation has been rejected.",
+                receiver=student
+            )
             cava_request.delete()
 
         return redirect('company:cava-requests')
 
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+##ToDo Add Roles
+class CompanyEvaluationView(LoginRequiredMixin, FormView):
+    template_name = 'company/evaluate-company.html'
+    form_class = CompanyEvaluationForm
+    success_url = reverse_lazy('main:home')
 
-class MainView(LoginRequiredMixin,FormView):
+    def form_valid(self, form, *args, **kwargs):
+        internship = Internship.objects.get(id=self.kwargs['pk'])
+        internship.company_evaluation = form.save()
+        internship.save()
+        return super().form_valid(form)
+
+##ToDo Add Roles
+class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
+    template_name = 'company/company-evaluations.html'
+    model = Internship
+    context_object_name = 'internships'
+
+    def get_queryset(self):
+        student = Student.objects.get(user_id=self.request.user.user_id)
+        return self.model.objects.filter(student=student)
+
+
+class MainView(LoginRequiredMixin, FormView):
     template_name = 'company/main.html'
 
     def get(self, request):
