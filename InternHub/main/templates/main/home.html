@@ -58,12 +58,18 @@
             <div class="col-auto col-6">
                 <h1 class="display-6 text-center" style="padding-top: 25px; padding-bottom: 10px;">Announcements</h1>
                 <hr class="my-4 border-2 text-dark">
-                <p class="lead">InternHub is a platform for students to find internships and for companies
-                    to
-                    find interns.</p>
-                <p>InternHub is a platform for students to find internships and for companies to find
-                    interns.</p>
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                <ul class="list-group">
+                    {% for announcement in announcements %}
+                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ announcement.title }}</h5>
+                                <small>{{ announcement.sender }}</small>
+                            </div>
+                            <p class="mb-1">{{ announcement.content }}</p>
+                            <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
             <div class="col bg-dark text-white">
                 <h1 class="display-6 text-white text-center" style="padding-top: 25px; padding-bottom: 10px;">
