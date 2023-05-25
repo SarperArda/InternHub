@@ -140,9 +140,42 @@ body {
     position: relative;
 }
 
-.profile-section nav {
+.profile-section ul {
     background-color: var(--color-snowbelt);
     position: relative;
     width: var(--profile-width);
     height: 100%;
+    list-style: none;
+}
+
+#profile {
+    position: relative;
+    margin: 10% 40% 0 0;
+    font-size: 30px;
+    color: var(--color-dark-grey);
+    text-align: justify;
+}
+.profile-section #info {
+    position: fixed;
+    font-size: 20px;
+    margin: 3% 0 0 -8%;
+    color: var(--color-dark-grey);
+    text-align: center;
+}
+
+.profile-section .title-deadline {
+    font-family: "Roboto", sans-serif;
+    font-size: 30px;
+    color: var(--color-dark-grey);
+    text-align: center;
+    margin: 75px 0 5px 35px;
+    position: relative;
+}
+
+.profile-section #deadline {
+    position: relative;
+    font-size: 25px;
+    margin: 10% 72% 0 0;
+    color: var(--color-dark-grey);
+    text-align: center;
 }

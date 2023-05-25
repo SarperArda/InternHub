@@ -11,3 +11,9 @@ class HomeView(LoginRequiredMixin, View):
     def get(self, request):
         announcements = Announcement.objects.all()
         return render(request, 'main/home.html', {'announcements': announcements})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.request.user.first_name
+        context['lastname'] = self.request.user.last_name
+        return context
