@@ -10,15 +10,19 @@
     flex-grow: 1;
 }
 
-.container a:hover {
+.content button {
+    text-align: left;
+}
+
+.container button:hover {
     background: #F47174;
 }
 
-.container a:hover span {
+.container button:hover span {
     color: black;
 }
 
-.container a:hover i {
+.container button:hover i {
     color: black;
 }
 
