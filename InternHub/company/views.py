@@ -11,9 +11,10 @@ from django.urls import reverse_lazy
 from users.decorators import allowed_users
 from django.utils import timezone
 from reports.models import Internship, Status
-from users.models import Student
+from users.models import Student, User, DepartmentSecretary
 from django.core.exceptions import ValidationError
 from users.views import RoleRequiredMixin
+from announcements.models import Notification
 # Create your views here.
 
 
@@ -30,9 +31,19 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
 
         form.save_m2m()
 
+        student = Student.objects.get(user_id=self.request.user.user_id)
+
         company_request = CompanyRequest.objects.create(
             company=company,
-            user=self.request.user
+            student=student,
+        )
+
+        department_secretary = User.objects.get(
+            user_id="hasat")
+        Notification.create_notification(
+            title="New Company Request",
+            content=f"Student {str(self.request.user)} has submitted a new company request for {company.name}.",
+            receiver=department_secretary
         )
         return super().form_valid(form)
 
@@ -51,8 +62,7 @@ class ListCompanyRequestsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     model = CompanyRequest
     context_object_name = 'requests'
     ordering = 'id'
-    allowed_users = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
-
+    allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
 class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyRequest
@@ -62,15 +72,28 @@ class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView
 
     def post(self, request, *args, **kwargs):
         company_request = self.get_object()
+        student = company_request.student
         action = request.POST.get('action')
 
         if action == 'approve':
             company_request.company.status = 'APPROVED'
             company_request.company.save()
             company_request.delete()
+
+            Notification.create_notification(
+                title="Company Request Approved",
+                content="Your company request has been approved.",
+                receiver=student
+            )
         elif action == 'reject':
             company_request.company.delete()
             company_request.delete()
+
+            Notification.create_notification(
+                title="Company Request Rejected",
+                content="Your company request has been rejected.",
+                receiver=student
+            )
 
         return redirect('company:company-requests')
 
@@ -100,6 +123,15 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         cava.status = 'PENDING'
         cava.student = student
         cava.demand_date = timezone.now()
+
+        department_secretary = User.objects.get(
+            user_id="hasat")
+        Notification.create_notification(
+            title="CAVA Request Submitted",
+            content='Student {{student.first_name}} {{student.last_name}} has submitted a CAVA request.'
+              'Please review the details in your dashboard. Thank you.',
+            receiver=department_secretary
+        )
 
         cava.save()
         return super().form_valid(form)
@@ -153,8 +185,18 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                 course=course,
                 company_approval=cava_request,
             )
+            Notification.create_notification(
+                title="Company Approval Validation Approved",
+                content="Your company approval validation has been approved.",
+                receiver=student
+            )
 
         elif action == 'reject':
+            Notification.create_notification(
+                title="Company Approval Validation Rejected",
+                content="Your company approval validation has been rejected.",
+                receiver=student
+            )
             cava_request.delete()
 
         return redirect('company:cava-requests')

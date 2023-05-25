@@ -21,8 +21,8 @@ class Company(models.Model):
 
 class CompanyRequest(models.Model):
     company = models.ForeignKey(Company, on_delete=models.SET_NULL, null= True, related_name='+')
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, null=True, related_name='+')
+    student = models.ForeignKey(
+        Student, on_delete=models.CASCADE, null=True, related_name='+')
 
 
 class CompanyRelatedDemand(models.Model):
