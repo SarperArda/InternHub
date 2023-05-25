@@ -239,7 +239,7 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
 class StudentReportForm(forms.ModelForm):
     class Meta:
         model = Submission
-        fields = '__all__'
+        fields = ['file']
 
 class FeedbackForm(forms.ModelForm):
     class Meta:

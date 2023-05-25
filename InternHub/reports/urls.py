@@ -8,9 +8,11 @@ urlpatterns = [
     path('create-summer-training-form/', views.CreateSummerTrainingGradingForm.as_view(), name='create_stf'),
     path('create-work-and-report-ev-form/', views.CreateWorkAndReportEvaluationForm.as_view(), name='create_wre'),
     path('submit-report/', views.CreateSubmitReport.as_view(), name='submit_report'),
-    path('submit-feedback/', views.CreateFeedback.as_view(), name='submit_feedback'),
+    path('submit-feedback/<int:pk>/', views.CreateFeedback.as_view(), name='submit_feedback'),
     path('view-reports/', views.ReportsView.as_view(), name='view_reports'),
     path('main/', views.MainView.as_view(), name='main'),
+    path('view-internships/', views.ListInternshipsView.as_view(), name='view_internships'),
+    path('internship-detail/<int:pk>/', views.InternshipDetailView.as_view(), name='internship_detail'),
 ]
 '''
     path('create-confidential-form/<int:internship_id>', views.CreateConfidentialForm.as_view(), name='create_cf'),
