@@ -16,7 +16,7 @@ class Status(models.TextChoices):
 
 
 class Task(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True, null=True)
     description = models.CharField(max_length=100, null=True)
     file = models.FileField(upload_to='uploads/', null=True)
 

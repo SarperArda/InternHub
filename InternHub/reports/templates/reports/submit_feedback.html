@@ -1,15 +1,17 @@
-<!DOCTYPE>
-<html   lang="en" >
-<head>
-    <title>Submit Feedback</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/admin.css">
-</head>
-<body>  
-    <form action="/reports/submit-feedback/" method= "POST" enctype= "multipart/form-data">  
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Submission{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    <form action="" method= "POST" enctype= "multipart/form-data">  
         {% csrf_token %}
-        {{form}}
+        {{form.as_p}}
         <button>Submit</button>
     </form>
-</body>
-</html>
+{% endblock %}

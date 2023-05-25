@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
 
 {% block title %}Internships{% endblock %}
 
@@ -10,16 +11,47 @@
 {% block body %}
     {% for internship in internships %}
     <div>
-        <p>Student Name: {{ internship.student.first_name}} {{ request.student.last_name}}</p>
+        {% if request.user.role != 'STUDENT' %}
+            <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name }}</p>
+        {% endif %}
+        {% if request.user.role == 'INSTRUCTOR' %}
+            <p>Instructor Name: {{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</p>
+        {% endif %}
         <p>Company Name: {{ internship.company.name }}</p>
-        <p>Department of Student: {{ internship.student.department }}</p>
+        <p>Department: {{ internship.student.department }}</p>
 
-        <a href="{{ internship.student_report.file.url }}"><button type="submit" name="action" value="detail">Open Submission</button></a>
-        <a href="{% url 'reports:submit_feedback' internship.id%}"><button type="submit" name="action" value="feedback">Give Feedback</button></a>
-        <a href="{% url 'reports:internship_detail' internship.id%}"><button type="submit" name="action" value="detail">Detail</button></a>
-        <p>
-            
-        </p>
+        {% if request.user.role == 'INSTRUCTOR' %}
+            {% if internship.student_report %}
+                <p>Submission Due Date: {{ internship.student_report.due_date }}</p>
+            {% else %}
+                <p>No Submission Due Date</p>
+            {% endif %}
+
+
+            {% if internship.student_report.file %}
+                <a href="{{ internship.student_report.file.url }}"><button type="submit" name="action" value="detail">Open Submission</button></a>
+            {% else %}
+            <p>No Submission</p>
+            {% endif %}
+        {% endif %}
+
+        {% if request.user.role == 'STUDENT' %}
+            <a href="{% url 'reports:submit_report' internship.pk %}"><button type="submit" name="action" value="detail">Create Submission</button></a>
+        {% endif %}
+
+        {% if request.user|can_submit_feedback%}
+            <a href="{% url 'reports:submit_feedback' internship.id%}"><button type="submit" name="action" value="feedback">Give Feedback</button></a>
+            <a href="{% url 'reports:internship_detail' internship.id%}"><button type="submit" name="action" value="detail">Detail</button></a>
+        {% endif %}
     </div>
     {% endfor %}
+
+    {% if request.user.role == 'INSTRUCTOR'%}
+        <h2>Set Extension For All Submissions</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Set Due Date</button>
+        </form>
+    {% endif %}
 {% endblock %}
