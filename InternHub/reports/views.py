@@ -387,14 +387,14 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
             form = ExtensionForm(request.POST)
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
-                if report.student_report is not None:
-                    report.student_report.due_date = due_date
-                    report.student_report.save()
-                else:
-                    report.student_report = Submission()
-                    report.student_report.due_date = due_date
-                    report.student_report.save()
+                if report is not None:
+                    report.due_date = due_date
                     report.save()
+                else:
+                    report = Submission()
+                    report.due_date = due_date
+                    report.save()
+                    internship.save()
 
         return redirect('reports:view_internships')
     
