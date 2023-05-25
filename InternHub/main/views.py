@@ -14,7 +14,7 @@ class HomeView(LoginRequiredMixin, View):
         full_name = str(request.user)
         user = request.user
         id = request.user.user_id
-        if(user.role == 'STUDENT' or user.role == 'INSTRUCTOR'):
+        if(user.role != 'SUPERUSER'):
             check = True
             internship = Internship.objects.filter(student_id=id)
             return render(request, 'main/home.html', {'announcements': announcements, 'full_name': full_name, 'user': user, 'internship': internship, 'check': check})

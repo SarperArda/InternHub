@@ -23,18 +23,36 @@
                         <div class="content">
                             <ul class="nav nav-pills flex-column mt-4">
                                 <li class="nav-item py-2 py-sm-2">
-                                    <a href="#" class="nav-link text-white">
+                                    <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#reports-collapse"
+                                            aria-expanded="true">
                                         <i class="fs-5 fa-regular fa-file"></i>
                                         <span class="fs-4 ms-3 d-none d-sm-inline"
                                               style="padding-left: 4px">Reports</span>
-                                    </a>
+                                    </button>
+                                    <div class="collapse" id="reports-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li><a href="#" class="text-white rounded">Submit</a></li>
+                                            <li><a href="#" class="text-white rounded">Feedbacks</a></li>
+                                        </ul>
+                                    </div>
                                 </li>
                                 <li class="nav-item py-2 py-sm-2">
-                                    <a href="#" class="nav-link text-white">
+                                    <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#company-collapse"
+                                            aria-expanded="true">
                                         <i class="fs-5 fa-regular fa-building"></i>
                                         <span class="fs-4 ms-3 d-none d-sm-inline"
                                               style="padding-left: 4px">Company</span>
-                                    </a>
+                                    </button>
+                                    <div class="collapse" id="company-collapse">
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                            <li><a href="#" class="text-white rounded">Company list</a></li>
+                                            <li><a href="#" class="text-white rounded">company form</a></li>
+                                        </ul>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -42,13 +60,15 @@
                             <li class="nav-item py-2 py-sm-2">
                                 <a href="#" class="nav-link text-white">
                                     <i class="fs-5 fa-regular fa-envelope"></i>
-                                    <span class="fs-4 ms-3 d-none d-sm-inline">Contact</span>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline"
+                                          style="padding-left: 4px">Contact</span>
                                 </a>
                             </li>
                             <li class="nav-item py-2 py-sm-2">
                                 <a href="{% url 'users:logout' %}" class="nav-link text-white">
                                     <i class="fs-5 fa-solid fa-right-from-bracket"></i>
-                                    <span class="fs-4 ms-3 d-none d-sm-inline">Logout</span>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline"
+                                          style="padding-left: 5px">Logout</span>
                                 </a>
                             </li>
                         </ul>
@@ -71,22 +91,23 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col text-white" id="right-bar" >
-                <h1 class="display-6 fw-semibold text-center" id="profile" >
+            <div class="col text-white" id="right-bar">
+                <h1 class="display-6 fw-semibold text-center" id="profile">
                     Profile</h1>
                 <hr class="my-4 border-2 text-black">
                 <div class="container" id="profile-info">
                     <div class="row">
-                        {%if check %}
-                        <span class="fs-3 text-black fw-semibold align-left"> {{full_name}} </span>
-                        <span class="fs-4 text-black fw-semibold align-left"> {{user.user_id}}</span>
-                        <span class="fs-4 text-black fw-semibold align-left"> {{user.department}}</span>
-                        <span class="fs-4 text-black fw-semibold align-left"> {{internship.course}}</span>
-                        {%endif%}
+                        {% if check %}
+                            <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ internship.course }}</span>
+                        {% endif %}
                     </div>
-                <hr class="my-4 border-2 text-black">
-                <h1 class="display-6 text-center fw-semibold" id="due-date">
-                    Due Date</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <h1 class="display-6 text-center fw-semibold" id="due-date">
+                        Due Date</h1>
+                </div>
             </div>
         </div>
     </div>
