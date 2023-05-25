@@ -246,3 +246,14 @@ class FeedbackForm(forms.ModelForm):
         model = Feedback
         fields = '__all__'
 
+class ExtensionForm(forms.ModelForm):
+    due_date = forms.DateTimeField(
+        widget=forms.DateInput(
+            attrs={'type': 'date'}
+        )
+    )
+    
+    class Meta:
+        model = Submission
+        fields = ['due_date']
+

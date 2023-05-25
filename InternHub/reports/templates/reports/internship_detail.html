@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}CAVA Evaluation{% endblock %}
+{% block title %}Internship Detail{% endblock %}
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static '' %}">
@@ -10,13 +10,34 @@
 {% block body %}
     <div>
         <h1>Student Report Detail</h1>
-        <p>Student Name: {{ request.student.first_name }} {{ request.report_request.student.last_name}}</p>
-        <p>Department of Student: {{ request.student.department }}</p>
-        <p>Uploaded pdf: <a href="{{ request.student.file.url }}">{{ request.file.name }}</a></p>
-        <form method="post" action="{% url 'reports:internship_detail' request.id %}">
+        <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name}}</p>
+        <p>Department of Student: {{ internship.student.department }}</p>
+        <p>Uploaded Report: 
+        {% if internship.student_report %}
+            {% if internship.student_report.file%}
+            <a href="{{ internship.student_report.file.url }}">{{ internship.student_report.name }}</a>
+            {% else %}
+            No file uploaded
+            {% endif %}
+            </p>
+            <p>Due Date:
+            {% if internship.student_report.due_date %}
+                {{ internship.student_report.due_date }}
+            {% else %}
+                No due date set
+            {% endif %} 
+        </p>
+        {% else %}
+            No Submission Created
+        {% endif %}
+        <form method="post" action="{% url 'reports:internship_detail' internship.id %}">
             {% csrf_token %}
             <button type="submit" name="action" value="approve">Approve</button>
             <button type="submit" name="action" value="reject">Reject</button>
+            
+            <p>Set Due Date for the Submission</p>
+            {{ form.as_p }}
+            <button type="submit" name="action" value="extend">Set Due Date</button>
         </form>
 
         <a href="{% url 'reports:view_internships' %}">Back to list</a>

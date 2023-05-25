@@ -14,9 +14,15 @@ class Status(models.TextChoices):
     ACCEPTED = 'AC', 'Accepted'
     REJECTED = 'RE', 'Rejected'
 
+class SubmissionStatus(models.TextChoices):
+    SATISFACTORY = 'SA', 'Satisfactory',
+    REVISION_REQUIRED = 'RR', 'Revision Required',
+    UNSATISFACTORY = 'UN', 'Unsatisfactory',
+    PENDING = 'PE', 'Pending'
+
 
 class Task(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True)
+    creation_date = models.DateTimeField(auto_now_add=True, null=True)
     description = models.CharField(max_length=100, null=True)
     file = models.FileField(upload_to='uploads/', null=True)
 
@@ -24,7 +30,7 @@ class Task(models.Model):
 class Submission(Task):
     status = models.CharField(
         max_length=2,
-        choices=Status.choices,
+        choices=SubmissionStatus.choices,
         default=Status.PENDING,
     )
     due_date = models.DateTimeField()

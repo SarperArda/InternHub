@@ -5,12 +5,11 @@ from reports.forms import ConfidentialCompanyForm
 from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Internship,Feedback
-from .forms import WorkAndReportEvaluationForm
+from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
 from users.models import Student
-from .models import StudentReport, WorkAndReportEvaluation,Submission
-from .models import InstructorFeedback
+from .models import StudentReport, WorkAndReportEvaluation,Submission, InstructorFeedback
 from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
@@ -24,6 +23,8 @@ from users.decorators import allowed_users
 from django.utils import timezone
 from users.views import RoleRequiredMixin
 from reports.models import Status
+from django.urls import reverse_lazy
+from reports.models import SubmissionStatus
 # Create your views here.
 
 
@@ -135,12 +136,16 @@ class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
 class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = StudentReportForm
     template_name = 'reports/submit_report.html'
-    success_url = '/reports/submit-report/'
+    success_url = reverse_lazy('reports:view_internships')
     allowed_roles = ['STUDENT']
     
     def form_valid(self, form, *args, **kwargs):
         submitted_report = form.save(commit=False)
         submitted_report.creation_date = timezone.now()
+
+        #DUE DATE MUST BE CHANGED
+        submitted_report.due_date = timezone.now() + timezone.timedelta(days=7)
+
         internship_pk = self.kwargs.get('pk')
         submitted_report.internship = get_object_or_404(Internship, pk=internship_pk)
             
@@ -201,49 +206,84 @@ class CreateFeedback(LoginRequiredMixin, FormView):
     
 
     
-class ListInternshipsView(LoginRequiredMixin, ListView):
+class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'reports/view_internships.html'
     model = Internship
     context_object_name = 'internships'
     ordering = 'id'
-
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY','INSTRUCTOR']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    allowed_roles = ['INSTRUCTOR', 'STUDENT', 'DEPARTMENT_SECRETARY']
 
     def get_queryset(self):
-        return Internship.objects.all()
+        if self.request.user.role == 'STUDENT':
+            return Internship.objects.filter(student__user_id=self.request.user.user_id)
+        elif self.request.user.role == 'INSTRUCTOR':
+            return Internship.objects.filter(instructor__user_id=self.request.user.user_id)
+        else:
+            return Internship.objects.filter(student__department=self.request.user.department)
+        
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['form'] = ExtensionForm()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        form = ExtensionForm(request.POST)
+        if form.is_valid():
+            due_date = form.cleaned_data['due_date']
+            internships = self.get_queryset()
+            for internship in internships:
+                if internship.student_report is not None:
+                    internship.student_report.due_date = due_date
+                    internship.student_report.save()
+                else:
+                    internship.student_report = Submission()
+                    internship.student_report.due_date = due_date
+                    internship.student_report.save()
+                    internship.save()
+            return redirect('reports:view_internships')  # Redirect to the same page to display updated due dates
 
-class InternshipDetailView(LoginRequiredMixin, DetailView):
+        # Re-render the page with the same context if form is not valid
+        return self.get(request, *args, **kwargs)
+    
+
+
+class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'reports/internship_detail.html'
     model = Internship
-    context_object_name = 'request'
+    context_object_name = 'internship'
+    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY']
+    
 
     def post(self, request, *args, **kwargs):
-        report_request = self.get_object()
+        internship = self.get_object()
         action = request.POST.get('action')
+        report = internship.student_report
 
         # Todo Send notification
         if action == 'approve':
-            report_request.status = 'pending'
-            student = report_request.student
-            course = report_request.course
-
-            report_request.course = None
-            report_request.student = None
-            report_request.save()
-
-            internship = Internship.objects.create(
-                student=student,
-                course=course,
-                student_report=report_request,
-            )
+            report.status = SubmissionStatus.SATISFACTORY
+            
 
         elif action == 'reject':
-            report_request.delete()
+            report.status = SubmissionStatus.REVISION_REQUIRED
+            ##ToDo: Create Feedback and set due date for new  save 
+        
+        elif action == 'extend':
+            form = ExtensionForm(request.POST)
+            if form.is_valid():
+                due_date = form.cleaned_data['due_date']
+                if report.student_report is not None:
+                    report.student_report.due_date = due_date
+                    report.student_report.save()
+                else:
+                    report.student_report = Submission()
+                    report.student_report.due_date = due_date
+                    report.student_report.save()
+                    report.save()
 
         return redirect('reports:view_internships')
-
-    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = ExtensionForm()
+        return context
