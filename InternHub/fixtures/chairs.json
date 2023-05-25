@@ -1,0 +1,58 @@
+[
+  {
+  "model": "users.chair",
+  "fields": {
+    "first_name": "Selim",
+    "last_name": "Aksoy",
+    "email": "saksoy@cs.bilkent.edu.tr",
+    "user_id": "9995",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+  {
+  "model": "users.chair",
+  "fields": {
+    "first_name": "Tolga Mete",
+    "last_name": "Duman",
+    "email": "duman@ee.bilkent.edu.tr",
+    "user_id": "9996",
+    "department": 3,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+   {
+  "model": "users.chair",
+  "fields": {
+    "first_name": "Bahar",
+    "last_name": "Yetiş Kara",
+    "email": "bkara@bilkent.edu.tr",
+    "user_id": "9997",
+    "department": 4,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+  {
+  "model": "users.chair",
+  "fields": {
+    "first_name": "İlker",
+    "last_name": "Temizer",
+    "email": "temizer@bilkent.edu.tr",
+    "user_id": "9998",
+    "department": 2,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+}
+]

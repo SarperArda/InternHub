@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
 from .decorators import decorate_get_all
-
+import json
+from django.contrib.auth.hashers import make_password
 
 # Create your models here.
 
@@ -49,6 +50,7 @@ class RoleMixin(models.Model):
 
 
 class UserManager(BaseUserManager):
+
     def create_user(self, user_id, password=None, email=None, first_name=None, last_name=None):
         if not user_id:
             raise ValueError('Users must have a valid id')
@@ -78,6 +80,87 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    @staticmethod
+    def create_instructors():
+        with open('fixtures/instructors.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                instructor = Instructor(**user['fields'], password=hashed_password)
+                instructor.save()
+    @staticmethod
+    def create_students():
+        with open('fixtures/students.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                student = Student(**user['fields'], password=hashed_password)
+                student.save()
+
+    @staticmethod
+    def create_department_secretaries():
+        with open('fixtures/secretary.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                ds = DepartmentSecretary(**user['fields'], password=hashed_password)
+                ds.save()
+
+    @staticmethod
+    def create_dean():
+        with open('fixtures/dean.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                dean = Dean(**user['fields'], password=hashed_password)
+                dean.save()
+
+    @staticmethod
+    def create_chairs():
+        with open('fixtures/chairs.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                chair = Chair(**user['fields'], password=hashed_password)
+                chair.save()
+
+    @staticmethod
+    def create_supers():
+        with open('fixtures/superuser.json') as file:
+            data = json.load(file)
+            hashed_password = make_password('admin')
+            for user in data:
+                department_id = user['fields']['department']
+                department = EngineeringDepartment.objects.get(pk=department_id)
+                user['fields']['department'] = department
+                super_user = User(**user['fields'], password=hashed_password)
+                super_user.role = RoleMixin.Role.SUPERUSER
+                super_user.save()
+    @staticmethod
+    def create_users():
+        UserManager.create_instructors()
+        UserManager.create_dean()
+        UserManager.create_students()
+        UserManager.create_department_secretaries()
+        UserManager.create_supers()
+        UserManager.create_chairs()
+
+# Your existing code here
 
 class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
     first_name = models.CharField(max_length=50, null=True)
@@ -129,6 +212,8 @@ class Instructor(User):
             self.assign_students_to_instructor(student)
         else:
             self.students.remove(student)
+    def __str__(self):
+        return self.first_name + " " + self.last_name
 
     class Meta:
         verbose_name = 'Instructor'

@@ -57,21 +57,21 @@ class ConfidentialCompany(models.Model):
 
 class WorkAndReportEvaluation(models.Model):
     grade_of_performing_work = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True)
+        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True, null=True)
     grade_of_solving_engineering_problems = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True)
+        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True, null=True)
     grade_of_recognizing_ethics = models.IntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True)
+        validators=[MinValueValidator(0), MaxValueValidator(10)], blank=True, null=True)
     grade_of_acquiring_knowledge = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                                       blank=True)
+                                                       blank=True, null=True)
     grade_of_applying_knowledge = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                                      blank=True)
+                                                      blank=True, null=True)
     grade_of_has_awareness = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                                 blank=True)
+                                                 blank=True, null=True)
     grade_of_making_judgements = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                                     blank=True)
+                                                     blank=True, null=True)
     grade_of_preparing_reports = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)],
-                                                     blank=True)
+                                                     blank=True, null=True)
 
     exp_is_able_to_perform_work = models.CharField(
         max_length=100, blank=True, null=True)
@@ -124,6 +124,8 @@ class Internship(models.Model):
     student_report = models.OneToOneField(
         Submission, on_delete=models.SET_NULL, null=True, related_name='internship', default=None)
 
+    def __str__(self):
+        return self.student.first_name + " " + self.student.last_name + "'s " + self.course.name + " Course"
 
 class StudentReport(models.Model):
     report = models.FileField(upload_to='reports/', null=True)
@@ -131,3 +133,16 @@ class StudentReport(models.Model):
 
 class InstructorFeedback(models.Model):
     feedback = models.FileField(upload_to='feedbacks/', null=True)
+
+class InternshipManager:
+    @staticmethod
+    def create_internships():
+        cavas = CompanyApprovalValidationApplication.objects.all()
+        for cava in cavas:
+            internship = Internship(student=cava.student, course=cava.course, company=cava.requested_company,
+                                    company_approval=cava)
+            internship.save()
+    @staticmethod
+    def list_instructors():
+        for internship in Internship.objects.all():
+            print("Internship name: " , internship, "Instructor name: " , internship.instructor)

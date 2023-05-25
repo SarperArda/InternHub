@@ -1,0 +1,16 @@
+[
+  {
+    "model": "users.student",
+    "fields": {
+      "first_name": "Hasan Anıl Sarper Alper Tuna",
+      "last_name": "InternHub",
+      "email": "hasat@ug.bilkent.edu.tr",
+      "user_id": "hasat",
+      "department": 1,
+      "is_admin": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true
+    }
+  }
+]
