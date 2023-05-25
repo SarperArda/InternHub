@@ -47,7 +47,7 @@
                             </li>
                             <li class="nav-item py-2 py-sm-2">
                                 <a href="{% url 'users:logout' %}" class="nav-link text-white">
-                                    <i class="fs-5 fa-regular fa-right-from-bracket"></i>
+                                    <i class="fs-5 fa-solid fa-right-from-bracket"></i>
                                     <span class="fs-4 ms-3 d-none d-sm-inline">Logout</span>
                                 </a>
                             </li>
@@ -65,10 +65,20 @@
                     interns.</p>
                 <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
             </div>
-            <div class="col bg-dark text-white">
-                <h1 class="display-6 text-white text-center" style="padding-top: 25px; padding-bottom: 10px;">
+            <div class="col text-white" id="right-bar" >
+                <h1 class="display-6 fw-semibold text-center" id="profile" >
                     Profile</h1>
-                <hr class="my-4 border-2 text-white">
+                <hr class="my-4 border-2 text-black">
+                <div class="container" id="profile-info">
+                    <div class="row">
+                        <span class="fs-3 text-black fw-semibold align-left"> {{full_name}} </span>
+                        <span class="fs-4 text-black fw-semibold align-left"> Computer Science</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> 22002948</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> CS299</span>
+                    </div>
+                <hr class="my-4 border-2 text-black">
+                <h1 class="display-6 text-center fw-semibold" id="due-date">
+                    Due Date</h1>
             </div>
         </div>
     </div>

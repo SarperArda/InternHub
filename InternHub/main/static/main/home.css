@@ -20,3 +20,21 @@
 .container a:hover i {
     color: black;
 }
+
+#right-bar {
+    background: #F47174;
+}
+
+#profile {
+    padding-top: 25px; 
+    padding-bottom: 10px;
+    color: #232323;
+}
+
+#profile-info {
+    color: #232323;
+}
+
+#profile {
+    color: #232323;
+}
