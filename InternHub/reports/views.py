@@ -1,9 +1,10 @@
-from django.shortcuts import render
-from django.views.generic.edit import FormView
+from django.shortcuts import render, redirect
+from django.views.generic.edit import FormView, UpdateView, CreateView, View
 from django.views.generic.base import TemplateView
 from reports.forms import ConfidentialCompanyForm
 from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import WorkAndReportEvaluationForm, InternshipAssignmentForm
 from .models import Internship,Feedback
 from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
@@ -14,12 +15,19 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from .models import StudentReport, WorkAndReportEvaluation
+from .models import InstructorFeedback
+from django.views.generic import ListView
+from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse
+from users.models import DepartmentSecretary, Instructor
+from users.decorators import allowed_users
+from main import decorators
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
-from users.decorators import allowed_users
 from django.utils import timezone
 from users.views import RoleRequiredMixin
 from reports.models import Status
@@ -132,7 +140,49 @@ class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
 
     #def get_context_data(self, **kwargs):
     #    super().get_context_data()
+class WorkAndReportEvaluationFormCreation(CreateView):
+    model = WorkAndReportEvaluation
+    form_class = WorkAndReportEvaluationForm
+    template_name = 'reports/create_work_and_report_ev_form.html'
 
+    def get_success_url(self):
+        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+
+class WorkAndReportEvaluationFormUpdate(UpdateView):
+    model = WorkAndReportEvaluation
+    form_class = WorkAndReportEvaluationForm
+    template_name = 'reports/create_work_and_report_ev_form.html'
+
+    def get_success_url(self):
+        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+
+class EditWorkAndReportEvaluation(View):
+    def get(self, request, **kwargs):
+        try:
+            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
+                #print(self.kwargs['pk'])
+                # Redirect to update view
+                return redirect('reports:update_wre', pk=self.kwargs['pk'])
+            else:
+                return redirect('reports:create_wre', pk=self.kwargs['pk'])
+        except ObjectDoesNotExist:
+            # Redirect to create view
+            return redirect('reports:create_wre', pk=self.kwargs['pk'])
+class CreateSubmitReport(LoginRequiredMixin, FormView):
+    def get(self, request):
+        form = StudentReportForm()
+        return render(request, 'reports/submit_report.html',{
+            'form': form
+        })
+    def post(self, request):
+        submitted_form = StudentReportForm(request.POST, request.FILES)
+        if submitted_form.is_valid():
+            report = StudentReport(report=request.FILES['student_report'])
+            report.save()
+            return HttpResponseRedirect('/reports/submit-report/')
+        return render(request, 'reports/submit_report.html', {
+            'form': submitted_form
+        })
 class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = StudentReportForm
     template_name = 'reports/submit_report.html'
@@ -164,6 +214,71 @@ class MainView(LoginRequiredMixin,FormView):
 
     def get(self, request):
         return render(request, 'reports/main.html')
+
+class InternshipAssignmentView(FormView, LoginRequiredMixin):
+    form_class = InternshipAssignmentForm
+    template_name = 'reports/internship_assignment.html'
+
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['instructor'].queryset = Instructor.objects.filter(department=self.request.user.department)
+        form.fields['internships'].queryset = Internship.objects.filter(student__department=self.request.user.department)
+        return form
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    def get_success_url(self):
+        return reverse('main:home')
+
+    def form_valid(self, form):
+        action = self.request.POST.get('action')
+
+        if action == 'Assign':
+            instructor = form.cleaned_data['instructor']
+            internships = form.cleaned_data['internships']
+
+            for internship in internships:
+                internship.instructor = instructor
+                internship.save()
+
+        elif action == 'RandomlyAssign':
+            instructors = Instructor.objects.filter(department=self.request.user.department)
+            internships = Internship.objects.filter(student__department=self.request.user.department)
+            instructor_count = instructors.count()
+            internship_count = len(internships)
+            internship_per_instructor = internship_count // instructor_count
+
+            instructor_index = 0
+            # Iterate over the internships and assign instructors
+            for internship in internships:
+                import random
+                instructor = instructors[instructor_index]
+                internship.instructor = instructor
+                internship.save()
+
+                # Increment instructor index and loop back if needed
+                instructor_index += 1
+                if instructor_index >= instructor_count:
+                    instructor_index = 0
+
+        elif action == 'Clear':
+            internships = Internship.objects.filter(student__department=self.request.user.department)
+            for internship in internships:
+                internship.instructor = None
+                internship.save()
+
+        return super().form_valid(form)
+
+    @method_decorator(allowed_users(['DEPARTMENT_SECRETARY']))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+class InternshipListView(ListView, LoginRequiredMixin):
+    pass
 
 class WorkAndReportEvaluationFormCreation(CreateView):
     model = WorkAndReportEvaluation

@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
+
 def allowed_users(allowed_roles=[]):
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs, ):
@@ -23,3 +24,4 @@ def decorate_get_all(model_cls):
         return model_cls.objects.all()
 
     return get_all
+

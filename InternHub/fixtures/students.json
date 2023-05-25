@@ -1,0 +1,142 @@
+[
+  {
+  "model": "users.student",
+  "fields": {
+    "first_name": "Hasan Ege",
+    "last_name": "Tunç",
+    "email": "hasan.tunc@ug.bilkent.edu.tr",
+    "user_id": "22003814",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+  {
+  "model": "users.student",
+  "fields": {
+    "first_name": "Alper",
+    "last_name": "Göçmen",
+    "email": "alper.gocmen@ug.bilkent.edu.tr",
+    "user_id": "22002948",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+   {
+  "model": "users.student",
+  "fields": {
+    "first_name": "Anıl",
+    "last_name": "İlağa",
+    "email": "anil.ilaga@ug.bilkent.edu.tr",
+    "user_id": "22002044",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+  {
+  "model": "users.student",
+  "fields": {
+    "first_name": "Sarper Arda",
+    "last_name": "Bakır",
+    "email": "arda.bakir@ug.bilkent.edu.tr",
+    "user_id": "21902781",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+  {
+  "model": "users.student",
+  "fields": {
+    "first_name": "Deniz Tuna",
+    "last_name": "Onguner",
+    "email": "tuna.onguner@ug.bilkent.edu.tr",
+    "user_id": "22001788",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+  {
+    "model": "users.student",
+    "fields": {
+      "first_name": "Ece",
+      "last_name": "Ateş",
+      "email": "e.ates@ug.bilkent.edu.tr",
+      "user_id": "22002908",
+      "department": 1,
+      "is_admin": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+{
+    "model": "users.student",
+    "fields": {
+      "first_name": "Enes",
+      "last_name": "Bektaş",
+      "email": "enes.bektas@ug.bilkent.edu.tr",
+      "user_id": "22002401",
+      "department": 1,
+      "is_admin": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+{
+    "model": "users.student",
+    "fields": {
+      "first_name": "Atika Zeynep",
+      "last_name": "Evmez",
+      "email": "zeynep.evmez@ug.bilkent.edu.tr",
+      "user_id": "22002603",
+      "department": 1,
+      "is_admin": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "users.student",
+    "fields": {
+      "first_name": "Aytekin",
+      "last_name": "İsmail",
+      "email": "aytekin.ismail@ug.bilkent.edu.tr",
+      "user_id": "22003988",
+      "department": 1,
+      "is_admin": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+ {
+    "model": "users.student",
+    "fields": {
+      "first_name": "Arda",
+      "last_name": "İynem",
+      "email": "arda.iynem@ug.bilkent.edu.tr",
+      "user_id": "22002717",
+      "department": 1,
+      "is_admin": false,
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  }
+]

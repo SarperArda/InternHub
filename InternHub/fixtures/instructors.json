@@ -1,0 +1,133 @@
+
+[
+  {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Can",
+    "last_name": "Alkan",
+    "email": "calkan@cs.bilkent.edu.tr",
+    "user_id": "0001",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+
+  {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Shervin",
+    "last_name": "Arashloo",
+    "email": "s.rahimzadeh@cs.bilkent.edu.tr",
+    "user_id": "0002",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+
+{
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Cevdet",
+    "last_name": "Aykanat",
+    "email": "aykanat@cs.bilkent.edu.tr",
+    "user_id": "0003",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+
+{
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Fazlı",
+    "last_name": "Can",
+    "email": "canf@cs.bilkent.edu.tr",
+    "user_id": "0004",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+
+  {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Altay",
+    "last_name": "Güvenir",
+    "email": "guvenir@cs.bilkent.edu.tr",
+    "user_id": "0006",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+    {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Uğur",
+    "last_name": "Güdükbay",
+    "email": "gudukbay@cs.bilkent.edu.tr",
+    "user_id": "0007",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+    {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Ayşegül",
+    "last_name": "Dündar",
+    "email": "adundar@cs.bilkent.edu.tr",
+    "user_id": "0008",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+    {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Uğur",
+    "last_name": "Doğrusöz",
+    "email": "ugur@cs.bilkent.edu.tr",
+    "user_id": "0009",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+},
+    {
+  "model": "users.instructor",
+  "fields": {
+    "first_name": "Hamdi",
+    "last_name": "Dibeklioğlu",
+    "email": "dibeklioglu@cs.bilkent.edu.tr",
+    "user_id": "0010",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+}
+]
