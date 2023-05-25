@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
+
 
 {% block title %}InternHub{% endblock %}
 
@@ -19,11 +21,9 @@
                             <a class="title" href="{% url 'main:home' %}">InternHub</a>
                         </li>
                         <li>
-                            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
-                            <li>
-                                <a href="{% url 'reports:main'%}"><button>Reports</button></a>
-                            </li>
-                            {% endif %}
+                        <li>
+                            <a href="{% url 'reports:main'%}"><button>Reports</button></a>
+                        </li>
                         </li>
                         <li>
                             <button>Feedbacks</button>
@@ -36,13 +36,13 @@
                             {% endif %}
                         </li>
                         <li>
-                            <button>Profile {{ full_name }}</button>
+                            <button>Profile</button>
                         </li>
                         
                         <li>
                             <button>Contact</button>
                         </li>
-                        {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
+                        {% if request.user|can_make_announcement %}
                             <li>
                                 <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
                             </li>
@@ -76,7 +76,7 @@
                     <li>
                         <i class="fa-solid fa-user" id="profile"> </i>
                         <span id="info">
-                            <p>{{username}} {{lastname}}</p>
+                            <p>{{ full_name }}</p>
                         </span>
                     </li>
                     <li class="title-deadline">Deadlines
