@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CAVA Evaluation{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static '' %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>Student Report Detail</h1>
+        <p>Student Name: {{ request.student.first_name }} {{ request.report_request.student.last_name}}</p>
+        <p>Department of Student: {{ request.student.department }}</p>
+        <p>Uploaded pdf: <a href="{{ request.student.file.url }}">{{ request.file.name }}</a></p>
+        <form method="post" action="{% url 'reports:internship_detail' request.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+
+        <a href="{% url 'reports:view_internships' %}">Back to list</a>
+    </div>
+{% endblock %}

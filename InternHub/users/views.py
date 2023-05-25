@@ -4,8 +4,18 @@ from django.views.generic.edit import FormView
 from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 # Create your views here.
+class RoleRequiredMixin(UserPassesTestMixin):
+    allowed_roles = []
+
+    def test_func(self):
+        return self.request.user.role in self.allowed_roles
+
+    def handle_no_permission(self):
+        return redirect('users:forbidden')
+
 
 class LoginView(FormView):
     template_name = 'users/login.html'
@@ -29,8 +39,13 @@ class LoginView(FormView):
         else:
             form.add_error(None, 'Invalid id or password.')
             return self.form_invalid(form)
-        
+
+
 class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('users:login')
+    
+class ForbiddenView(View):
+    def get(self, request):
+        return render(request, 'users/forbidden.html')

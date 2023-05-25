@@ -4,12 +4,12 @@ from django.views.generic.base import TemplateView
 from reports.forms import ConfidentialCompanyForm
 from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Internship
+from .models import Internship,Feedback
 from .forms import WorkAndReportEvaluationForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
 from users.models import Student
-from .models import StudentReport, WorkAndReportEvaluation
+from .models import StudentReport, WorkAndReportEvaluation,Submission
 from .models import InstructorFeedback
 from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
@@ -18,6 +18,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
 from django.core.exceptions import ObjectDoesNotExist
+from django.views.generic.detail import DetailView
+from django.utils.decorators import method_decorator
+from users.decorators import allowed_users
+from django.utils import timezone
 # Create your views here.
 
 
@@ -128,33 +132,26 @@ class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
 
 class CreateSubmitReport(LoginRequiredMixin, FormView):
     def get(self, request):
-        form = StudentReportForm()
+        form = StudentReportForm() 
         return render(request, 'reports/submit_report.html',{
             'form': form
-        })
+    })
+    
     def post(self, request):
         submitted_form = StudentReportForm(request.POST, request.FILES)
         if submitted_form.is_valid():
-            report = StudentReport(report=request.FILES['student_report'])
+            report = Submission(file=request.FILES['file'])
+            report.creation_date = timezone.now()
+            report.description = 'submission'
+            ##it should be changed
+            report.due_date = timezone.now()
+            report.status = 'PENDING'
+            
+            id = request.user.user_id
+            
             report.save()
             return HttpResponseRedirect('/reports/submit-report/')
         return render(request, 'reports/submit_report.html', {
-            'form': submitted_form
-        })
-
-class CreateFeedback(LoginRequiredMixin, FormView):
-    def get(self, request):
-        form = FeedbackForm()
-        return render(request, 'reports/submit_feedback.html',{
-            'form': form
-        })
-    def post(self, request):
-        submitted_form = FeedbackForm(request.POST, request.FILES)
-        if submitted_form.is_valid():
-            feedback = InstructorFeedback(feedback=request.FILES['instructor_feedback'])
-            feedback.save()
-            return HttpResponseRedirect('/reports/submit-feedback/')
-        return render(request, 'reports/submit_feedback.html', {
             'form': submitted_form
         })
 
@@ -197,3 +194,62 @@ class EditWorkAndReportEvaluation(View):
         except ObjectDoesNotExist:
             # Redirect to create view
             return redirect('reports:create_wre', pk=self.kwargs['pk'])
+
+class CreateFeedback(LoginRequiredMixin, FormView):
+    template_name = 'reports/submit_feedback.html'
+    form_class = FeedbackForm
+    success_url = '/reports/view-internships/'
+
+    def form_valid(self, form):
+        feedback = InstructorFeedback(feedback=form.FILES['instructor_feedback'])
+        feedback.save()
+        return super().form_valid(form)
+    
+
+    
+class ListInternshipsView(LoginRequiredMixin, ListView):
+    template_name = 'reports/view_internships.html'
+    model = Internship
+    context_object_name = 'internships'
+    ordering = 'id'
+
+    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY','INSTRUCTOR']))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return Internship.objects.all()
+
+class InternshipDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'reports/internship_detail.html'
+    model = Internship
+    context_object_name = 'request'
+
+    def post(self, request, *args, **kwargs):
+        report_request = self.get_object()
+        action = request.POST.get('action')
+
+        # Todo Send notification
+        if action == 'approve':
+            report_request.status = 'pending'
+            student = report_request.student
+            course = report_request.course
+
+            report_request.course = None
+            report_request.student = None
+            report_request.save()
+
+            internship = Internship.objects.create(
+                student=student,
+                course=course,
+                student_report=report_request,
+            )
+
+        elif action == 'reject':
+            report_request.delete()
+
+        return redirect('reports:view_internships')
+
+    @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)

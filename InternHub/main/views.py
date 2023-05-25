@@ -10,4 +10,5 @@ class HomeView(LoginRequiredMixin, View):
 
     def get(self, request):
         announcements = Announcement.objects.all()
-        return render(request, 'main/home.html', {'announcements': announcements})
+        full_name = str(request.user)
+        return render(request, 'main/home.html', {'announcements': announcements, 'full_name': full_name})

@@ -1,15 +1,59 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
+
 
 {% block title %}InternHub{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
 {% endblock %}
 
 {% block body %}
+<<<<<<< HEAD
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
+                <div class="bg-dark p2">
+                    <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                        <b class="display-4">
+                            <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                        </b>
+                    </a>
+                    <hr class="bg-white border-2 border-top border-white">
+                    <div class="container">
+                        <div class="content">
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2">
+                                    <a href="#" class="nav-link text-white">
+                                        <i class="fs-5 fa-regular fa-file"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline"
+                                              style="padding-left: 4px">Reports</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item py-2 py-sm-2">
+                                    <a href="#" class="nav-link text-white">
+                                        <i class="fs-5 fa-regular fa-building"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline"
+                                              style="padding-left: 4px">Company</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <ul class="nav nav-pills flex-column mt-4">
+                            <li class="nav-item py-2 py-sm-2">
+                                <a href="#" class="nav-link text-white">
+                                    <i class="fs-5 fa-regular fa-envelope"></i>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline">Contact</span>
+                                </a>
+                            </li>
+                            <li class="nav-item py-2 py-sm-2">
+                                <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                    <i class="fs-5 fa-regular fa-right-from-bracket"></i>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline">Logout</span>
+                                </a>
+                            </li>
+=======
     <div>
         <div class="main-container">
             <div class="side-menu">
@@ -19,11 +63,9 @@
                             <a class="title" href="{% url 'main:home' %}">InternHub</a>
                         </li>
                         <li>
-                            {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
-                            <li>
-                                <a href="{% url 'reports:main'%}"><button>Reports</button></a>
-                            </li>
-                            {% endif %}
+                        <li>
+                            <a href="{% url 'reports:main'%}"><button>Reports</button></a>
+                        </li>
                         </li>
                         <li>
                             <button>Feedbacks</button>
@@ -38,10 +80,11 @@
                         <li>
                             <button>Profile</button>
                         </li>
+                        
                         <li>
                             <button>Contact</button>
                         </li>
-                        {% if request.user.role != "STUDENT" and request.user.role != "INSTRUCTOR" and request%}
+                        {% if request.user|can_make_announcement %}
                             <li>
                                 <a href="{% url 'announcements:announce'%}"><button>Make Announcement</button></a>
                             </li>
@@ -66,15 +109,50 @@
                                 </div>
                             </li>
                         {% endfor %}
+>>>>>>> main
                         </ul>
-                    {% endif %}
+                    </div>
+                </div>
             </div>
+            <div class="col-auto col-6">
+                <h1 class="display-6 text-center" style="padding-top: 25px; padding-bottom: 10px;">Announcements</h1>
+                <hr class="my-4 text-dark">
+                <p class="lead">InternHub is a platform for students to find internships and for companies
+                    to
+                    find interns.</p>
+                <p>InternHub is a platform for students to find internships and for companies to find
+                    interns.</p>
+                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+            </div>
+<<<<<<< HEAD
+            <div class="col bg-dark text-white">
+                <h1 class="display-6 text-white text-center" style="padding-top: 25px; padding-bottom: 10px;">
+                    Profile</h1>
+                <hr class="my-4 text-white">
+                <p class="lead">InternHub is a platform for students to find internships and for companies
+                    to
+                    find interns.</p>
+                <p>InternHub is a platform for students to find internships and for companies to find
+                    interns.</p>
+                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+=======
             <div class="profile-section">
                 <h2>Profile</h2>
-                <nav>
-                    <i class="fa-solid fa-gear"></i>
-                    <i class="fa-solid fa-user"></i>
-                </nav>
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-user" id="profile"> </i>
+                        <span id="info">
+                            <p>{{ full_name }}</p>
+                        </span>
+                    </li>
+                    <li class="title-deadline">Deadlines
+                        <i class="fa-solid fa-calendar" id="deadline"> </i>
+                            <span id="info">
+                                <p>Deadline</p>
+                            </span>
+                    </li>
+                </ul>
+>>>>>>> main
             </div>
         </div>
     </div>

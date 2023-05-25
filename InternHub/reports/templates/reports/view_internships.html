@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Internships{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    {% for internship in internships %}
+    <div>
+        <p>Student Name: {{ internship.student.first_name}} {{ request.student.last_name}}</p>
+        <p>Company Name: {{ internship.company.name }}</p>
+        <p>Department of Student: {{ internship.student.department }}</p>
+
+        <a href="{{ internship.student_report.file.url }}"><button type="submit" name="action" value="detail">Open Submission</button></a>
+        <a href="{% url 'reports:submit_feedback' internship.id%}"><button type="submit" name="action" value="feedback">Give Feedback</button></a>
+        <a href="{% url 'reports:internship_detail' internship.id%}"><button type="submit" name="action" value="detail">Detail</button></a>
+        <p>
+            
+        </p>
+    </div>
+    {% endfor %}
+{% endblock %}
