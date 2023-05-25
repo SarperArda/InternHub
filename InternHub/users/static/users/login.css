@@ -32,6 +32,13 @@ html, body {
     border-radius: 10px;
 }
 
+.form ul {
+    list-style: none;
+    text-align: center;
+    color: red;
+    padding: 0;
+}
+
 .logo {
     margin-bottom: 35px;
 }
@@ -44,10 +51,6 @@ html, body {
     margin: 0 0 30px;
     font-size: 40px;
     color: #48394c;
-}
-
-.form p {
-    list-style-type: none;
 }
 
 .form input {

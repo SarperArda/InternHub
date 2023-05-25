@@ -37,7 +37,7 @@ class LoginView(FormView):
             login(self.request, user)
             return redirect('main:home')
         else:
-            form.add_error(None, 'Invalid id or password.')
+            form.add_error(None, 'Invalid ID or password.')
             return self.form_invalid(form)
 
 
