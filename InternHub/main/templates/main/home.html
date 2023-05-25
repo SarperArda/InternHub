@@ -77,10 +77,12 @@
                 <hr class="my-4 border-2 text-black">
                 <div class="container" id="profile-info">
                     <div class="row">
+                        {%if check %}
                         <span class="fs-3 text-black fw-semibold align-left"> {{full_name}} </span>
-                        <span class="fs-4 text-black fw-semibold align-left"> Computer Science</span>
-                        <span class="fs-4 text-black fw-semibold align-left"> 22002948</span>
-                        <span class="fs-4 text-black fw-semibold align-left"> CS299</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> {{user.user_id}}</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> {{user.department}}</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> {{internship.course}}</span>
+                        {%endif%}
                     </div>
                 <hr class="my-4 border-2 text-black">
                 <h1 class="display-6 text-center fw-semibold" id="due-date">
