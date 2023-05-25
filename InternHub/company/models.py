@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import EngineeringDepartment, User, Course, Student
 from django.core.validators import FileExtensionValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 STATUS_CHOICES = [
         ('PENDING', 'Pending'),
@@ -43,4 +44,4 @@ class CompanyApprovalValidationApplication(CompanyRelatedDemand):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name='cava_applications')
 
 class EvaluationByStudent(CompanyRelatedDemand):
-    grade = models.IntegerField(null=True)
+    grade = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])

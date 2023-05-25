@@ -93,16 +93,16 @@ class CreateCAVAView(LoginRequiredMixin, FormView):
         course = form.instance.course
 
         pending_internship = Internship.objects.filter(
-            student=student, 
-            course=course, 
+            student=student,
+            course=course,
             status=Status.PENDING
         ).exists()
 
         if pending_internship:
             # Raise a ValidationError if a pending internship exists
-            raise ValidationError("You have a pending internship for this course. You cannot submit another CAVA.")
-        
-        
+            raise ValidationError(
+                "You have a pending internship for this course. You cannot submit another CAVA.")
+
         cava = form.save(commit=False)
         cava.status = 'PENDING'
         cava.student = student
@@ -136,7 +136,7 @@ class ListCAVASView(LoginRequiredMixin, ListView):
     @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-    
+
     def get_queryset(self):
         return CompanyApprovalValidationApplication.objects.filter(status='PENDING')
 
@@ -178,15 +178,30 @@ class CAVADetailView(LoginRequiredMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
+
 class CompanyEvaluationView(LoginRequiredMixin, FormView):
     template_name = 'company/evaluate-company.html'
     form_class = CompanyEvaluationForm
     success_url = reverse_lazy('main:home')
 
-    def form_valid(self, form):
-        pass
-    
-class MainView(LoginRequiredMixin,FormView):
+    def form_valid(self, form, *args, **kwargs):
+        internship = Internship.objects.get(id=self.kwargs['pk'])
+        internship.company_evaluation = form.save()
+        internship.save()
+        return super().form_valid(form)
+
+class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
+    template_name = 'company/company-evaluations.html'
+    model = Internship
+    context_object_name = 'internships'
+
+    def get_queryset(self):
+        student = Student.objects.get(user_id=self.request.user.user_id)
+        return self.model.objects.filter(student=student)
+
+
+
+class MainView(LoginRequiredMixin, FormView):
     template_name = 'company/main.html'
 
     def get(self, request):

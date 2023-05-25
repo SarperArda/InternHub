@@ -39,7 +39,7 @@ class CAVAForm(forms.ModelForm):
         model = CompanyApprovalValidationApplication
         fields = ['course', 'file', 'requested_company']
 
-class EvaluationForm(forms.ModelForm):
+class CompanyEvaluationForm(forms.ModelForm):
     class Meta:
         model = EvaluationByStudent
         fields = ['grade']
