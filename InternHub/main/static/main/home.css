@@ -17,6 +17,7 @@
 .container a:hover span {
     color: black;
 }
+
 .container a:hover i {
     color: black;
 }
@@ -37,4 +38,9 @@
 
 #profile {
     color: #232323;
+}
+
+#announcements {
+    padding-top: 25px; 
+    padding-bottom: 10px;
 }
