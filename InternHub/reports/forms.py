@@ -1,5 +1,5 @@
 from django import forms
-from users.models import EngineeringDepartment, Course, Student
+from users.models import EngineeringDepartment, Course, Student, Instructor
 from company.models import Company
 from reports.models import Internship, Submission, Feedback
 from django.core.exceptions import ValidationError
@@ -256,4 +256,9 @@ class ExtensionForm(forms.ModelForm):
     class Meta:
         model = Submission
         fields = ['due_date']
+class InternshipAssignmentForm(forms.Form):
+
+    instructor = forms.ModelChoiceField(queryset=None, label="Choose instructor to whom Internship will be assigned")
+    internships = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple,
+                                                 label="Choose internships to be assigned")
 

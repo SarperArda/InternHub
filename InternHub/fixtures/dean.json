@@ -1,0 +1,16 @@
+[
+  {
+  "model": "users.dean",
+  "fields": {
+    "first_name": "Orhan",
+    "last_name": "Arıkan",
+    "email": "oarikan@ee.bilkent.edu.tr",
+    "user_id": "9999",
+    "department": 2,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false
+  }
+}
+]

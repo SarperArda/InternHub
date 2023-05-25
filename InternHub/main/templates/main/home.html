@@ -22,53 +22,49 @@
                     <div class="container">
                         <div class="content">
                             <ul class="nav nav-pills flex-column mt-4">
-                                <li class="nav-item py-2 py-sm-2">
+                                <li class="nav-item py-2 py-sm-2 rounded">
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#reports-collapse"
                                             aria-expanded="true">
                                         <i class="fs-5 fa-regular fa-file"></i>
-                                        <span class="fs-4 ms-3 d-none d-sm-inline"
-                                              style="padding-left: 4px">Reports</span>
+                                        <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
                                     </button>
                                     <div class="collapse" id="reports-collapse">
-                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><a href="#" class="text-white rounded">Submit</a></li>
-                                            <li><a href="#" class="text-white rounded">Feedbacks</a></li>
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
+                                            <li><a href="#" class="text-white rounded fs-4">Submit</a></li>
+                                            <li><a href="#" class="text-white rounded fs-4">Feedbacks</a></li>
                                         </ul>
                                     </div>
                                 </li>
-                                <li class="nav-item py-2 py-sm-2">
+                                <li class="nav-item py-2 py-sm-2 rounded">
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#company-collapse"
                                             aria-expanded="true">
                                         <i class="fs-5 fa-regular fa-building"></i>
-                                        <span class="fs-4 ms-3 d-none d-sm-inline"
-                                              style="padding-left: 4px">Company</span>
+                                        <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
                                     </button>
                                     <div class="collapse" id="company-collapse">
-                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><a href="#" class="text-white rounded">Company list</a></li>
-                                            <li><a href="#" class="text-white rounded">company form</a></li>
+                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
+                                            <li><a href="#" class="text-white rounded fs-4">Company list</a></li>
+                                            <li><a href="#" class="text-white rounded fs-4">company form</a></li>
                                         </ul>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                         <ul class="nav nav-pills flex-column mt-4">
-                            <li class="nav-item py-2 py-sm-2">
+                            <li class="nav-item py-2 py-sm-2 rounded">
                                 <a href="#" class="nav-link text-white">
                                     <i class="fs-5 fa-regular fa-envelope"></i>
-                                    <span class="fs-4 ms-3 d-none d-sm-inline"
-                                          style="padding-left: 4px">Contact</span>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline" id="sidebar-span">Contact</span>
                                 </a>
                             </li>
-                            <li class="nav-item py-2 py-sm-2">
+                            <li class="nav-item py-2 py-sm-2 rounded">
                                 <a href="{% url 'users:logout' %}" class="nav-link text-white">
                                     <i class="fs-5 fa-solid fa-right-from-bracket"></i>
-                                    <span class="fs-4 ms-3 d-none d-sm-inline"
-                                          style="padding-left: 5px">Logout</span>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
                                 </a>
                             </li>
                         </ul>
@@ -76,7 +72,7 @@
                 </div>
             </div>
             <div class="col-auto col-6">
-                <h1 class="display-6 text-center" style="padding-top: 25px; padding-bottom: 10px;">Announcements</h1>
+                <h1 class="display-6 text-center" id="announcements">Announcements</h1>
                 <hr class="my-4 border-2 text-dark">
                 <ul class="list-group">
                     {% for announcement in announcements %}
@@ -91,7 +87,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="col text-white" id="right-bar">
+            <div class="col text-white" id="side-bar-right">
                 <h1 class="display-6 fw-semibold text-center" id="profile">
                     Profile</h1>
                 <hr class="my-4 border-2 text-black">
