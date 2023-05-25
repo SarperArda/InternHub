@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}InternHub{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+{% endblock %}
+
+{% block body %}
+    <div>
+        <div class="main-container">
+            <div class="side-menu">
+                <nav>
+                    <ul>
+                        <li class="title-li">
+                            <a class="title" href="{% url 'main:home' %}">Company</a>
+                        </li>
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:companies'%}"><button>Companies</button></a>
+                            </li>
+                            {% endif %}
+                        </li>
+                        <li>
+                            <button>Evaluate company</button>
+                        </li>
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:cava-creation'%}"><button> Create company approval validation application</button></a>
+                            </li>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:cava-requests'%}"><button> View company approval validation applications </button></a>
+                            </li>
+                            {% endif %}
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:company-creation'%}"><button> Create company request application </button></a>
+                            </li>
+                            {% endif %}
+                        </li>
+                        <li>
+                            {% if request%}
+                            <li>
+                                <a href="{% url 'company:company-requests'%}"><button> View company request applications </button></a>
+                            </li>
+                            {% endif %}
+                        </li>
+                        <li>
+                            <a href="{% url 'main:home' %}"><button>Home Page</button></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="profile-section">
+                <h2>Profile</h2>
+                <nav>
+                    <i class="fa-solid fa-gear"></i>
+                    <i class="fa-solid fa-user"></i>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}

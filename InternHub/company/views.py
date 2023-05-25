@@ -1,4 +1,5 @@
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views.generic.edit import FormView
 from .forms import CompanyForm, CAVAForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -176,3 +177,9 @@ class CAVADetailView(LoginRequiredMixin, DetailView):
     @method_decorator(allowed_users(['SUPERUSER', 'DEPARTMENT_SECRETARY']))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+class MainView(LoginRequiredMixin,FormView):
+    template_name = 'company/main.html'
+
+    def get(self, request):
+        return render(request, 'company/main.html')
