@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Something Went Wrong!{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="error-template">
+          <h1>Oops!</h1>
+          <h2>403 Forbidden</h2>
+          <div class="error-details">
+            Sorry, you do not have the necessary permissions to access this page.
+          </div>
+          <div class="error-actions">
+            <a href="{% url 'main:home' %}" class="btn btn-primary btn-lg">
+              <span class="glyphicon glyphicon-home"></span>
+              Take me home 
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
