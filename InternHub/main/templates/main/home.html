@@ -85,6 +85,14 @@
                             <small class="text-muted d-block text-end">{{ announcement.date }}</small>
                         </li>
                     {% endfor %}
+                    {% for notification in notifications %}
+                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ notification.title }}</h5>
+                        </div>
+                        <p class="mb-1">{{ notification.content }}</p>
+                    </li>
+                {% endfor %}
                 </ul>
             </div>
             <div class="col text-white" id="side-bar-right">
