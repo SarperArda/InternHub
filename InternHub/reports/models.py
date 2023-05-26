@@ -23,18 +23,20 @@ class SubmissionStatus(models.TextChoices):
 
 
 class Task(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True, null=True)
+    creation_date = models.DateTimeField(null=True)
     description = models.CharField(max_length=100, null=True)
     file = models.FileField(upload_to='uploads/', null=True)
 
 
 class Submission(Task):
+    internship = models.ForeignKey('Internship', on_delete=models.CASCADE, null=True, related_name='submissions')
     status = models.CharField(
         max_length=2,
         choices=SubmissionStatus.choices,
-        default=Status.PENDING,
+        default=SubmissionStatus.PENDING,
     )
     due_date = models.DateTimeField()
+
 
 
 class Feedback(Task):
@@ -138,10 +140,6 @@ class Internship(models.Model):
         CompanyApprovalValidationApplication, on_delete=models.SET_NULL, null=True, related_name='internship')
     company_evaluation = models.OneToOneField(
         EvaluationByStudent, on_delete=models.SET_NULL, null=True, related_name='internship', default=None)
-
-    # Student Report
-    student_report = models.OneToOneField(
-        Submission, on_delete=models.SET_NULL, null=True, related_name='internship', default=None)
 
     def __str__(self):
         return self.student.first_name + " " + self.student.last_name + "'s " + self.course.name + " Course"

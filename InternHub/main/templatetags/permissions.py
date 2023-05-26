@@ -13,3 +13,11 @@ def can_submit_report(user):
 @register.filter
 def can_submit_feedback(user):
     return user.role in ["INSTRUCTOR"]
+
+@register.filter
+def can_submit(user):
+    return user.role in ["INSTRUCTOR", "STUDENT"]
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

@@ -358,6 +358,19 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     def get_context_data(self):
         context = super().get_context_data()
         context['form'] = ExtensionForm()
+        context['submission_statuses'] = {}
+        context['feedback_needed'] = {}
+        for internship in context['internships']:
+            if internship.submissions.exists():
+                last_submission = internship.submissions.latest('creation_date')
+                context['submission_statuses'][internship.pk] = last_submission.get_status_display()
+                # Check if feedback is needed for the last submission
+                feedback_needed = bool(last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
+                context['feedback_needed'][internship.pk] = feedback_needed
+                print(f"Feedback needed for internship {internship.pk}: {feedback_needed}")
+            else:
+                context['submission_statuses'][internship.pk] = None
+                context['feedback_needed'][internship.pk] = False
         return context
     
     def post(self, request, *args, **kwargs):
@@ -366,15 +379,18 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             due_date = form.cleaned_data['due_date']
             internships = self.get_queryset()
             for internship in internships:
-                if internship.student_report is not None:
-                    internship.student_report.due_date = due_date
-                    internship.student_report.save()
+                # Get the existing submission with status "PENDING"
+                report = internship.submissions.filter(status=SubmissionStatus.PENDING).first()
+                # Create a new submission if it doesn't exist
+                if report is None:
+                    report = Submission.objects.create(internship=internship, due_date=due_date)
                 else:
-                    internship.student_report = Submission()
-                    internship.student_report.due_date = due_date
-                    internship.student_report.save()
-                    internship.save()
-            return redirect('reports:view_internships')  # Redirect to the same page to display updated due dates
+                    report.due_date = due_date
+                    report.save()
+                # Add the submission to the internship if it doesn't exist
+                if report.id is None:
+                    internship.submissions.add(report)
+            return redirect('reports:view_internships')  # Redirect to the view page
 
         # Re-render the page with the same context if form is not valid
         return self.get(request, *args, **kwargs)
@@ -385,13 +401,14 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'reports/internship_detail.html'
     model = Internship
     context_object_name = 'internship'
-    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY']
+    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY', 'STUDENT']
     
 
     def post(self, request, *args, **kwargs):
         internship = self.get_object()
         action = request.POST.get('action')
-        report = internship.student_report
+        report_form = StudentReportForm(request.POST, request.FILES)
+
 
         # Todo Send notification
         if action == 'approve':
@@ -415,9 +432,25 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                     report.save()
                     internship.save()
 
+        elif action == 'submission_upload' and report_form.is_valid():
+            existing_report = Submission.objects.filter(internship=internship, status=SubmissionStatus.PENDING).first()
+
+            if existing_report and timezone.now() <= existing_report.due_date:
+                #Update Existing Report
+                existing_report.file = report_form.cleaned_data['file']
+                existing_report.creation_date = timezone.now()
+                existing_report.save()
+
+
         return redirect('reports:view_internships')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = ExtensionForm()
+        context['report_form'] = StudentReportForm()
+        submissions = self.get_object().submissions.all()
+        context['submissions'] = submissions
+        context['last_submission'] = submissions.last()
+        context['submission_set'] = self.get_object().submissions.exists()
+        context['now'] = timezone.now()
         return context

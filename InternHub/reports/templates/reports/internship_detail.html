@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
 
 {% block title %}Internship Detail{% endblock %}
 
@@ -10,36 +11,56 @@
 {% block body %}
     <div>
         <h1>Student Report Detail</h1>
-        <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name}}</p>
-        <p>Department of Student: {{ internship.student.department }}</p>
-        <p>Uploaded Report: 
-        {% if internship.student_report %}
-            {% if internship.student_report.file%}
-            <a href="{{ internship.student_report.file.url }}">{{ internship.student_report.name }}</a>
-            {% else %}
-            No file uploaded
-            {% endif %}
-            </p>
-            <p>Due Date:
-            {% if internship.student_report.due_date %}
-                {{ internship.student_report.due_date }}
-            {% else %}
-                No due date set
-            {% endif %} 
-        </p>
-        {% else %}
-            No Submission Created
+        {% if request.user.role != 'STUDENT'%}
+            <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name}}</p>
+            <p>Department of Student: {{ internship.student.department }}</p>
         {% endif %}
-        <form method="post" action="{% url 'reports:internship_detail' internship.id %}">
-            {% csrf_token %}
-            <button type="submit" name="action" value="approve">Approve</button>
-            <button type="submit" name="action" value="reject">Reject</button>
-            
-            <p>Set Due Date for the Submission</p>
-            {{ form.as_p }}
-            <button type="submit" name="action" value="extend">Set Due Date</button>
-        </form>
+        {% if last_submission %}
+            <h2>Latest Submission</h2>
+            <p>Submitted File: <a href="{{ last_submission.file.url }}">{{ last_submission.file.name }}</a></p>
+            <p>Submission Status: {{ last_submission.get_status_display }}</p>
+            <p>Submitted At: {{ last_submission.creation_date }}</p>
+            <p>Submission Due Date: {{last_submission.due_date}}</p>
+
+            {% if request.user.role == 'STUDENT' and submission_set and last_submission.status == 'PE' and last_submission.due_date > now %}
+                <form method="post" enctype="multipart/form-data" action="{% url 'reports:internship_detail' internship.id %}">
+                    {% csrf_token %}
+                    {{ report_form.as_p }}
+                    <button type="submit" name="action" value="submission_upload">Upload</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <h2>Your Instructor has not assigned you a submission yet!</h2>
+        {% endif %}
+
+        {% if request.user|can_submit_feedback %}
+            <form method="post" action="{% url 'reports:internship_detail' internship.id %}">
+                {% csrf_token %}
+                <button type="submit" name="action" value="approve">Satisfactory</button>
+                <button type="submit" name="action" value="reject">Revision Required</button>
+                <p>Set Due Date for the Submission</p>
+                {{ form.as_p }}
+                <button type="submit" name="action" value="extend">Set Due Date</button>
+            </form>
+        {% endif %}
+
+        {% if submissions %}
+            <h2>Previous Submissions</h2>
+            {% for submission in submissions %}
+                {% if not forloop.last %}
+                    <p>Submitted File: {{ submission.file }}</p>
+                    <p>Submission Status: {{ submission.status }}</p>
+                    <p>Submitted At: {{ submission.creation_date }}</p>
+                    {% if submission.feedback %}
+                        <p>Received Feedback: {{ submission.feedback.file.url }}</p>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
 
         <a href="{% url 'reports:view_internships' %}">Back to list</a>
     </div>
+
+    
 {% endblock %}
