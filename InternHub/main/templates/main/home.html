@@ -90,23 +90,34 @@
                 </div>
             </div>
             <div class="col-auto col-6" id="middle-column">
-                <h1 class="display-6 text-center" id="announcements">Announcements</h1>
-                <hr class="my-4 border-2 text-dark">
-                <ul class="list-group">
-                    {% for announcement in announcements %}
-                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ announcement.title }}</h5>
-                                <small>{{ announcement.sender }}</small>
-                            </div>
-                            <p class="mb-1">{{ announcement.content }}</p>
-                            <small class="text-muted d-block text-end">{{ announcement.date }}</small>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div id="announcement-div">
+                    <h1 class="display-6 text-center" id="titles">Announcements</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    <ul class="list-group">
+                        {% for announcement in announcements %}
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ announcement.title }}</h5>
+                                    <small>{{ announcement.sender }}</small>
+                                </div>
+                                <p class="mb-1">{{ announcement.content }}</p>
+                                <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="submit-div" hidden>
+                    <h1 class="display-6 text-center" id="titles">Submit</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    
+                </div>
+                <div id="feedback-div" hidden>
+                    <h1 class="display-6 text-center" id="titles">Feedback</h1>
+                    <hr class="my-4 border-2 text-dark">
+                </div>
             </div>
             <div class="col text-white" id="side-bar-right">
-                <h1 class="display-6 fw-semibold text-center" id="profile">
+                <h1 class="display-6 fw-semibold text-center" id="titles">
                     Profile</h1>
                 <hr class="my-4 border-2 text-black">
                 <div class="container" id="profile-info">

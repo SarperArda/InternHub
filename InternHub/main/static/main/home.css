@@ -45,12 +45,7 @@ li.nav-item:hover .btn {
     background: #F47174;
 }
 
-#announcements {
-    padding-top: 25px;
-    padding-bottom: 10px;
-}
-
-#profile {
+#titles {
     padding-top: 25px;
     padding-bottom: 10px;
     color: #232323;
@@ -59,3 +54,5 @@ li.nav-item:hover .btn {
 #profile-info {
     color: #232323;
 }
+
+
