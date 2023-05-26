@@ -33,6 +33,8 @@ from users.views import RoleRequiredMixin
 from reports.models import Status
 from django.urls import reverse_lazy
 from reports.models import SubmissionStatus
+from announcements.models import Notification
+from users.models import Student, User, DepartmentSecretary, Instructor
 # Create your views here.
 
 
@@ -202,6 +204,12 @@ class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
         submitted_report.status = Status.PENDING
         submitted_report.save()
 
+        internship = Internship.objects.get(pk=internship_pk)
+        Notification.create_notification(
+            title="New Submitted Report",
+            content=f"Student {str(self.request.user)} has submitted a new report for {internship.course}.",
+            receiver= internship.instructor,
+        )
         return super().form_valid(form)
 
 class ReportsView(ListView):
@@ -314,10 +322,20 @@ class CreateFeedback(LoginRequiredMixin, FormView):
     template_name = 'reports/submit_feedback.html'
     form_class = FeedbackForm
     success_url = '/reports/view-internships/'
+    allowed_roles = ['INSTRUCTOR']
 
     def form_valid(self, form):
+
         feedback = InstructorFeedback(feedback=form.FILES['instructor_feedback'])
         feedback.save()
+
+        internship_pk = self.kwargs.get('pk')
+        internship = Internship.objects.get(pk=internship_pk)
+        Notification.create_notification(
+            title="New Submitted Report",
+            content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
+            receiver= internship.student,
+        )
         return super().form_valid(form)
     
 
