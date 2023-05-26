@@ -280,6 +280,7 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
 class InternshipListView(ListView, LoginRequiredMixin):
     pass
 
+"""
 class WorkAndReportEvaluationFormCreation(CreateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
@@ -308,7 +309,7 @@ class EditWorkAndReportEvaluation(View):
         except ObjectDoesNotExist:
             # Redirect to create view
             return redirect('reports:create_wre', pk=self.kwargs['pk'])
-
+"""
 class CreateFeedback(LoginRequiredMixin, FormView):
     template_name = 'reports/submit_feedback.html'
     form_class = FeedbackForm

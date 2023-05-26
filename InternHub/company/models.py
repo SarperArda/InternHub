@@ -54,14 +54,14 @@ class CAVAManager:
         student_count = students.count()
         companies = Company.objects.all()
         companies_count = companies.count()
-        for i in range(0, 2 * student_count):
+        for i in range(0, student_count):
             number = random.randint(0, companies_count - 1)
             if i % 2 == 0:
                 pk = 1
             else:
                 pk = 2
             cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
-                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2],
+                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2 + student_count//2],
                                                     requested_company=companies[number])
             print(students[i//2].first_name + students[i//2].last_name)
             cava.save()
