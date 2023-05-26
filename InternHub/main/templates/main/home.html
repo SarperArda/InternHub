@@ -26,14 +26,25 @@
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#reports-collapse"
-                                            aria-expanded="true">
+                                            aria-expanded="true"
+                                            id="main-button">
                                         <i class="fs-5 fa-regular fa-file"></i>
                                         <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
                                     </button>
                                     <div class="collapse" id="reports-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                            <li><button onclick="changeContent(1)" id="submit-button" href="#" class="text-black rounded fs-4">Submit</button></li>
-                                            <li><button onclick="changeContent(2)" id="feedbacks-button" href="#" class="text-black rounded fs-4">Feedbacks</button></li>
+                                            <li>
+                                                <button onclick="changeContent(1)"
+                                                        class="btn rounded text-white fs-4 w-100">
+                                                    Submit
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button onclick="changeContent(2)"
+                                                        class="btn rounded text-white fs-4 w-100">
+                                                    Feedbacks
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -41,14 +52,21 @@
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#company-collapse"
-                                            aria-expanded="true">
+                                            aria-expanded="true"
+                                            id="main-button">
                                         <i class="fs-5 fa-regular fa-building"></i>
                                         <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
                                     </button>
                                     <div class="collapse" id="company-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                            <li><a href="#" class="text-white rounded fs-4">Company list</a></li>
-                                            <li><a href="#" class="text-white rounded fs-4">company form</a></li>
+                                            <li>
+                                                <button class="btn text-white rounded fs-4">Company list
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="btn text-white rounded fs-4">Company form
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -56,10 +74,10 @@
                         </div>
                         <ul class="nav nav-pills flex-column mt-4">
                             <li class="nav-item py-2 py-sm-2 rounded">
-                                <a href="#" class="nav-link text-white">
+                                <button class="nav-link text-white">
                                     <i class="fs-5 fa-regular fa-envelope"></i>
                                     <span class="fs-4 ms-3 d-none d-sm-inline" id="sidebar-span">Contact</span>
-                                </a>
+                                </button>
                             </li>
                             <li class="nav-item py-2 py-sm-2 rounded">
                                 <a href="{% url 'users:logout' %}" class="nav-link text-white">

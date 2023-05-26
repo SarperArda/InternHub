@@ -12,20 +12,21 @@
     text-align: left;
 }
 
-.container button:hover,
+#main-button:hover,
 .container ul li:hover {
     background: #F47174;
 }
 
-.container button:hover span,
-.container ul li:hover span,
-.container button:hover i,
-.container ul li:hover i {
-    color: black;
-}
-
 .container ul li {
     padding: 10px;
+}
+
+#main-button:hover i,
+#main-button:hover span,
+.container ul li:hover i,
+.container ul li:hover span,
+li.nav-item:hover .btn {
+    color: black !important;
 }
 
 .container ul a {
