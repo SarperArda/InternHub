@@ -249,13 +249,17 @@ class FeedbackForm(forms.ModelForm):
 class ExtensionForm(forms.ModelForm):
     due_date = forms.DateTimeField(
         widget=forms.DateInput(
-            attrs={'type': 'date'}
-        )
+            attrs={'type': 'date'},
+        ),
+        required=False,
     )
-    
+    feedback_description = forms.CharField(required=False)
+    feedback_file = forms.FileField(required=False)
+
     class Meta:
         model = Submission
-        fields = ['due_date']
+        fields = [ 'feedback_description', 'feedback_file', 'due_date']
+
 class InternshipAssignmentForm(forms.Form):
 
     instructor = forms.ModelChoiceField(queryset=None, label="Choose instructor to whom Internship will be assigned",

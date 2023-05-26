@@ -17,10 +17,12 @@
         {% endif %}
         {% if last_submission %}
             <h2>Latest Submission</h2>
-            <p>Submitted File: <a href="{{ last_submission.file.url }}">{{ last_submission.file.name }}</a></p>
-            <p>Submission Status: {{ last_submission.get_status_display }}</p>
-            <p>Submitted At: {{ last_submission.creation_date }}</p>
             <p>Submission Due Date: {{last_submission.due_date}}</p>
+            <p>Submission Status: {{ last_submission.get_status_display }}</p>
+            {% if last_submission.file %}
+                <p>Submitted File: <a href="{{ last_submission.file.url }}">{{ last_submission.file.name }}</a></p>
+                <p>Submitted At: {{ last_submission.creation_date }}</p>
+            {% endif %}
 
             {% if request.user.role == 'STUDENT' and submission_set and last_submission.status == 'PE' and last_submission.due_date > now %}
                 <form method="post" enctype="multipart/form-data" action="{% url 'reports:internship_detail' internship.id %}">
@@ -34,13 +36,17 @@
         {% endif %}
 
         {% if request.user|can_submit_feedback %}
-            <form method="post" action="{% url 'reports:internship_detail' internship.id %}">
+            <form method="post" action="{% url 'reports:internship_detail' internship.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <button type="submit" name="action" value="approve">Satisfactory</button>
-                <button type="submit" name="action" value="reject">Revision Required</button>
-                <p>Set Due Date for the Submission</p>
+                <button type="submit" name="action" value="satisfactory">Satisfactory</button>   
+                
                 {{ form.as_p }}
-                <button type="submit" name="action" value="extend">Set Due Date</button>
+                {% if form.action.value == 'revision_required' %}
+                    <p>Upload Revision File:</p>
+                    <input type="file" name="revision_file">
+                {% endif %}
+                <button type="submit" name="action" value="extend">Change Due Date</button>
+                <button type="submit" name="action" value="revision_required">Revision Required</button>  
             </form>
         {% endif %}
 
@@ -48,11 +54,11 @@
             <h2>Previous Submissions</h2>
             {% for submission in submissions %}
                 {% if not forloop.last %}
-                    <p>Submitted File: {{ submission.file }}</p>
-                    <p>Submission Status: {{ submission.status }}</p>
+                    <p>Submitted File: <a href={{ submission.file.url }}>Submission</a></p>
+                    <p>Submission Status: {{ submission.get_status_display }}</p>
                     <p>Submitted At: {{ submission.creation_date }}</p>
                     {% if submission.feedback %}
-                        <p>Received Feedback: {{ submission.feedback.file.url }}</p>
+                        <p>Received Feedback: <a href={{ submission.feedback.file.url }}>Feedback</a></p>
                     {% endif %}
                 {% endif %}
             {% endfor %}

@@ -131,8 +131,8 @@ class Internship(models.Model):
     # Current status of the internship
     status = models.CharField(
         max_length=2,
-        choices=Status.choices,
-        default=Status.PENDING,
+        choices=SubmissionStatus.choices,
+        default=SubmissionStatus.PENDING,
     )
 
     # Company Related Demands

@@ -402,48 +402,61 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = Internship
     context_object_name = 'internship'
     allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY', 'STUDENT']
-    
 
     def post(self, request, *args, **kwargs):
         internship = self.get_object()
         action = request.POST.get('action')
         report_form = StudentReportForm(request.POST, request.FILES)
+        form = ExtensionForm(request.POST)  # form for the due date and feedback
 
+        if action == 'satisfactory':
+            # handle the satisfactory action here
+            last_submission = internship.submissions.latest('creation_date')
+            last_submission.status = SubmissionStatus.SATISFACTORY
+            last_submission.internship.status = SubmissionStatus.SATISFACTORY
+            last_submission.internship.save()
+            last_submission.save()
+            # Set internship status as Satisfactory too if needed
 
-        # Todo Send notification
-        if action == 'approve':
-            report.status = SubmissionStatus.SATISFACTORY
-            
+        elif action == 'revision_required':
+        # handle the revision_required action here
+            if form.is_valid():
+                feedback_description = form.cleaned_data['feedback_description']
+                last_submission = internship.submissions.latest('creation_date')
+                last_submission.status = SubmissionStatus.REVISION_REQUIRED
+                last_submission.save()
+                due_date = form.cleaned_data['due_date']
 
-        elif action == 'reject':
-            report.status = SubmissionStatus.REVISION_REQUIRED
-            ##ToDo: Create Feedback and set due date for new  save 
-        
+                feedback = Feedback.objects.create(submission_field=last_submission)
+                feedback.file = request.FILES['feedback_file']
+                feedback.description = feedback_description
+                feedback.save()
+
+                # Create a new submission with the provided due date
+                new_submission = Submission.objects.create(internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+            else:
+                return self.get(request, *args, **kwargs)
+
         elif action == 'extend':
-            form = ExtensionForm(request.POST)
+            # handle the extend action here
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
-                if report is not None:
-                    report.due_date = due_date
-                    report.save()
-                else:
-                    report = Submission()
-                    report.due_date = due_date
-                    report.save()
-                    internship.save()
+                last_submission = internship.submissions.latest('creation_date')
+                last_submission.due_date = due_date
+                last_submission.save()
+            else:
+                return self.get(request, *args, **kwargs)
 
         elif action == 'submission_upload' and report_form.is_valid():
             existing_report = Submission.objects.filter(internship=internship, status=SubmissionStatus.PENDING).first()
 
             if existing_report and timezone.now() <= existing_report.due_date:
-                #Update Existing Report
                 existing_report.file = report_form.cleaned_data['file']
                 existing_report.creation_date = timezone.now()
                 existing_report.save()
 
-
         return redirect('reports:view_internships')
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = ExtensionForm()
@@ -453,4 +466,5 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['last_submission'] = submissions.last()
         context['submission_set'] = self.get_object().submissions.exists()
         context['now'] = timezone.now()
+        context['action'] = self.request.POST.get('action')
         return context
