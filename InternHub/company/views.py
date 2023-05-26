@@ -85,6 +85,7 @@ class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView
                 content="Your company request has been approved.",
                 receiver=student
             )
+            
         elif action == 'reject':
             company_request.company.delete()
             company_request.delete()
