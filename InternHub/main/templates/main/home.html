@@ -60,11 +60,11 @@
                                     <div class="collapse" id="company-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
                                             <li>
-                                                <button class="btn text-white rounded fs-4">Company list
+                                                <button class="btn text-white rounded fs-4 w-100">Company list
                                                 </button>
                                             </li>
                                             <li>
-                                                <button class="btn text-white rounded fs-4">Company form
+                                                <button class="btn text-white rounded fs-4 w-100">Company form
                                                 </button>
                                             </li>
                                         </ul>
@@ -74,7 +74,7 @@
                         </div>
                         <ul class="nav nav-pills flex-column mt-4">
                             <li class="nav-item py-2 py-sm-2 rounded">
-                                <button class="nav-link text-white">
+                                <button class="nav-link text-white w-100" id="contact-button">
                                     <i class="fs-5 fa-regular fa-envelope"></i>
                                     <span class="fs-4 ms-3 d-none d-sm-inline" id="sidebar-span">Contact</span>
                                 </button>
@@ -109,11 +109,34 @@
                 <div id="submit-div" hidden>
                     <h1 class="display-6 text-center" id="titles">Submit</h1>
                     <hr class="my-4 border-2 text-dark">
-                    
                 </div>
                 <div id="feedback-div" hidden>
                     <h1 class="display-6 text-center" id="titles">Feedback</h1>
                     <hr class="my-4 border-2 text-dark">
+                </div>
+                <div id="contact-div" hidden>
+                    {% csrf_token %}
+                    <h1 class="display-6 text-center" id="titles">Contact</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    {% for contacts in contacts_tuple %}
+                        {% for contact in contacts %}
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
+                                    {% if contact.role == 'DEPARTMENT_SECRETARY' %}
+                                        <small>Department Secretary</small>
+                                    {% else %}
+                                        <small>{{ contact.role|title }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex w-100 justify-content-between mb-2">
+                                    <a href="mailto: {{ contact.email }}" id="contacts-mail"
+                                       class="text-muted">{{ contact.email }}</a>
+                                    <small class="d-block text-end">{{ contact.department }}</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    {% endfor %}
                 </div>
             </div>
             <div class="col text-white" id="side-bar-right">
@@ -137,5 +160,4 @@
         </div>
     </div>
     <script src="{% static 'main/home.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
