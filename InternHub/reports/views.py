@@ -468,3 +468,5 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['now'] = timezone.now()
         context['action'] = self.request.POST.get('action')
         return context
+
+#class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):

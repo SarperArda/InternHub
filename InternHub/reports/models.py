@@ -101,15 +101,21 @@ class WorkAndReportEvaluation(models.Model):
     total_work_grade = models.IntegerField()
 
     def calculate_total_grade(self):
-        total_work_grade = (self.grade_of_performing_work +
-                self.grade_of_solving_engineering_problems +
-                self.grade_of_recognizing_ethics +
-                self.grade_of_acquiring_knowledge +
-                self.grade_of_applying_knowledge +
-                self.grade_of_has_awareness +
-                self.grade_of_making_judgements +
-                self.grade_of_preparing_reports)
 
+        self.total_work_grade = 0
+        grade_list = list()
+        grade_list.append(self.grade_of_performing_work)
+        grade_list.append(self.grade_of_solving_engineering_problems)
+        grade_list.append(self.grade_of_recognizing_ethics)
+        grade_list.append(self.grade_of_acquiring_knowledge)
+        grade_list.append(self.grade_of_applying_knowledge)
+        grade_list.append(self.grade_of_has_awareness)
+        grade_list.append(self.grade_of_making_judgements)
+        grade_list.append(self.grade_of_preparing_reports)
+        for grade in grade_list:
+            if grade is not None:
+                self.total_work_grade = self.total_work_grade + grade
+        self.save()
 
 class Internship(models.Model):
     # Models
@@ -166,20 +172,94 @@ class InternshipManager:
 
 class Statistic(models.Model):
 
-    report_grade_average = models.IntegerField()
-    work_evaluation_grade_average = models.IntegerField()
-    company_evaluation_grade_average = models.IntegerField()
-    internship_satisfaction_number = models.IntegerField()
-    internship_unsatisfaction_number = models.IntegerField()
-    internship_pending_number = models.IntegerField()
+    report_grade_average = models.FloatField(null=True)
+    work_evaluation_grade_average = models.FloatField(null=True)
+    company_evaluation_grade_average = models.FloatField(null=True)
+    internship_satisfaction_number = models.IntegerField(null=True)
+    internship_unsatisfaction_number = models.IntegerField(null=True)
+    internship_pending_number = models.IntegerField(null=True)
     department = models.ForeignKey(EngineeringDepartment, on_delete=models.CASCADE, null=True, related_name='statistic')
 
     def calculate_report_grade_average(self):
         report_grade_average = 0
+        count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
-            if internship.work_and_report_evaluation_form.grade_of_preparing_reports and internship.work_and_report_evaluation_form:
+            if internship.work_and_report_evaluation_form and internship.work_and_report_evaluation_form.grade_of_preparing_reports :
                 report_grade_average += internship.student_report.grade
-        report_grade_average /= Internship.objects.all().count()
-        self.report_grade_average = report_grade_average
-        self.save()
-    
+                count = count + 1
+        if count:
+            report_grade_average /= count
+        else:
+            return None
+        return report_grade_average
+    def calculate_work_grade_average(self):
+        work_grade_average = 0
+        count = 0
+        for internship in Internship.objects.all().filter(student__department=self.department):
+            if internship.work_and_report_evaluation_form:
+                work_grade_average += internship.work_and_report_evaluation_form.calculate_total_grade()
+                count += 1
+        if count:
+            work_grade_average /= count
+        else:
+            return None
+        return work_grade_average - self.calculate_report_grade_average()
+
+    def calculate_company_evaluation_grade_average(self):
+        confidential_company= 0
+        count = 0
+        for internship in Internship.objects.all().filter(student__department=self.department):
+            if internship.confidential_company_form:
+                confidential_company = confidential_company + internship.confidential_company_form.grade
+                count = count + 1
+        if count:
+            confidential_company /= count
+        else:
+            return None
+        return confidential_company
+
+    def calculate_internship_statuses(self):
+        satisfactory = 0
+        unsatisfactory = 0
+        pending = 0
+        for internship in Internship.objects.all().filter(student__department=self.department):
+            if internship.status == 'PE':
+                pending += 1
+            elif internship.status == 'AC':
+                satisfactory += 1
+            else:
+                unsatisfactory += 1
+        return satisfactory, pending, unsatisfactory
+
+    def save(self, *args, **kwargs):
+        self.calculate_all()
+        super().save(*args, **kwargs)
+
+    def calculate_all(self):
+        self.report_grade_average = self.calculate_report_grade_average()
+        self.work_evaluation_grade_average = self.calculate_work_grade_average()
+        self.company_evaluation_grade_average = self.calculate_company_evaluation_grade_average()
+        self.internship_satisfaction_number, self.internship_pending_number, self.internship_unsatisfaction_number = self.calculate_internship_statuses()
+
+class StatisticManager:
+    @staticmethod
+    def create_statistics():
+        for department in EngineeringDepartment.objects.all():
+            statistic = Statistic(department=department)
+            statistic.save()
+    @staticmethod
+    def update_statistics():
+        for statistic in Statistic.objects.all():
+            statistic.save()
+
+    @staticmethod
+    def display_statistics():
+        for statistic in Statistic.objects.all():
+            print(statistic.report_grade_average )
+            print(statistic.work_evaluation_grade_average)
+            print(statistic.company_evaluation_grade_average)
+            print(statistic.internship_unsatisfaction_number)
+            print(statistic.internship_satisfaction_number)
+            print(statistic.internship_pending_number)
+            print(statistic.department)
+
