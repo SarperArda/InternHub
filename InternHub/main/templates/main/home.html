@@ -32,8 +32,8 @@
                                     </button>
                                     <div class="collapse" id="reports-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                            <li><a href="#" class="text-white rounded fs-4">Submit</a></li>
-                                            <li><a href="#" class="text-white rounded fs-4">Feedbacks</a></li>
+                                            <li><button onclick="changeContent(1)" id="submit-button" href="#" class="text-black rounded fs-4">Submit</button></li>
+                                            <li><button onclick="changeContent(2)" id="feedbacks-button" href="#" class="text-black rounded fs-4">Feedbacks</button></li>
                                         </ul>
                                     </div>
                                 </li>
@@ -71,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-auto col-6">
+            <div class="col-auto col-6" id="middle-column">
                 <h1 class="display-6 text-center" id="announcements">Announcements</h1>
                 <hr class="my-4 border-2 text-dark">
                 <ul class="list-group">
@@ -107,4 +107,5 @@
             </div>
         </div>
     </div>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}
