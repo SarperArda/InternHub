@@ -34,13 +34,13 @@
                                     <div class="collapse" id="reports-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
                                             <li>
-                                                <button onclick="changeContent(1)"
+                                                <button id="submit-button"
                                                         class="btn rounded text-white fs-4 w-100">
                                                     Submit
                                                 </button>
                                             </li>
                                             <li>
-                                                <button onclick="changeContent(2)"
+                                                <button id="feedbacks-button"
                                                         class="btn rounded text-white fs-4 w-100">
                                                     Feedbacks
                                                 </button>
@@ -126,4 +126,5 @@
         </div>
     </div>
     <script src="{% static 'main/home.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}

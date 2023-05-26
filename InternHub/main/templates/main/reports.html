@@ -1,0 +1,16 @@
+<div class="col-auto col-6" id="middle-column">
+    <h1 class="display-6 text-center" id="announcements">POTATO</h1>
+    <hr class="my-4 border-2 text-dark">
+    <ul class="list-group">
+        {% for announcement in announcements %}
+            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ announcement.title }}</h5>
+                    <small>{{ announcement.sender }}</small>
+                </div>
+                <p class="mb-1">{{ announcement.content }}</p>
+                <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

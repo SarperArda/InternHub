@@ -1,19 +1,19 @@
-function changeContent(buttonId) {
-  var middleColumn = document.getElementById('middle-column');
-  var middleColumnTitle = document.getElementById('announcements');
+document.getElementById("submit-button").addEventListener("click", function() {
+  loadContent("reports.html", "middle-column");
+});
 
-  // Replace the content based on the button clicked
-  if (buttonId === 1) {
-    middleColumnTitle.textContent = 'Submit';
-    middleColumn.innerHTML = `
-      <p>This is the content for the Submit button.</p>
-    `;
-  } else if (buttonId === 2) {
-    middleColumnTitle.textContent = 'Feedbacks';
-    middleColumn.innerHTML = `
-      <p>This is the content for the Feedbacks button.</p>
-    `;
-  }
+document.getElementById("feedbacks-button").addEventListener("click", function() {
+  loadContent("feedbacks.html", "middle-column");
+});
+
+function loadContent(url, targetId) {
+  var targetElement = document.getElementById(targetId);
+  fetch(url)
+    .then(response => response.text())
+    .then(content => {
+      targetElement.innerHTML = content;
+    })
+    .catch(error => {
+      console.error("Error loading content:", error);
+    });
 }
-  
-  
