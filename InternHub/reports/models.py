@@ -2,6 +2,7 @@ from django.db import models
 from users.models import Student, Course, Instructor
 from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
 from django.core.validators import MinValueValidator, MaxValueValidator
+from users.models import EngineeringDepartment
 # Create your models here.
 
 yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
@@ -94,6 +95,18 @@ class WorkAndReportEvaluation(models.Model):
         max_length=100, blank=True, null=True)
     exp_is_able_to_prepare_reports = models.CharField(
         max_length=100, blank=True, null=True)
+    
+    total_work_grade = models.IntegerField()
+
+    def calculate_total_grade(self):
+        total_work_grade = (self.grade_of_performing_work +
+                self.grade_of_solving_engineering_problems +
+                self.grade_of_recognizing_ethics +
+                self.grade_of_acquiring_knowledge +
+                self.grade_of_applying_knowledge +
+                self.grade_of_has_awareness +
+                self.grade_of_making_judgements +
+                self.grade_of_preparing_reports)
 
 
 class Internship(models.Model):
@@ -152,3 +165,23 @@ class InternshipManager:
     def list_instructors():
         for internship in Internship.objects.all():
             print("Internship name: " , internship, "Instructor name: " , internship.instructor)
+
+class Statistic(models.Model):
+
+    report_grade_average = models.IntegerField()
+    work_evaluation_grade_average = models.IntegerField()
+    company_evaluation_grade_average = models.IntegerField()
+    internship_satisfaction_number = models.IntegerField()
+    internship_unsatisfaction_number = models.IntegerField()
+    internship_pending_number = models.IntegerField()
+    department = models.ForeignKey(EngineeringDepartment, on_delete=models.CASCADE, null=True, related_name='statistic')
+
+    def calculate_report_grade_average(self):
+        report_grade_average = 0
+        for internship in Internship.objects.all().filter(student__department=self.department):
+            if internship.work_and_report_evaluation_form.grade_of_preparing_reports and internship.work_and_report_evaluation_form:
+                report_grade_average += internship.student_report.grade
+        report_grade_average /= Internship.objects.all().count()
+        self.report_grade_average = report_grade_average
+        self.save()
+    
