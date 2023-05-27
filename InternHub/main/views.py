@@ -28,5 +28,5 @@ class HomeView(LoginRequiredMixin, View):
                     contacts_tuple += ((internships[0].instructor,),)
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
-                           'internships': internships, 'check': check, 'contacts_tuple': contacts_tuple})
-        return render(request, 'main/home.html', {'announcements': announcements, 'full_name': full_name})
+                           'internships': internships, 'check': check, 'notifications': notifications ,'contacts_tuple': contacts_tuple})
+        return render(request, 'main/home.html', {'announcements': announcements,'notifications': notifications ,'full_name': full_name})
