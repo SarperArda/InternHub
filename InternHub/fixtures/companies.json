@@ -6,7 +6,7 @@
             "name": "Software Solutions Inc",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     },
     {
@@ -16,7 +16,7 @@
             "name": "Mechanics Corp",
             "field": "Mechanics",
             "status": "APPROVED",
-            "departments": [2]
+            "departments": 1
         }
     },
     {
@@ -26,7 +26,7 @@
             "name": "Electronical Engineering Services",
             "field": "Electronics",
             "status": "APPROVED",
-            "departments": [3]
+            "departments": 1
         }
     },
     {
@@ -36,7 +36,7 @@
             "name": "Industrial Innovations Ltd",
             "field": "Industry",
             "status": "APPROVED",
-            "departments": [4]
+            "departments": 1
         }
     },
     {
@@ -46,7 +46,7 @@
             "name": "Developer's Place",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     },
     {
@@ -56,7 +56,7 @@
             "name": "High Exclusive Techniques",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     },
     {
@@ -66,7 +66,7 @@
             "name": "Innovations&Ideas",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     },
     {
@@ -76,7 +76,7 @@
             "name": "Shining Solutions",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     },
     {
@@ -86,7 +86,7 @@
             "name": "Mobile Behaviors",
             "field": "Software",
             "status": "APPROVED",
-            "departments": [1]
+            "departments": 1
         }
     }
 ]

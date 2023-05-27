@@ -4,20 +4,14 @@ from users.models import Course, EngineeringDepartment
 from company.models import Company, CompanyApprovalValidationApplication,EvaluationByStudent
 from reports.models import Internship
 import json
-from users.models import RoleMixin
-from django.contrib.auth.hashers import make_password
 import random
 from users.models import UserManager
 
-class DatabaseManager():
 
+class DatabaseManager:
     @staticmethod
     def restart_database():
-        User.objects.all().delete()
-        Course.objects.all().delete()
-        EngineeringDepartment.objects.all().delete()
-        Company.objects.all().delete()
-        EvaluationByStudent.objects.all().delete()
+        DatabaseManager.delete_database()
         DatabaseManager.create_database()
 
     @staticmethod
@@ -27,7 +21,7 @@ class DatabaseManager():
             for user in data:
                 course = Course(**user['fields'])
                 course.save()
-    
+
     @staticmethod
     def create_departments():
         with open('fixtures/departments.json') as file:
@@ -41,8 +35,27 @@ class DatabaseManager():
         with open('fixtures/companies.json') as file:
             data = json.load(file)
             for company_data in data:
-                company = Company(**company_data['fields'])
-                company.save()
+                cs_pk = EngineeringDepartment.objects.all()[0].pk
+                me_pk = EngineeringDepartment.objects.all()[1].pk
+                eee_pk = EngineeringDepartment.objects.all()[2].pk
+                ie_pk = EngineeringDepartment.objects.all()[3].pk
+                company = Company(name=company_data['fields']['name'],
+                                    status=company_data['fields']['status'],
+                                    field=company_data['fields']['field'])
+                company.save()  # Save the company first
+
+                # Refresh the company instance to get the updated values, including the id
+                company.refresh_from_db()
+                dep_no = company_data['fields']['departments']
+                if dep_no == 1:
+                    final_pk = cs_pk
+                elif dep_no == 2:
+                    final_pk = me_pk
+                elif dep_no == 3:
+                    final_pk = eee_pk
+                else:
+                    final_pk = ie_pk
+                company.departments.add(EngineeringDepartment.objects.all().get(pk=final_pk))
 
     @staticmethod
     def create_database():
@@ -52,6 +65,14 @@ class DatabaseManager():
         UserManager.create_users()
         CAVAManager.create_CAVAs()
         InternshipManager.create_internships()
+
+    @staticmethod
+    def delete_database():
+        User.objects.all().delete()
+        Course.objects.all().delete()
+        EngineeringDepartment.objects.all().delete()
+        Company.objects.all().delete()
+        EvaluationByStudent.objects.all().delete()
 
 class InternshipManager:
     @staticmethod
@@ -66,116 +87,6 @@ class InternshipManager:
         for internship in Internship.objects.all():
             print("Internship name: " , internship, "Instructor name: " , internship.instructor)
 
-class UserManager(BaseUserManager):
-
-    def create_user(self, user_id, password=None, email=None, first_name=None, last_name=None):
-        if not user_id:
-            raise ValueError('Users must have a valid id')
-
-        user = self.model(
-            user_id=user_id,
-            email=self.normalize_email(email),
-            first_name=first_name,
-            last_name=last_name,
-        )
-
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, user_id, password=None):
-        user = self.create_user(
-            user_id=user_id,
-            password=password,
-        )
-
-        user.is_staff = True
-        user.is_active = True
-        user.is_superuser = True
-        user.is_admin = True
-        user.role = RoleMixin.Role.SUPERUSER
-        user.save(using=self._db)
-        return user
-
-    @staticmethod
-    def create_instructors():
-        with open('fixtures/instructors.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                instructor = Instructor(**user['fields'], password=hashed_password)
-                instructor.save()
-    @staticmethod
-    def create_students():
-        with open('fixtures/students.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                student = Student(**user['fields'], password=hashed_password)
-                student.save()
-
-    @staticmethod
-    def create_department_secretaries():
-        with open('fixtures/secretary.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                ds = DepartmentSecretary(**user['fields'], password=hashed_password)
-                ds.save()
-
-    @staticmethod
-    def create_dean():
-        with open('fixtures/dean.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                dean = Dean(**user['fields'], password=hashed_password)
-                dean.save()
-
-    @staticmethod
-    def create_chairs():
-        with open('fixtures/chairs.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                chair = Chair(**user['fields'], password=hashed_password)
-                chair.save()
-
-    @staticmethod
-    def create_supers():
-        with open('fixtures/superuser.json') as file:
-            data = json.load(file)
-            hashed_password = make_password('admin')
-            for user in data:
-                department_id = user['fields']['department']
-                department = EngineeringDepartment.objects.get(pk=department_id)
-                user['fields']['department'] = department
-                super_user = User(**user['fields'], password=hashed_password)
-                super_user.role = RoleMixin.Role.SUPERUSER
-                super_user.save()
-    @staticmethod
-    def create_users():
-        UserManager.create_instructors()
-        UserManager.create_dean()
-        UserManager.create_students()
-        UserManager.create_department_secretaries()
-        UserManager.create_supers()
-        UserManager.create_chairs()
 
 class CAVAManager:
     @staticmethod
@@ -187,9 +98,9 @@ class CAVAManager:
         for i in range(0, student_count):
             number = random.randint(0, companies_count - 1)
             if i % 2 == 0:
-                pk = 1
+                pk = Course.objects.all()[0].pk
             else:
-                pk = 2
+                pk = Course.objects.all()[1].pk
             cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
                  file='uploads/empty.pdf', status='APPROVED', student=students[i//2 + student_count//2],
                                                     requested_company=companies[number])
