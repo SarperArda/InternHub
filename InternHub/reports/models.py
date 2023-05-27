@@ -160,19 +160,6 @@ class InstructorFeedback(models.Model):
     feedback = models.FileField(upload_to='feedbacks/', null=True)
 
 
-class InternshipManager:
-    @staticmethod
-    def create_internships():
-        cavas = CompanyApprovalValidationApplication.objects.all()
-        for cava in cavas:
-            internship = Internship(student=cava.student, course=cava.course, company=cava.requested_company,
-                                    company_approval=cava)
-            internship.save()
-    @staticmethod
-    def list_instructors():
-        for internship in Internship.objects.all():
-            print("Internship name: " , internship, "Instructor name: " , internship.instructor)
-
 class Statistic(models.Model):
 
     report_grade_average = models.FloatField(null=True)

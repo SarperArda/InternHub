@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from .decorators import decorate_get_all
 import json
 from django.contrib.auth.hashers import make_password
+from company.models import Company,CAVAManager
+from company.models import EvaluationByStudent
+from reports.models import InternshipManager
 
 # Create your models here.
 
@@ -47,7 +50,6 @@ class RoleMixin(models.Model):
         else:
             self.role = self.Role[role]
         super().save(*args, **kwargs)
-
 
 class UserManager(BaseUserManager):
 
@@ -159,6 +161,7 @@ class UserManager(BaseUserManager):
         UserManager.create_department_secretaries()
         UserManager.create_supers()
         UserManager.create_chairs()
+
 
 # Your existing code here
 
