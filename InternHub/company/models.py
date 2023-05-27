@@ -47,22 +47,3 @@ class CompanyApprovalValidationApplication(CompanyRelatedDemand):
 class EvaluationByStudent(CompanyRelatedDemand):
     grade = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])
 
-class CAVAManager:
-    @staticmethod
-    def create_CAVAs():
-        students = Student.objects.all()
-        student_count = students.count()
-        companies = Company.objects.all()
-        companies_count = companies.count()
-        for i in range(0, student_count):
-            number = random.randint(0, companies_count - 1)
-            if i % 2 == 0:
-                pk = 1
-            else:
-                pk = 2
-            cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
-                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2 + student_count//2],
-                                                    requested_company=companies[number])
-            print(students[i//2].first_name + students[i//2].last_name)
-            cava.save()
-

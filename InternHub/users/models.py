@@ -4,6 +4,8 @@ from .decorators import decorate_get_all
 import json
 from django.contrib.auth.hashers import make_password
 
+
+
 # Create your models here.
 
 
@@ -48,7 +50,6 @@ class RoleMixin(models.Model):
             self.role = self.Role[role]
         super().save(*args, **kwargs)
 
-
 class UserManager(BaseUserManager):
 
     def create_user(self, user_id, password=None, email=None, first_name=None, last_name=None):
@@ -86,7 +87,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 instructor = Instructor(**user['fields'], password=hashed_password)
@@ -97,7 +98,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 student = Student(**user['fields'], password=hashed_password)
@@ -109,7 +110,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 ds = DepartmentSecretary(**user['fields'], password=hashed_password)
@@ -121,7 +122,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 dean = Dean(**user['fields'], password=hashed_password)
@@ -133,7 +134,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 chair = Chair(**user['fields'], password=hashed_password)
@@ -145,7 +146,7 @@ class UserManager(BaseUserManager):
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
-                department_id = user['fields']['department']
+                department_id = UserManager.determine_pk(user['fields']['department'])
                 department = EngineeringDepartment.objects.get(pk=department_id)
                 user['fields']['department'] = department
                 super_user = User(**user['fields'], password=hashed_password)
@@ -160,6 +161,20 @@ class UserManager(BaseUserManager):
         UserManager.create_supers()
         UserManager.create_chairs()
 
+    @staticmethod
+    def determine_pk(pk):
+        cs_pk = EngineeringDepartment.objects.all()[0].pk
+        me_pk = EngineeringDepartment.objects.all()[1].pk
+        eee_pk = EngineeringDepartment.objects.all()[2].pk
+        ie_pk = EngineeringDepartment.objects.all()[3].pk
+        if pk == 1:
+            return cs_pk
+        elif pk == 2:
+            return me_pk
+        elif pk == 3:
+            return eee_pk
+        else:
+            return ie_pk
 # Your existing code here
 
 class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
