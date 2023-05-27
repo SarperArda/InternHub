@@ -117,7 +117,10 @@ class WorkAndReportEvaluation(models.Model):
             if grade is not None:
                 self.total_work_grade = self.total_work_grade + grade
         self.save()
-
+        if self.total_work_grade:
+            return self.total_work_grade
+        else:
+            return None
 class Internship(models.Model):
     # Models
     student = models.ForeignKey(
@@ -186,14 +189,20 @@ class Statistic(models.Model):
         work_grade_average = 0
         count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
-            if internship.work_and_report_evaluation_form:
+            print("Inside the loop")
+            if internship.work_and_report_evaluation_form and internship.work_and_report_evaluation_form.calculate_total_grade():
                 work_grade_average += internship.work_and_report_evaluation_form.calculate_total_grade()
+                print("Work grade average: ", work_grade_average)
                 count += 1
         if count:
             work_grade_average /= count
+            if self.calculate_report_grade_average():
+                return work_grade_average - self.calculate_report_grade_average()
+            else:
+                return work_grade_average
         else:
             return None
-        return work_grade_average - self.calculate_report_grade_average()
+
 
     def calculate_company_evaluation_grade_average(self):
         confidential_company= 0
@@ -213,12 +222,17 @@ class Statistic(models.Model):
         unsatisfactory = 0
         pending = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
-            if internship.status == 'PE':
+            if internship.status == SubmissionStatus.PENDING:
                 pending += 1
-            elif internship.status == 'AC':
+            elif internship.status == SubmissionStatus.SATISFACTORY:
                 satisfactory += 1
             else:
                 unsatisfactory += 1
+            print("Internship with ", internship,  " department: ", internship.student.department)
+            if internship.confidential_company_form:
+                print("Internship with confidential company grade ", internship.confidential_company_form.grade)
+            if internship.work_and_report_evaluation_form:
+                print("Internship with work and report evaluation grade", internship.work_and_report_evaluation_form.total_work_grade)
         return satisfactory, pending, unsatisfactory
 
     def save(self, *args, **kwargs):
@@ -230,7 +244,7 @@ class Statistic(models.Model):
         self.work_evaluation_grade_average = self.calculate_work_grade_average()
         self.company_evaluation_grade_average = self.calculate_company_evaluation_grade_average()
         self.internship_satisfaction_number, self.internship_pending_number, self.internship_unsatisfaction_number = self.calculate_internship_statuses()
-
+        print(self.report_grade_average, self.work_evaluation_grade_average, self.company_evaluation_grade_average)
 class StatisticManager:
     @staticmethod
     def create_statistics():
@@ -245,11 +259,11 @@ class StatisticManager:
     @staticmethod
     def display_statistics():
         for statistic in Statistic.objects.all():
-            print(statistic.report_grade_average )
-            print(statistic.work_evaluation_grade_average)
-            print(statistic.company_evaluation_grade_average)
-            print(statistic.internship_unsatisfaction_number)
-            print(statistic.internship_satisfaction_number)
-            print(statistic.internship_pending_number)
-            print(statistic.department)
+            print("Report grade average: ",statistic.report_grade_average )
+            print("Work evaluation average: ", statistic.work_evaluation_grade_average)
+            print("Company Average: ", statistic.company_evaluation_grade_average)
+            print("Unsatisfactory Number: ", statistic.internship_unsatisfaction_number)
+            print("Satisfactory Number: ", statistic.internship_satisfaction_number)
+            print("Pending Number: ",statistic.internship_pending_number)
+            print("Department Name: ", statistic.department)
 
