@@ -1,7 +1,7 @@
 from django import forms
 from users.models import EngineeringDepartment, Course, Student, Instructor
 from company.models import Company
-from reports.models import Internship, Submission, Feedback
+from reports.models import Internship, Submission, Feedback, ExtensionRequest
 from django.core.exceptions import ValidationError
 from datetime import datetime
 from .models import WorkAndReportEvaluation, ConfidentialCompany
@@ -242,20 +242,29 @@ class StudentReportForm(forms.ModelForm):
         fields = ['file']
 
 class FeedbackForm(forms.ModelForm):
+    due_date = forms.DateTimeField(
+        widget=forms.DateInput(
+            attrs={'type': 'date'},
+        ),
+    )
+    description = forms.CharField(
+        widget=forms.Textarea,
+        required=False,
+    )
     class Meta:
         model = Feedback
-        fields = '__all__'
+        fields = ['due_date', 'file', 'description']
 
 class ExtensionForm(forms.ModelForm):
-    due_date = forms.DateTimeField(
+    extension_date = forms.DateTimeField(
         widget=forms.DateInput(
             attrs={'type': 'date'},
         ),
     )
 
     class Meta:
-        model = Submission
-        fields = ['due_date']
+        model = ExtensionRequest
+        fields = ['extension_date']
 
 class InternshipAssignmentForm(forms.Form):
 

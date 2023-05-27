@@ -63,6 +63,9 @@ class ConfidentialCompany(models.Model):
     supervisor_background = models.CharField(
         max_length=3, choices=yes_no_choices)
 
+class ExtensionRequest(models.Model):
+    extension_date = models.DateTimeField()
+    submission = models.OneToOneField(Submission, on_delete=models.CASCADE, null=True, related_name='extension')
 
 class WorkAndReportEvaluation(models.Model):
     grade_of_performing_work = models.IntegerField(

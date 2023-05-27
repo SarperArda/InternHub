@@ -10,7 +10,7 @@ from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
 from users.models import Student
-from .models import StudentReport, WorkAndReportEvaluation, Submission, InstructorFeedback
+from .models import StudentReport, WorkAndReportEvaluation, Submission, InstructorFeedback, ExtensionRequest
 from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
@@ -499,26 +499,90 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         internships = self.get_queryset()
         context['internships'] = internships
         context['latest_submissions'] = {}
-        for internship in internships:
-            context['latest_submissions'][internship.pk] = internship.submissions.order_by('-id').first()
+        context['feedback_needed'] = {}
+        context['feedback_recieved'] = {}
+        context['feedback_form'] = FeedbackForm()
         context['form'] = StudentReportForm()
         context['extension_form'] = ExtensionForm()
+        context['date_passed'] = {}
+
+        for internship in internships:
+            if internship.submissions.exists():
+                context['latest_submissions'][internship.pk] = internship.submissions.order_by('-id').first()
+                last_submission = internship.submissions.all().latest('id')
+                submissions = internship.submissions.all().order_by('-id')
+                second_last_submission = submissions[1] if submissions.count() > 1 else None 
+
+                if last_submission.file == "" and second_last_submission is not None:
+                    context['feedback_recieved'][internship.pk] = True                
+                else:
+                    context['feedback_recieved'][internship.pk] = False
+                if last_submission.due_date < timezone.now():
+                    context['date_passed'][internship.pk] = True
+                # Check if feedback is needed for the last submission
+                feedback_needed = bool(
+                    last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
+                context['feedback_needed'][internship.pk] = feedback_needed
+            else:
+                context['latest_submissions'][internship.pk] = None
+                context['feedback_needed'][internship.pk] = False
         return context
     
     def post(self, request, *args, **kwargs):
         internship_id = request.POST.get('internship_id')
         internship = get_object_or_404(Internship, id=internship_id)
+        latest_submission = internship.submissions.latest('id')
+        action = request.POST.get('action')
 
-        if 'extension_request' in request.POST:
+        if action == 'extension_request':
             extension_form = ExtensionForm(request.POST)
-            if extension_form.is_valid():
+            if extension_form.is_valid() and not hasattr(latest_submission, 'extension'):
                 # Process the extension request
-                due_date = extension_form.cleaned_data['due_date']
-                # Handle the extension logic for the internship
-                #TODO Add Extension Request Logic
-                return redirect('reports:submission_list')
-        else:
+                date = extension_form.cleaned_data['extension_date']
+                ExtensionRequest.objects.create(
+                    submission=latest_submission, extension_date=date)
+                Notification.create_notification(
+                    title="Extension Request",
+                    content=f"Student {str(self.request.user)} has requested an extension for {internship.student.department.code} {internship.course} at {date}.",
+                    receiver=internship.instructor,
+                )
+                latest_submission.save()
+        elif action == 'satisfactory':
+            print("Hey")
+            latest_submission.status = SubmissionStatus.SATISFACTORY
+            internship.status = SubmissionStatus.SATISFACTORY
+            latest_submission.save()
+            internship.save()
+            Notification.create_notification(
+                title="Satisfactory Report",
+                content=f"Your report for {internship.student.department.code} {internship.course} has been marked as satisfactory.",
+                receiver=internship.student,
+            )
+        elif action == 'revision_required':
+            feedback_form = FeedbackForm(request.POST, request.FILES)
+            if feedback_form.is_valid():
+                print("Hey")
+                # Process the feedback upload
+                feedback_description = feedback_form.cleaned_data['description']
+                due_date = feedback_form.cleaned_data['due_date']
 
+                # Update the status of the last submission to revision required
+                last_submission = internship.submissions.latest('creation_date')
+                last_submission.status = SubmissionStatus.REVISION_REQUIRED
+                
+                # Create a new feedback object and initialize it with the last submission
+                feedback = Feedback.objects.create(
+                    submission_field=last_submission)
+                feedback.file = request.FILES['file']
+                feedback.description = feedback_description
+
+                feedback.save()
+                last_submission.save()
+
+                # Create a new submission with the provided due date
+                new_submission = Submission.objects.create(
+                    internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+        elif action == 'submit_report':
             form = StudentReportForm(request.POST, request.FILES)
 
             if form.is_valid():
@@ -531,10 +595,22 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                     existing_report.save()
 
                 # Handle the file upload and any other necessary logic
-                return redirect('reports:submission_list')
-
-        context = self.get_context_data(**kwargs)
-        context['form'] = form
-        return self.render_to_response(context)
+        elif action == 'approve_extension':
+            latest_submission.due_date = latest_submission.extension.extension_date
+            latest_submission.extension.delete()
+            latest_submission.save()
+            Notification.create_notification(
+                title="Extension Approved",
+                content=f"Your extension request for {internship.student.department.code} {internship.course} has been approved.",
+                receiver=internship.student,
+            )
+        elif action == 'reject_extension':
+            latest_submission.extension.delete()
+            Notification.create_notification(
+                title="Extension Rejected",
+                content=f"Your extension request for {internship.student.department.code} {internship.course} has been rejected.",
+                receiver=internship.student,
+            )
+        return redirect('reports:submission_list')
 
 # class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
