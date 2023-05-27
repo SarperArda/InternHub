@@ -8,7 +8,8 @@
 {% endblock %}
 
 {% block body %}
-    {{ block.super }}
+<div class="container-fluid">
+    <div class="row flex-nowrap">
     {% block left-column %}
         <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
             <div class="bg-dark p2">
@@ -91,6 +92,24 @@
     {% endblock %}
 
     {% block right-column %}
-        {{ block.super }}
+        <div class="col text-white" id="side-bar-right">
+            <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+            <hr class="my-4 border-2 text-black">
+            <div class="container" id="profile-info">
+                <div class="row">
+                    {% if check %}
+                        <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                        <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                        <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                    {% endif %}
+                </div>
+                <hr class="my-4 border-2 text-black">
+                <h1 class="display-6 text-center fw-semibold" id="due-date">
+                    Due Date</h1>
+            </div>
+        </div>
     {% endblock %}
+    </div>
+</div>
+<script src="{% static 'main/home.js' %}"></script>
 {% endblock %}

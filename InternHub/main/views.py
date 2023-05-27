@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from announcements.models import Announcement
+from announcements.models import Announcement, Notification
 from reports.models import Internship
 from users.models import DepartmentSecretary, Chair, Dean
 
@@ -11,6 +11,7 @@ class HomeView(LoginRequiredMixin, View):
 
     def get(self, request):
         announcements = Announcement.objects.all()
+        notifications = Notification.objects.filter(receiver=request.user)
         full_name = str(request.user)
         user = request.user
         id = request.user.user_id
@@ -25,5 +26,5 @@ class HomeView(LoginRequiredMixin, View):
                     contacts_set.add((internship.instructor,))
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
-                           'internships': internships, 'check': check, 'contacts_set': contacts_set})
-        return render(request, 'main/home.html', {'announcements': announcements, 'full_name': full_name})
+                           'internships': internships, 'check': check, 'contacts_set': contacts_set, 'notifications': notifications})
+        return render(request, 'main/home.html', {'announcements': announcements, 'notifications': notifications, 'full_name': full_name})
