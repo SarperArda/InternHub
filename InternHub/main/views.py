@@ -15,18 +15,16 @@ class HomeView(LoginRequiredMixin, View):
         full_name = str(request.user)
         user = request.user
         id = request.user.user_id
-        contacts_tuple = (DepartmentSecretary.objects.all().filter(department=user.department),
-                          Chair.objects.all().filter(department=user.department),
-                          Dean.objects.all().filter(department=user.department),)
+        contacts_set: set = {DepartmentSecretary.objects.all().filter(department=user.department),
+                             Chair.objects.all().filter(department=user.department),
+                             Dean.objects.all().filter(department=user.department), }
         if user.role != 'SUPERUSER':
             check = True
             internships = Internship.objects.filter(student__user_id=id)
             if user.role == 'STUDENT':
-                if (internships.count() == 2):
-                    contacts_tuple += ((internships[0].instructor, internships[1].instructor,),)
-                elif (internships.count() == 1):
-                    contacts_tuple += ((internships[0].instructor,),)
+                for internship in internships:
+                    contacts_set.add((internship.instructor,))
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
-                           'internships': internships, 'check': check, 'notifications': notifications ,'contacts_tuple': contacts_tuple})
-        return render(request, 'main/home.html', {'announcements': announcements,'notifications': notifications ,'full_name': full_name})
+                           'internships': internships, 'check': check, 'contacts_set': contacts_set, 'notifications': notifications})
+        return render(request, 'main/home.html', {'announcements': announcements, 'notifications': notifications, 'full_name': full_name})
