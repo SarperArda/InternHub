@@ -33,11 +33,15 @@
             {% endif %}
             <a href="{% url 'company:evaluate-company' internship.pk %}"><button type="submit" name="action" value="detail">Evaluate Company</button></a>
         {% endif %}
-
+        {% if request.user.role == 'INSTRUCTOR' %}
+            <a href="{% url 'reports:edit_wre' internship.id%}"><button type="submit" name="action" value="form_filling">Fill Work and Report Evaluation</button></a>
+        {% endif %}
         {% if request.user|can_submit %}
             <a href="{% url 'reports:internship_detail' internship.id%}"><button type="submit" name="action" value="detail">View Submissions</button></a>
         {% endif %}
-
+        {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+            <a href="{% url 'reports:create_cf' internship.id%}"><button type="submit" name="action" value="form_filling">Fill Confidential Company</button></a>
+        {% endif %}
     </div>
     {% endfor %}
 

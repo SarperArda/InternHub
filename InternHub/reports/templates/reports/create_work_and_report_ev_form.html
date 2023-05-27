@@ -13,14 +13,12 @@
             <h1>InternHub</h1>
             <form method="post" class="form">
                 {% csrf_token %}
-                <p> Instructor Name:  {{ instructor_name }}</p>
-                <p> Instructor Surname:  {{ instructor_surname }}</p>
                 <p> Student Name:  {{ student_name }}</p>
-                <p> Student Surname:  {{ student_surname }}</p>
                 <p> Department:  {{ department }}</p>
                 <p> Course: {{ course }}</p>
                 {{ form.as_p }}
                 <button type="submit">Submit!</button>
+                <a href="{% url 'reports:view_internships'%}"> Back to List</a>
             </form>
         </div>
     </div>

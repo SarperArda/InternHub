@@ -5,7 +5,7 @@ from reports.forms import ConfidentialCompanyForm
 from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import WorkAndReportEvaluationForm, InternshipAssignmentForm
-from .models import Internship,Feedback
+from .models import Internship,Feedback, ConfidentialCompany
 from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
@@ -38,73 +38,36 @@ from users.models import Student, User, DepartmentSecretary, Instructor
 # Create your views here.
 
 
-class CreateConfidentialForm(LoginRequiredMixin, FormView):
+class CreateConfidentialForm(CreateView):
     form_class = ConfidentialCompanyForm
     template_name = 'reports/create_confidential_form.html'
-    success_url = '/company/companies/'
+    model = ConfidentialCompany
+    success_url = reverse_lazy('reports:view_internships')
+    def get_success_url(self):
+        confidential = self.object
+        if confidential.grade < 7 or confidential.is_work_related == 'No' or confidential.supervisor_background == 'No':
+            confidential.status = 'REJECTED'
+        else:
+            confidential.status = 'ACCEPTED'
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        if internship.confidential_company_form:
+            internship.confidential_company_form.delete()
+        internship.confidential_company_form = confidential
+        print(internship.confidential_company_form.grade)
+        internship.save()
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        internship_id = self.kwargs["internship_id"]
+        internship_id = self.kwargs["pk"]
         if Internship.objects.filter(id = internship_id).exists():
             internship = Internship.objects.get(id = internship_id)
-            if not internship.student.DoesNotExist:
-                context['student_name'] = internship.student.first_name
-                context['student_surname'] = internship.student.last_name
-                context['department'] = internship.student.department.name
-            else:
-                context['student_name'] = "Does not exist"
-                context['student_surname'] = "Does not exist"
-                context['department'] = "Does not exist"
-            if not internship.instructor is None:
-                context['instructor_name'] = internship.instructor.first_name
-                context['instructor_surname'] = internship.instructor.last_name
-            else:
-                context['instructor_name'] = "Does not exist"
-                context['instructor_surname'] = "Does not exist"
-            if not internship.course is None:
-                context['course'] = internship.course
-            else:
-                context['course'] = "Does not exist"
-        else:
-            context['student_name'] = "Not reachable"
-            context['student_surname'] = "Not reachable"
-            context['instructor_name'] = "Not reachable"
-            context['department'] = "Not reachable"
-            context['instructor_surname'] = "Not reachable"
-            context['course'] = "Not reachable"
+            context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+            context['department'] = internship.student.department.name
+            context['instructor_name'] = internship.instructor.first_name + " " + internship.instructor.last_name
+            context['course'] = internship.student.department.code + " " + internship.course.code
         return context
 
-    """
-    def form_valid(self, form):
-        # Checking if the report is satisfactory.
-
-        if form.cleaned_data['grade'] < 7:
-            status = 'REJECTED'
-        elif not form.cleaned_data['is_work_related']:
-            status = 'REJECTED'
-        elif not form.cleaned_data['supervisor_background']:
-            status = 'REJECTED'
-        else:
-            status = 'ACCEPTED'
-
-        # Getting the user_id and course from the form.
-        user_id = form.cleaned_data['student_id']
-        course = form.cleaned_data['course']
-
-        # Getting the internship object.
-        internship = Internship.objects.get(
-            student=Student.objects.get(user_id=user_id), course=course)
-
-        # If the form is not valid, return the form with the errors.
-        if form.errors != {}:
-            return super().form_invalid(form)
-
-        # If there are no errors, save the form and update the internship status.
-        form.save()
-        internship.confidential_company_form.status = status
-        return super().form_valid(form)
-    """
 
 #not completed
 class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
@@ -135,20 +98,31 @@ class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
         form.save()
         return super().form_valid(form)
 
-class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-    success_url = '/reports/create-work-and-report-ev-form/1'
 
-    #def get_context_data(self, **kwargs):
-    #    super().get_context_data()
 class WorkAndReportEvaluationFormCreation(CreateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
 
+    # Create a new WorkAndReportEvaluation instance
     def get_success_url(self):
+        work_and_report_evaluation = self.object
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        # Set the internship's work_and_report_evaluation field
+        work_and_report_evaluation.calculate_total_grade()
+        internship.work_and_report_evaluation_form = work_and_report_evaluation
+        print(internship.work_and_report_evaluation_form.total_work_grade)
+        internship.save()
         return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+        context['department'] = internship.student.department.name
+        context['course'] = internship.student.department.code + " " + internship.course.code
+        #ontext['form'] = self.get_form()
+        return context
 
 class WorkAndReportEvaluationFormUpdate(UpdateView):
     model = WorkAndReportEvaluation
@@ -156,20 +130,33 @@ class WorkAndReportEvaluationFormUpdate(UpdateView):
     template_name = 'reports/create_work_and_report_ev_form.html'
 
     def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+        work_and_report_evaluation = self.object
+        work_and_report_evaluation.calculate_total_grade()
+        internship = Internship.objects.all().filter(pk=work_and_report_evaluation.internship.pk).first()
+        print(internship.work_and_report_evaluation_form.total_work_grade)
+        return reverse('reports:edit_wre', kwargs={'pk' : work_and_report_evaluation.internship.pk })
 
+    def get_context_data(self, **kwargs):
+        work_and_report_evaluation = self.object
+        context = super().get_context_data(**kwargs)
+        internship = Internship.objects.all().filter(pk=work_and_report_evaluation.internship.pk).first()
+        context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+        context['department'] = internship.student.department.name
+        context['course'] = internship.student.department.code + " " + internship.course.code
+        #context['form'] = self.get_form()
+        return context
 class EditWorkAndReportEvaluation(View):
     def get(self, request, **kwargs):
-        try:
-            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
-                #print(self.kwargs['pk'])
-                # Redirect to update view
-                return redirect('reports:update_wre', pk=self.kwargs['pk'])
-            else:
-                return redirect('reports:create_wre', pk=self.kwargs['pk'])
-        except ObjectDoesNotExist:
-            # Redirect to create view
+        target_form = Internship.objects.filter(pk=self.kwargs['pk']).first().work_and_report_evaluation_form
+        if target_form:
+            real_pk = target_form.pk
+            # Redirect to update view
+            return redirect('reports:update_wre', pk=real_pk)
+        else:
             return redirect('reports:create_wre', pk=self.kwargs['pk'])
+
+
+
 class CreateSubmitReport(LoginRequiredMixin, FormView):
     def get(self, request):
         form = StudentReportForm()
@@ -288,36 +275,6 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
 class InternshipListView(ListView, LoginRequiredMixin):
     pass
 
-"""
-class WorkAndReportEvaluationFormCreation(CreateView):
-    model = WorkAndReportEvaluation
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-
-    def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
-
-class WorkAndReportEvaluationFormUpdate(UpdateView):
-    model = WorkAndReportEvaluation
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-
-    def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
-
-class EditWorkAndReportEvaluation(View):
-    def get(self, request, **kwargs):
-        try:
-            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
-                #print(self.kwargs['pk'])
-                # Redirect to update view
-                return redirect('reports:update_wre', pk=self.kwargs['pk'])
-            else:
-                return redirect('reports:create_wre', pk=self.kwargs['pk'])
-        except ObjectDoesNotExist:
-            # Redirect to create view
-            return redirect('reports:create_wre', pk=self.kwargs['pk'])
-"""
 class CreateFeedback(LoginRequiredMixin, FormView):
     template_name = 'reports/submit_feedback.html'
     form_class = FeedbackForm
@@ -330,7 +287,7 @@ class CreateFeedback(LoginRequiredMixin, FormView):
         feedback.save()
 
         internship_pk = self.kwargs.get('pk')
-        internship = Internship.objects.get(pk=internship_pk)
+        internship = Internship.objects.all().get(pk=internship_pk)
         Notification.create_notification(
             title="New Submitted Report",
             content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",

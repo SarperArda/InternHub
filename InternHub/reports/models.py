@@ -98,7 +98,7 @@ class WorkAndReportEvaluation(models.Model):
     exp_is_able_to_prepare_reports = models.CharField(
         max_length=100, blank=True, null=True)
     
-    total_work_grade = models.IntegerField()
+    total_work_grade = models.IntegerField(null=True)
 
     def calculate_total_grade(self):
 
