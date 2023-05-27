@@ -45,6 +45,11 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
             content=f"Student {str(self.request.user)} has submitted a new company request for {company.name}.",
             receiver=department_secretary
         )
+        Notification.create_notification(
+            title="Company Request Sent",
+            content=f"Has been submitted a new company request for {company.name}.",
+            receiver=student
+        )
         return super().form_valid(form)
 
 

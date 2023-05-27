@@ -218,11 +218,6 @@ class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
         submitted_report.save()
 
         internship = Internship.objects.get(pk=internship_pk)
-        Notification.create_notification(
-            title="New Submitted Report",
-            content=f"Student {str(self.request.user)} has submitted a new report for {internship.course}.",
-            receiver=internship.instructor,
-        )
         return super().form_valid(form)
 
 
@@ -356,11 +351,6 @@ class CreateFeedback(LoginRequiredMixin, FormView):
 
         internship_pk = self.kwargs.get('pk')
         internship = Internship.objects.get(pk=internship_pk)
-        Notification.create_notification(
-            title="New Submitted Report",
-            content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
-            receiver=internship.student,
-        )
         return super().form_valid(form)
 
 
@@ -405,6 +395,11 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             else:
                 context['submission_statuses'][internship.pk] = None
                 context['feedback_needed'][internship.pk] = False
+                Notification.create_notification(
+                        title="New Submission",
+                        content=f"Instructor {str(self.request.user)} has submitted a new submission for {internship.student.department.code}{internship.course}.",
+                        receiver=internship.student,
+                )
         return context
 
     def post(self, request, *args, **kwargs):
@@ -426,6 +421,11 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                 # Add the submission to the internship if it doesn't exist
                 if report.id is None:
                     internship.submissions.add(report)
+                Notification.create_notification(
+                        title="New Due Date",
+                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                        receiver=internship.student,
+                )
             # Redirect to the view page
             return redirect('reports:view_internships')
 
@@ -454,6 +454,11 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
             last_submission.internship.save()
             last_submission.save()
             # Set internship status as Satisfactory too if needed
+            Notification.create_notification(
+                title="Report is Satisfactory",
+                content=f"{internship.student.department.code} {internship.course}'s report is marked as satisfactory by {self.request.user}.",
+                receiver=internship.student,
+            )
 
         elif action == 'revision_required':
             # handle the revision_required action here
@@ -474,6 +479,11 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                 # Create a new submission with the provided due date
                 new_submission = Submission.objects.create(
                     internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+                Notification.create_notification(
+                    title="New Submitted Feedback",
+                    content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
+                    receiver=internship.student,
+                )
             else:
                 return self.get(request, *args, **kwargs)
 
@@ -485,6 +495,11 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                     'creation_date')
                 last_submission.due_date = due_date
                 last_submission.save()
+                Notification.create_notification(
+                        title="New Due Date",
+                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                        receiver=internship.student,
+                )
             else:
                 return self.get(request, *args, **kwargs)
 
@@ -496,7 +511,11 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                 existing_report.file = report_form.cleaned_data['file']
                 existing_report.creation_date = timezone.now()
                 existing_report.save()
-
+        Notification.create_notification(
+            title="New Submitted Report",
+            content=f"Student {str(self.request.user)} has submitted a new report for {internship.student.department.code} {internship.course}.",
+            receiver=internship.instructor,
+        )
         return redirect('reports:view_internships')
 
     def get_context_data(self, **kwargs):
