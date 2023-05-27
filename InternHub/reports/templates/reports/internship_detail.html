@@ -35,7 +35,7 @@
             <h2>Your Instructor has not assigned you a submission yet!</h2>
         {% endif %}
 
-        {% if request.user|can_submit_feedback %}
+        {% if request.user|can_submit_feedback and last_submission.file %}
             <form method="post" action="{% url 'reports:internship_detail' internship.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <button type="submit" name="action" value="satisfactory">Satisfactory</button>   
@@ -53,12 +53,14 @@
         {% if submissions %}
             <h2>Previous Submissions</h2>
             {% for submission in submissions %}
-                {% if not forloop.last %}
+                {% if not forloop.first %}
                     <p>Submitted File: <a href={{ submission.file.url }}>Submission</a></p>
                     <p>Submission Status: {{ submission.get_status_display }}</p>
                     <p>Submitted At: {{ submission.creation_date }}</p>
+                    
                     {% if submission.feedback %}
-                        <p>Received Feedback: <a href={{ submission.feedback.file.url }}>Feedback</a></p>
+                        <p>Feedback Description: {{ submission.feedback.description }}</p>
+                        <p>Received Feedback: <a href={{ submission.feedback.file.url }}>Feedback</a></p>   
                     {% endif %}
                 {% endif %}
             {% endfor %}

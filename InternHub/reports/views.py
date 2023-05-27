@@ -10,7 +10,7 @@ from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
 from users.models import Student
-from .models import StudentReport, WorkAndReportEvaluation,Submission, InstructorFeedback
+from .models import StudentReport, WorkAndReportEvaluation, Submission, InstructorFeedback
 from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
@@ -73,7 +73,7 @@ class CreateConfidentialForm(CreateView):
 class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
     form_class = SummerTrainingGradingForm
     template_name = 'reports/create_summer_training_form.html'
-    success_url = '/student/students/' # not good name
+    success_url = '/student/students/'  # not good name
 
     def form_valid(self, form):
         # Checking if the report is satisfactory.
@@ -89,7 +89,7 @@ class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
 
         # Getting the user_id from the form.
         user_id = form.cleaned_data['student_id']
-    
+
         # If the form is not valid, return the form with the errors.
         if form.errors != {}:
             return super().form_invalid(form)
@@ -160,9 +160,10 @@ class EditWorkAndReportEvaluation(View):
 class CreateSubmitReport(LoginRequiredMixin, FormView):
     def get(self, request):
         form = StudentReportForm()
-        return render(request, 'reports/submit_report.html',{
+        return render(request, 'reports/submit_report.html', {
             'form': form
         })
+
     def post(self, request):
         submitted_form = StudentReportForm(request.POST, request.FILES)
         if submitted_form.is_valid():
@@ -172,53 +173,55 @@ class CreateSubmitReport(LoginRequiredMixin, FormView):
         return render(request, 'reports/submit_report.html', {
             'form': submitted_form
         })
+
+
 class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = StudentReportForm
     template_name = 'reports/submit_report.html'
     success_url = reverse_lazy('reports:view_internships')
     allowed_roles = ['STUDENT']
-    
+
     def form_valid(self, form, *args, **kwargs):
         submitted_report = form.save(commit=False)
         submitted_report.creation_date = timezone.now()
 
-        #DUE DATE MUST BE CHANGED
+        # DUE DATE MUST BE CHANGED
         submitted_report.due_date = timezone.now() + timezone.timedelta(days=7)
 
         internship_pk = self.kwargs.get('pk')
-        submitted_report.internship = get_object_or_404(Internship, pk=internship_pk)
-            
+        submitted_report.internship = get_object_or_404(
+            Internship, pk=internship_pk)
+
         submitted_report.status = Status.PENDING
         submitted_report.save()
 
         internship = Internship.objects.get(pk=internship_pk)
-        Notification.create_notification(
-            title="New Submitted Report",
-            content=f"Student {str(self.request.user)} has submitted a new report for {internship.course}.",
-            receiver= internship.instructor,
-        )
         return super().form_valid(form)
+
 
 class ReportsView(ListView):
     model = StudentReport
     template_name = 'reports/view_reports.html'
     context_object_name = 'reports'
 
-class MainView(LoginRequiredMixin,FormView):
+
+class MainView(LoginRequiredMixin, FormView):
     template_name = 'reports/main.html'
 
     def get(self, request):
         return render(request, 'reports/main.html')
 
+
 class InternshipAssignmentView(FormView, LoginRequiredMixin):
     form_class = InternshipAssignmentForm
     template_name = 'reports/internship_assignment.html'
 
-
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['instructor'].queryset = Instructor.objects.filter(department=self.request.user.department)
-        form.fields['internships'].queryset = Internship.objects.filter(student__department=self.request.user.department)
+        form.fields['instructor'].queryset = Instructor.objects.filter(
+            department=self.request.user.department)
+        form.fields['internships'].queryset = Internship.objects.filter(
+            student__department=self.request.user.department)
         return form
 
     def get_context_data(self, **kwargs):
@@ -241,8 +244,10 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
                 internship.save()
 
         elif action == 'RandomlyAssign':
-            instructors = Instructor.objects.filter(department=self.request.user.department)
-            internships = Internship.objects.filter(student__department=self.request.user.department)
+            instructors = Instructor.objects.filter(
+                department=self.request.user.department)
+            internships = Internship.objects.filter(
+                student__department=self.request.user.department)
             instructor_count = instructors.count()
             internship_count = len(internships)
             internship_per_instructor = internship_count // instructor_count
@@ -261,7 +266,8 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
                     instructor_index = 0
 
         elif action == 'Clear':
-            internships = Internship.objects.filter(student__department=self.request.user.department)
+            internships = Internship.objects.filter(
+                student__department=self.request.user.department)
             for internship in internships:
                 internship.instructor = None
                 internship.save()
@@ -271,6 +277,7 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
     @method_decorator(allowed_users(['DEPARTMENT_SECRETARY']))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
 
 class InternshipListView(ListView, LoginRequiredMixin):
     pass
@@ -283,7 +290,8 @@ class CreateFeedback(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
 
-        feedback = InstructorFeedback(feedback=form.FILES['instructor_feedback'])
+        feedback = InstructorFeedback(
+            feedback=form.FILES['instructor_feedback'])
         feedback.save()
 
         internship_pk = self.kwargs.get('pk')
@@ -294,9 +302,8 @@ class CreateFeedback(LoginRequiredMixin, FormView):
             receiver= internship.student,
         )
         return super().form_valid(form)
-    
 
-    
+
 class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'reports/view_internships.html'
     model = Internship
@@ -311,25 +318,40 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             return Internship.objects.filter(instructor__user_id=self.request.user.user_id)
         else:
             return Internship.objects.filter(student__department=self.request.user.department)
-        
+
     def get_context_data(self):
         context = super().get_context_data()
         context['form'] = ExtensionForm()
         context['submission_statuses'] = {}
         context['feedback_needed'] = {}
+        context['feedback_recieved'] = {}
+
         for internship in context['internships']:
             if internship.submissions.exists():
-                last_submission = internship.submissions.latest('creation_date')
+                last_submission = internship.submissions.all().latest('id')
+                submissions = internship.submissions.all().order_by('-id')
+                second_last_submission = submissions[1] if submissions.count() > 1 else None 
+
+                if last_submission.file == "" and second_last_submission is not None:
+                    context['feedback_recieved'][internship.pk] = True                
+                else:
+                    context['feedback_recieved'][internship.pk] = False
+
                 context['submission_statuses'][internship.pk] = last_submission.get_status_display()
                 # Check if feedback is needed for the last submission
-                feedback_needed = bool(last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
+                feedback_needed = bool(
+                    last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
                 context['feedback_needed'][internship.pk] = feedback_needed
-                print(f"Feedback needed for internship {internship.pk}: {feedback_needed}")
             else:
                 context['submission_statuses'][internship.pk] = None
                 context['feedback_needed'][internship.pk] = False
+                Notification.create_notification(
+                        title="New Submission",
+                        content=f"Instructor {str(self.request.user)} has submitted a new submission for {internship.student.department.code}{internship.course}.",
+                        receiver=internship.student,
+                )
         return context
-    
+
     def post(self, request, *args, **kwargs):
         form = ExtensionForm(request.POST)
         if form.is_valid():
@@ -337,21 +359,28 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             internships = self.get_queryset()
             for internship in internships:
                 # Get the existing submission with status "PENDING"
-                report = internship.submissions.filter(status=SubmissionStatus.PENDING).first()
+                report = internship.submissions.filter(
+                    status=SubmissionStatus.PENDING).first()
                 # Create a new submission if it doesn't exist
                 if report is None:
-                    report = Submission.objects.create(internship=internship, due_date=due_date)
+                    report = Submission.objects.create(
+                        internship=internship, due_date=due_date)
                 else:
                     report.due_date = due_date
                     report.save()
                 # Add the submission to the internship if it doesn't exist
                 if report.id is None:
                     internship.submissions.add(report)
-            return redirect('reports:view_internships')  # Redirect to the view page
+                Notification.create_notification(
+                        title="New Due Date",
+                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                        receiver=internship.student,
+                )
+            # Redirect to the view page
+            return redirect('reports:view_internships')
 
         # Re-render the page with the same context if form is not valid
         return self.get(request, *args, **kwargs)
-    
 
 
 class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
@@ -364,7 +393,8 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         internship = self.get_object()
         action = request.POST.get('action')
         report_form = StudentReportForm(request.POST, request.FILES)
-        form = ExtensionForm(request.POST)  # form for the due date and feedback
+        # Form for the due date and feedback
+        form = ExtensionForm(request.POST)
 
         if action == 'satisfactory':
             # handle the satisfactory action here
@@ -374,23 +404,36 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
             last_submission.internship.save()
             last_submission.save()
             # Set internship status as Satisfactory too if needed
+            Notification.create_notification(
+                title="Report is Satisfactory",
+                content=f"{internship.student.department.code} {internship.course}'s report is marked as satisfactory by {self.request.user}.",
+                receiver=internship.student,
+            )
 
         elif action == 'revision_required':
-        # handle the revision_required action here
+            # handle the revision_required action here
             if form.is_valid():
                 feedback_description = form.cleaned_data['feedback_description']
-                last_submission = internship.submissions.latest('creation_date')
+                last_submission = internship.submissions.latest(
+                    'creation_date')
                 last_submission.status = SubmissionStatus.REVISION_REQUIRED
                 last_submission.save()
                 due_date = form.cleaned_data['due_date']
 
-                feedback = Feedback.objects.create(submission_field=last_submission)
+                feedback = Feedback.objects.create(
+                    submission_field=last_submission)
                 feedback.file = request.FILES['feedback_file']
                 feedback.description = feedback_description
                 feedback.save()
 
                 # Create a new submission with the provided due date
-                new_submission = Submission.objects.create(internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+                new_submission = Submission.objects.create(
+                    internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+                Notification.create_notification(
+                    title="New Submitted Feedback",
+                    content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
+                    receiver=internship.student,
+                )
             else:
                 return self.get(request, *args, **kwargs)
 
@@ -398,20 +441,31 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
             # handle the extend action here
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
-                last_submission = internship.submissions.latest('creation_date')
+                last_submission = internship.submissions.latest(
+                    'creation_date')
                 last_submission.due_date = due_date
                 last_submission.save()
+                Notification.create_notification(
+                        title="New Due Date",
+                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                        receiver=internship.student,
+                )
             else:
                 return self.get(request, *args, **kwargs)
 
         elif action == 'submission_upload' and report_form.is_valid():
-            existing_report = Submission.objects.filter(internship=internship, status=SubmissionStatus.PENDING).first()
+            existing_report = Submission.objects.filter(
+                internship=internship, status=SubmissionStatus.PENDING).first()
 
             if existing_report and timezone.now() <= existing_report.due_date:
                 existing_report.file = report_form.cleaned_data['file']
                 existing_report.creation_date = timezone.now()
                 existing_report.save()
-
+        Notification.create_notification(
+            title="New Submitted Report",
+            content=f"Student {str(self.request.user)} has submitted a new report for {internship.student.department.code} {internship.course}.",
+            receiver=internship.instructor,
+        )
         return redirect('reports:view_internships')
 
     def get_context_data(self, **kwargs):
@@ -419,11 +473,11 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['form'] = ExtensionForm()
         context['report_form'] = StudentReportForm()
         submissions = self.get_object().submissions.all()
-        context['submissions'] = submissions
+        context['submissions'] = submissions.order_by('-id')
         context['last_submission'] = submissions.last()
         context['submission_set'] = self.get_object().submissions.exists()
         context['now'] = timezone.now()
         context['action'] = self.request.POST.get('action')
         return context
 
-#class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
+# class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
