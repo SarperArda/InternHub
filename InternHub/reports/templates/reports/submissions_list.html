@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load permissions %}
+
+{% block title %}Submissions{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    {% for internship in internships %}
+        <h3>Submissions for Internship {{ internship.id }}</h3>
+        <table>
+        <tr>
+            <th>Submission File</th>
+            <th>Submitted Date</th>
+            <th>Status</th>
+        </tr>
+        {% for submission in internship.submissions.all|dictsortreversed:'id' %}
+            {% if forloop.counter > 1 %}
+                <tr>
+                    <td><a href="{{submission.file.url}}">{{ submission.file.name }}</a></td>
+                    <td>{{ submission.creation_date|date:"F j, Y H:i" }}</td>
+                    <td>{{ submission.get_status_display}}<td>
+                </tr>
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="2">No previous submissions found for this internship.</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h3>Latest Submission:</h3>
+        {% with latest_submission=latest_submissions|get_item:internship.pk %}
+            {% if latest_submission %}
+                <p>Creation Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</p>
+                <p>Due Date: {{ latest_submission.due_date|date:"F j, Y H:i"}}</p>
+                <p>Uploaded File: 
+                    {% if latest_submission.file == "" %}
+                        No file uploaded.
+                    {% else %}
+                        <a href="{{latest_submission.file.url}}">{{ latest_submission.file.name }}</a>
+                    {% endif %}
+                {% if latest_submission.status == 'PE' %}
+                    <h3>Submit a New Submission</h3>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                        <button type="submit">Submit</button>
+                    </form>
+                    <h3>Request Extension</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ extension_form.as_p }}
+                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                        <button type="submit" name="extension_request">Request Extension</button>
+                    </form>
+                {% else %}
+                    <p>No pending submissions found.</p>
+                {% endif %}
+            {% else %}
+                <p>Instructor has not set a submission yet.</p>
+            {% endif %}
+        {% endwith %}
+        
+        <hr>
+    {% endfor %}
+{% endblock %}

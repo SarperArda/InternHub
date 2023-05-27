@@ -480,4 +480,61 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['action'] = self.request.POST.get('action')
         return context
 
+class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
+    template_name = 'reports/submissions_list.html'
+    model = Internship
+    context_object_name = 'internships'
+    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY', 'STUDENT']
+
+    def get_queryset(self):
+        if self.request.user.role == 'STUDENT':
+            return Internship.objects.filter(student__user_id=self.request.user.user_id).order_by('id')
+        elif self.request.user.role == 'INSTRUCTOR':
+            return Internship.objects.filter(instructor__user_id=self.request.user.user_id).order_by('id')
+        else:  # if the user is a DEPARTMENT_SECRETARY
+            return Internship.objects.filter(student__department=self.request.user.department).order_by('id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        internships = self.get_queryset()
+        context['internships'] = internships
+        context['latest_submissions'] = {}
+        for internship in internships:
+            context['latest_submissions'][internship.pk] = internship.submissions.order_by('-id').first()
+        context['form'] = StudentReportForm()
+        context['extension_form'] = ExtensionForm()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        internship_id = request.POST.get('internship_id')
+        internship = get_object_or_404(Internship, id=internship_id)
+
+        if 'extension_request' in request.POST:
+            extension_form = ExtensionForm(request.POST)
+            if extension_form.is_valid():
+                # Process the extension request
+                due_date = extension_form.cleaned_data['due_date']
+                # Handle the extension logic for the internship
+                #TODO Add Extension Request Logic
+                return redirect('reports:submission_list')
+        else:
+
+            form = StudentReportForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                existing_report = Submission.objects.filter(
+                    internship=internship, status=SubmissionStatus.PENDING).first()
+
+                if existing_report and timezone.now() <= existing_report.due_date:
+                    existing_report.file = form.cleaned_data['file']
+                    existing_report.creation_date = timezone.now()
+                    existing_report.save()
+
+                # Handle the file upload and any other necessary logic
+                return redirect('reports:submission_list')
+
+        context = self.get_context_data(**kwargs)
+        context['form'] = form
+        return self.render_to_response(context)
+
 # class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):

@@ -18,7 +18,9 @@ urlpatterns = [
     path('edit-work-and-report-ev-form/<int:pk>', views.EditWorkAndReportEvaluation.as_view(), name='edit_wre'),
     path('create-work-and-report-ev-form/<int:pk>', views.WorkAndReportEvaluationFormCreation.as_view(), name='create_wre'),
     path('update-work-and-report-ev-form/<int:pk>', views.WorkAndReportEvaluationFormUpdate.as_view(), name='update_wre'),
-    path('assign-internships/', views.InternshipAssignmentView.as_view(), name='assign_internships')
+    path('assign-internships/', views.InternshipAssignmentView.as_view(), name='assign_internships'),
+
+    path('submissions/', views.ListSubmissionView.as_view(), name='submission_list'),
 ]
 '''
     path('create-confidential-form/<int:internship_id>', views.CreateConfidentialForm.as_view(), name='create_cf'),
