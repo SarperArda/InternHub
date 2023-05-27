@@ -21,16 +21,23 @@
         <p>Course: {{ internship.course }}</p>
         <p>Status: {{ internship.get_status_display }}</p>
         
-        {% if feedback_needed|get_item:internship.pk %}
-            <p>Feedback Needed!</p>
+        {% if request.user.role == 'INSTRUCTOR'%}
+            {% if feedback_needed|get_item:internship.pk %}
+                <p>Feedback Needed!</p>
+            {% endif %}
         {% endif %}
 
         {% if request.user.role == 'STUDENT' %}
-                {% if internship.company_evaluation %}
+            {% if internship.company_evaluation %}
                 <p>Your Evaluation to Company: {{ internship.company_evaluation.grade }}</p>
             {% else %}
                 <p>You have not evaluated this company.</p>
             {% endif %}
+            {% if feedback_recieved|get_item:internship.pk %}
+                <p>You Recieved Feedback For Your Submission!</p>
+            {% endif %}
+            
+
             <a href="{% url 'company:evaluate-company' internship.pk %}"><button type="submit" name="action" value="detail">Evaluate Company</button></a>
         {% endif %}
 
