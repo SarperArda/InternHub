@@ -3,9 +3,6 @@ from . import views
 app_name = 'reports'
 
 urlpatterns = [
-    path('submit-feedback/<int:pk>/', views.CreateFeedback.as_view(), name='submit_feedback'),
-    path('submit-report/<int:pk>', views.CreateSubmitReport.as_view(), name='submit_report'),
-
     path('view-reports/', views.ReportsView.as_view(), name='view_reports'),
     path('view-internships/', views.ListInternshipsView.as_view(), name='view_internships'),
     path('internship-detail/<int:pk>/', views.InternshipDetailView.as_view(), name='internship_detail'),
@@ -21,6 +18,7 @@ urlpatterns = [
     path('assign-internships/', views.InternshipAssignmentView.as_view(), name='assign_internships'),
 
     path('submissions/', views.ListSubmissionView.as_view(), name='submission_list'),
+    path('feedbacks/', views.ListFeedbackView.as_view(), name='feedback_list'),
 ]
 '''
     path('create-confidential-form/<int:internship_id>', views.CreateConfidentialForm.as_view(), name='create_cf'),

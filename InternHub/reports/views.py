@@ -157,48 +157,6 @@ class EditWorkAndReportEvaluation(View):
 
 
 
-class CreateSubmitReport(LoginRequiredMixin, FormView):
-    def get(self, request):
-        form = StudentReportForm()
-        return render(request, 'reports/submit_report.html', {
-            'form': form
-        })
-
-    def post(self, request):
-        submitted_form = StudentReportForm(request.POST, request.FILES)
-        if submitted_form.is_valid():
-            report = StudentReport(report=request.FILES['student_report'])
-            report.save()
-            return HttpResponseRedirect('/reports/submit-report/')
-        return render(request, 'reports/submit_report.html', {
-            'form': submitted_form
-        })
-
-
-class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
-    form_class = StudentReportForm
-    template_name = 'reports/submit_report.html'
-    success_url = reverse_lazy('reports:view_internships')
-    allowed_roles = ['STUDENT']
-
-    def form_valid(self, form, *args, **kwargs):
-        submitted_report = form.save(commit=False)
-        submitted_report.creation_date = timezone.now()
-
-        # DUE DATE MUST BE CHANGED
-        submitted_report.due_date = timezone.now() + timezone.timedelta(days=7)
-
-        internship_pk = self.kwargs.get('pk')
-        submitted_report.internship = get_object_or_404(
-            Internship, pk=internship_pk)
-
-        submitted_report.status = Status.PENDING
-        submitted_report.save()
-
-        internship = Internship.objects.get(pk=internship_pk)
-        return super().form_valid(form)
-
-
 class ReportsView(ListView):
     model = StudentReport
     template_name = 'reports/view_reports.html'
@@ -277,31 +235,6 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
     @method_decorator(allowed_users(['DEPARTMENT_SECRETARY']))
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
-
-
-class InternshipListView(ListView, LoginRequiredMixin):
-    pass
-
-class CreateFeedback(LoginRequiredMixin, FormView):
-    template_name = 'reports/submit_feedback.html'
-    form_class = FeedbackForm
-    success_url = '/reports/view-internships/'
-    allowed_roles = ['INSTRUCTOR']
-
-    def form_valid(self, form):
-
-        feedback = InstructorFeedback(
-            feedback=form.FILES['instructor_feedback'])
-        feedback.save()
-
-        internship_pk = self.kwargs.get('pk')
-        internship = Internship.objects.all().get(pk=internship_pk)
-        Notification.create_notification(
-            title="New Submitted Report",
-            content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
-            receiver= internship.student,
-        )
-        return super().form_valid(form)
 
 
 class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
@@ -396,48 +329,8 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         # Form for the due date and feedback
         form = ExtensionForm(request.POST)
 
-        if action == 'satisfactory':
-            # handle the satisfactory action here
-            last_submission = internship.submissions.latest('creation_date')
-            last_submission.status = SubmissionStatus.SATISFACTORY
-            last_submission.internship.status = SubmissionStatus.SATISFACTORY
-            last_submission.internship.save()
-            last_submission.save()
-            # Set internship status as Satisfactory too if needed
-            Notification.create_notification(
-                title="Report is Satisfactory",
-                content=f"{internship.student.department.code} {internship.course}'s report is marked as satisfactory by {self.request.user}.",
-                receiver=internship.student,
-            )
 
-        elif action == 'revision_required':
-            # handle the revision_required action here
-            if form.is_valid():
-                feedback_description = form.cleaned_data['feedback_description']
-                last_submission = internship.submissions.latest(
-                    'creation_date')
-                last_submission.status = SubmissionStatus.REVISION_REQUIRED
-                last_submission.save()
-                due_date = form.cleaned_data['due_date']
-
-                feedback = Feedback.objects.create(
-                    submission_field=last_submission)
-                feedback.file = request.FILES['feedback_file']
-                feedback.description = feedback_description
-                feedback.save()
-
-                # Create a new submission with the provided due date
-                new_submission = Submission.objects.create(
-                    internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
-                Notification.create_notification(
-                    title="New Submitted Feedback",
-                    content=f"Student {str(self.request.user)} has submitted a new feedback for {internship.course}.",
-                    receiver=internship.student,
-                )
-            else:
-                return self.get(request, *args, **kwargs)
-
-        elif action == 'extend':
+        if action == 'extend':
             # handle the extend action here
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
@@ -452,20 +345,6 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
                 )
             else:
                 return self.get(request, *args, **kwargs)
-
-        elif action == 'submission_upload' and report_form.is_valid():
-            existing_report = Submission.objects.filter(
-                internship=internship, status=SubmissionStatus.PENDING).first()
-
-            if existing_report and timezone.now() <= existing_report.due_date:
-                existing_report.file = report_form.cleaned_data['file']
-                existing_report.creation_date = timezone.now()
-                existing_report.save()
-        Notification.create_notification(
-            title="New Submitted Report",
-            content=f"Student {str(self.request.user)} has submitted a new report for {internship.student.department.code} {internship.course}.",
-            receiver=internship.instructor,
-        )
         return redirect('reports:view_internships')
 
     def get_context_data(self, **kwargs):
@@ -612,5 +491,18 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                 receiver=internship.student,
             )
         return redirect('reports:submission_list')
+    
+class ListFeedbackView(LoginRequiredMixin, RoleRequiredMixin, ListView):
+    model = Feedback
+    template_name = 'reports/feedback_list.html'
+    context_object_name = 'feedbacks'
+    allowed_roles = ['STUDENT', 'INSTRUCTOR']
 
-# class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
+    def get_queryset(self):
+        if self.request.user.role == 'STUDENT':
+            return Feedback.objects.filter(submission_field__internship__student__user_id=self.request.user.user_id).order_by('id')
+        elif self.request.user.role == 'INSTRUCTOR':
+            return Feedback.objects.filter(submission_field__internship__instructor__user_id=self.request.user.user_id).order_by('id')
+
+
+# class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView)

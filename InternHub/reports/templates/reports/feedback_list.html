@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load permissions %}
+
+{% block title %}Feedbacks{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="">
+{% endblock %}
+
+{% block body %}
+    {% for feedback in feedbacks %}
+        <div class="feedback">
+            <h2>Course: {{ feedback.submission_field.internship.course }}</h2>
+            <h2>Submission: <a href="{{feedback.file.url}}">{{ feedback.submission_field.file.name }}</a></h2>
+            <h3>Feedback File: <a href="{{feedback.file.url}}">{{feedback.file.name}}</a></h3>
+            {% if feedback.description %}
+                <p>Description: {{ feedback.description }}</p>
+            {% endif %}
+            <p>Status: {{ feedback.submission_field.status }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}
