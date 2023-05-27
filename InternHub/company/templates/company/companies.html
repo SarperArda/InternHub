@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main/home.html' %}
 {% load static %}
 
 {% block title %}Companies{% endblock %}
@@ -8,17 +8,29 @@
 {% endblock %}
 
 {% block body %}
-    <div>
-        <ul>
-            {% for company in companies %}
-                <li>
-                    {{ company.name }}
-                    {{ company.field }}
-                    {% for department in company.departments.all %}
-                        {{ department.name }}
-                    {% endfor %}
-                </li>
-            {% endfor %}
-        </ul>
+    {% block left-column%}
+    {{ block.super}}
+    {% endblock %}
+    
+    {% block middle-column%}
+    <div class="col-auto col-6" id="middle-column">
+        <div>
+            <ul>
+                {% for company in companies %}
+                    <li>
+                        {{ company.name }}
+                        {{ company.field }}
+                        {% for department in company.departments.all %}
+                            {{ department.name }}
+                        {% endfor %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
+    {% endblock %}
+    
+    {% block right-column %}
+    {{ block.super }}
+    {% endblock %}
 {% endblock %}

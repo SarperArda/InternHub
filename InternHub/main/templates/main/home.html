@@ -11,7 +11,8 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
+            {% block left-column %}
+            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
                 <div class="bg-dark p2">
                     <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
                         <b class="display-4">
@@ -31,6 +32,14 @@
                                     </button>
                                 </li>
                                 <li class="nav-item py-2 py-sm-2 rounded">
+                                    <button class="nav-link text-white w-100" id="internship-button"
+                                            style="padding-left: 12px;">
+                                        <i class="fs-5 fa-regular fa-briefcase"></i>
+                                        <span class="fs-3 ms-3 d-none d-sm-inline"
+                                              id="sidebar-span">Internships</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item py-2 py-sm-2 rounded">
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#reports-collapse"
@@ -42,9 +51,9 @@
                                     <div class="collapse" id="reports-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
                                             <li>
-                                                <button id="submit-button"
+                                                <button id="submissions-button"
                                                         class="btn rounded text-white fs-4 w-100">
-                                                    Submit
+                                                    Submissions
                                                 </button>
                                             </li>
                                             <li>
@@ -68,7 +77,7 @@
                                     <div class="collapse" id="company-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
                                             <li>
-                                                <button class="btn text-white rounded fs-4 w-100">Company list
+                                                <button onclick="navigateToAnotherPage('/company/companies/')" class="btn text-white rounded fs-4 w-100">Company list
                                                 </button>
                                             </li>
                                             <li>
@@ -104,6 +113,8 @@
                     </div>
                 </div>
             </div>
+            {% endblock %}
+            {% block middle-column %}
             <div class="col-auto col-6" id="middle-column">
                 <div id="announcement-div">
                     <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
@@ -120,6 +131,21 @@
                             </li>
                         {% endfor %}
                     </ul>
+                </div>
+                <div id="internship-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Internships</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <ul class="list-group">
+                            {% for internship in internships %}
+                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ internship.student.department.code}}{{ internship.course }} \ {{internship.status}}</h5>
+                                    </div>
+                                    <p class="mb-1">{{ internship.company }}</p>
+                                    <small class="text-muted d-block text-end">{{ internship.instructor }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
                 </div>
                 <div id="notification-div">
                     <h1 class="display-6 text-center fw-semibold" id="titles">Notifications</h1>
@@ -161,6 +187,8 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endblock %}
+            {% block right-column %}
             <div class="col text-white" id="side-bar-right">
                 <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
                 <hr class="my-4 border-2 text-black">
@@ -170,7 +198,6 @@
                             <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
                             <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
                             <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
-                            <span class="fs-4 text-black fw-semibold align-left"> {{ internship.course }}</span>
                         {% endif %}
                     </div>
                     <hr class="my-4 border-2 text-black">

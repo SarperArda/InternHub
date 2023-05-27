@@ -19,10 +19,13 @@ class HomeView(LoginRequiredMixin, View):
                           Dean.objects.all().filter(department=user.department),)
         if user.role != 'SUPERUSER':
             check = True
-            internship = Internship.objects.filter(student__user_id=id)[0]
+            internships = Internship.objects.filter(student__user_id=id)
             if user.role == 'STUDENT':
-                contacts_tuple += ((internship.instructor,),)
+                if (internships.count() == 2):
+                    contacts_tuple += ((internships[0].instructor, internships[1].instructor,),)
+                elif (internships.count() == 1):
+                    contacts_tuple += ((internships[0].instructor,),)
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
-                           'internship': internship, 'check': check, 'contacts_tuple': contacts_tuple})
+                           'internships': internships, 'check': check, 'contacts_tuple': contacts_tuple})
         return render(request, 'main/home.html', {'announcements': announcements, 'full_name': full_name})
