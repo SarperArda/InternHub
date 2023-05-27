@@ -11,7 +11,8 @@
 {% block body %}
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100">
+            {% block left-column %}
+            <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
                 <div class="bg-dark p2">
                     <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
                         <b class="display-4">
@@ -23,17 +24,44 @@
                         <div class="content">
                             <ul class="nav nav-pills flex-column mt-4">
                                 <li class="nav-item py-2 py-sm-2 rounded">
+                                    <button onclick="navigateAnnouncement('/')" class="nav-link text-white w-100" id="announcement-button"
+                                            style="padding-left: 12px;">
+                                        <i class="fs-5 fa-regular fa-bullhorn"></i>
+                                        <span class="fs-3 ms-3 d-none d-sm-inline"
+                                              id="sidebar-span">Announcements</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <button onclick="navigateInternship('/')" class="nav-link text-white w-100" id="internship-button"
+                                            style="padding-left: 12px;">
+                                        <i class="fs-5 fa-regular fa-briefcase"></i>
+                                        <span class="fs-3 ms-3 d-none d-sm-inline"
+                                              id="sidebar-span">Internships</span>
+                                    </button>
+                                </li>
+                                <li class="nav-item py-2 py-sm-2 rounded">
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#reports-collapse"
-                                            aria-expanded="true">
+                                            aria-expanded="true"
+                                            id="main-button">
                                         <i class="fs-5 fa-regular fa-file"></i>
                                         <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
                                     </button>
                                     <div class="collapse" id="reports-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                            <li><a href="#" class="text-white rounded fs-4">Submit</a></li>
-                                            <li><a href="#" class="text-white rounded fs-4">Feedbacks</a></li>
+                                            <li>
+                                                <button id="submissions-button"
+                                                        class="btn rounded text-white fs-4 w-100">
+                                                    Submissions
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button id="feedbacks-button"
+                                                        class="btn rounded text-white fs-4 w-100">
+                                                    Feedbacks
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -41,14 +69,21 @@
                                     <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                             data-bs-toggle="collapse"
                                             data-bs-target="#company-collapse"
-                                            aria-expanded="true">
+                                            aria-expanded="true"
+                                            id="main-button">
                                         <i class="fs-5 fa-regular fa-building"></i>
                                         <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
                                     </button>
                                     <div class="collapse" id="company-collapse">
                                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                            <li><a href="#" class="text-white rounded fs-4">Company list</a></li>
-                                            <li><a href="#" class="text-white rounded fs-4">company form</a></li>
+                                            <li>
+                                                <button onclick="navigateToAnotherPage('/company/companies/')" class="btn text-white rounded fs-4 w-100">Company list
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="btn text-white rounded fs-4 w-100">Company form
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>
@@ -56,10 +91,17 @@
                         </div>
                         <ul class="nav nav-pills flex-column mt-4">
                             <li class="nav-item py-2 py-sm-2 rounded">
-                                <a href="#" class="nav-link text-white">
+                                <button onclick="navigateNotification('/')" class="nav-link text-white w-100" id="notification-button">
+                                    <i class="fs-5 fa-regular fa-bell"></i>
+                                    <span class="fs-4 ms-3 d-none d-sm-inline"
+                                          id="sidebar-span">Notifications</span>
+                                </button>
+                            </li>
+                            <li class="nav-item py-2 py-sm-2 rounded">
+                                <button onclick="navigateContact('/')" class="nav-link text-white w-100" id="contact-button">
                                     <i class="fs-5 fa-regular fa-envelope"></i>
                                     <span class="fs-4 ms-3 d-none d-sm-inline" id="sidebar-span">Contact</span>
-                                </a>
+                                </button>
                             </li>
                             <li class="nav-item py-2 py-sm-2 rounded">
                                 <a href="{% url 'users:logout' %}" class="nav-link text-white">
@@ -71,33 +113,84 @@
                     </div>
                 </div>
             </div>
-            <div class="col-auto col-6">
-                <h1 class="display-6 text-center" id="announcements">Announcements</h1>
-                <hr class="my-4 border-2 text-dark">
-                <ul class="list-group">
-                    {% for announcement in announcements %}
-                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ announcement.title }}</h5>
-                                <small>{{ announcement.sender }}</small>
-                            </div>
-                            <p class="mb-1">{{ announcement.content }}</p>
-                            <small class="text-muted d-block text-end">{{ announcement.date }}</small>
-                        </li>
+            {% endblock %}
+            {% block middle-column %}
+            <div class="col-auto col-6" id="middle-column">
+                <div id="announcement-div">
+                    <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    <ul class="list-group">
+                        {% for announcement in announcements %}
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ announcement.title }}</h5>
+                                    <small>{{ announcement.sender }}</small>
+                                </div>
+                                <p class="mb-1">{{ announcement.content }}</p>
+                                <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="internship-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Internships</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <ul class="list-group">
+                            {% for internship in internships %}
+                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ internship.student.department.code}}{{ internship.course }} \ {{internship.status}}</h5>
+                                    </div>
+                                    <p class="mb-1">{{ internship.company }}</p>
+                                    <small class="text-muted d-block text-end">{{ internship.instructor }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                </div>
+                <div id="notification-div">
+                    <h1 class="display-6 text-center fw-semibold" id="titles">Notifications</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    <ul class="list-group">
+                        {% for notification in notifications %}
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ notification.title|title }}</h5>
+                                </div>
+                                <p class="mb-1">{{ notification.content }}</p>
+                                <small class="text-muted d-block text-end">{{ notification.timestamp }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div id="contact-div" hidden>
+                    {% csrf_token %}
+                    <h1 class="display-6 text-center fw-semibold" id="titles">Contact</h1>
+                    <hr class="my-4 border-2 text-dark">
+                    {% for contacts in contacts_tuple %}
+                        {% for contact in contacts %}
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
+                                    {% if contact.role == 'DEPARTMENT_SECRETARY' %}
+                                        <small>Department Secretary</small>
+                                    {% else %}
+                                        <small>{{ contact.role|title }}</small>
+                                    {% endif %}
+                                </div>
+                                <div class="d-flex w-100 justify-content-between mb-2">
+                                    <a href="mailto: {{ contact.email }}" id="contacts-mail"
+                                       class="text-muted">{{ contact.email }}</a>
+                                    <small class="d-block text-end">{{ contact.department }}</small>
+                                </div>
+                            </li>
+                        {% endfor %}
                     {% endfor %}
-                    {% for notification in notifications %}
-                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ notification.title }}</h5>
-                        </div>
-                        <p class="mb-1">{{ notification.content }}</p>
-                    </li>
-                {% endfor %}
-                </ul>
+                </div>
             </div>
+            {% endblock %}
+            {% block right-column %}
             <div class="col text-white" id="side-bar-right">
-                <h1 class="display-6 fw-semibold text-center" id="profile">
-                    Profile</h1>
+                <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
                 <hr class="my-4 border-2 text-black">
                 <div class="container" id="profile-info">
                     <div class="row">
@@ -105,7 +198,6 @@
                             <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
                             <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
                             <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
-                            <span class="fs-4 text-black fw-semibold align-left"> {{ internship.course }}</span>
                         {% endif %}
                     </div>
                     <hr class="my-4 border-2 text-black">
@@ -113,6 +205,8 @@
                         Due Date</h1>
                 </div>
             </div>
+            {% endblock %}
         </div>
     </div>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}

@@ -20,6 +20,7 @@ urlpatterns = [
     path('update-work-and-report-ev-form/<int:pk>', views.WorkAndReportEvaluationFormUpdate.as_view(), name='update_wre'),
     path('assign-internships/', views.InternshipAssignmentView.as_view(), name='assign_internships')
 ]
+
 '''
     path('create-confidential-form/<int:internship_id>', views.CreateConfidentialForm.as_view(), name='create_cf'),
     path('create-summer-training-form/<int:internship_id>', views.CreateSummerTrainingGradingForm.as_view(), name='create_stf'),
@@ -28,4 +29,4 @@ urlpatterns = [
     path('submit-feedback/<int:internship_id>', views.CreateFeedback.as_view(), name='submit_feedback'),
     path('view-reports/<int:internship_id>', views.ReportsView.as_view(), name='view_reports'),
     path('main/<int:internship_id>', views.MainView.as_view(), name='main'),
-    '''
+'''
