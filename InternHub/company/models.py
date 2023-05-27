@@ -5,10 +5,11 @@ import random
 from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 STATUS_CHOICES = [
-        ('PENDING', 'Pending'),
-        ('APPROVED', 'Approved'),
-        ('REJECTED', 'Rejected'),
-    ]
+    ('PENDING', 'Pending'),
+    ('APPROVED', 'Approved'),
+    ('REJECTED', 'Rejected'),
+]
+
 
 class Company(models.Model):
     name = models.CharField(max_length=100, null=True, unique=True)
@@ -43,6 +44,7 @@ class CompanyApprovalValidationApplication(CompanyRelatedDemand):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     requested_company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, related_name='+')
     student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, related_name='cava_applications')
+
 
 class EvaluationByStudent(CompanyRelatedDemand):
     grade = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])

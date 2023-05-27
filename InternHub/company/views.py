@@ -68,6 +68,7 @@ class ListCompanyRequestsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     ordering = 'id'
     allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
+
 class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyRequest
     template_name = 'company/request-detail.html'
@@ -133,7 +134,7 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         Notification.create_notification(
             title="CAVA Request Submitted",
             content=f'Student { student.first_name } { student.last_name } has submitted a CAVA request.'
-              'Please review the details in your dashboard. Thank you.',
+            ' Please review the details in your dashboard. Thank you.',
             receiver=department_secretary
         )
 
