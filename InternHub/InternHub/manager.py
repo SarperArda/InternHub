@@ -2,7 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from users.models import User, Student, Instructor, DepartmentSecretary, Chair, Dean
 from users.models import Course, EngineeringDepartment
 from company.models import Company, CompanyApprovalValidationApplication,EvaluationByStudent
-from reports.models import Internship
+from reports.models import Internship, Statistic
 import json
 import random
 from users.models import UserManager
@@ -62,6 +62,7 @@ class DatabaseManager:
         DatabaseManager.create_departments()
         DatabaseManager.create_courses()
         DatabaseManager.create_companies()
+        StatisticManager.create_statistics()
         UserManager.create_users()
         CAVAManager.create_CAVAs()
         InternshipManager.create_internships()
@@ -73,6 +74,7 @@ class DatabaseManager:
         EngineeringDepartment.objects.all().delete()
         Company.objects.all().delete()
         EvaluationByStudent.objects.all().delete()
+        Statistic.objects.all().delete()
 
 class InternshipManager:
     @staticmethod
@@ -106,3 +108,25 @@ class CAVAManager:
                                                     requested_company=companies[number])
             print(students[i//2].first_name + students[i//2].last_name)
             cava.save()
+
+class StatisticManager:
+    @staticmethod
+    def create_statistics():
+        for department in EngineeringDepartment.objects.all():
+            statistic = Statistic(department=department)
+            statistic.save()
+    @staticmethod
+    def update_statistics():
+        for statistic in Statistic.objects.all():
+            statistic.save()
+
+    @staticmethod
+    def display_statistics():
+        for statistic in Statistic.objects.all():
+            print("Report grade average: ",statistic.report_grade_average )
+            print("Work evaluation average: ", statistic.work_evaluation_grade_average)
+            print("Company Average: ", statistic.company_evaluation_grade_average)
+            print("Unsatisfactory Number: ", statistic.internship_unsatisfaction_number)
+            print("Satisfactory Number: ", statistic.internship_satisfaction_number)
+            print("Pending Number: ",statistic.internship_pending_number)
+            print("Department Name: ", statistic.department)

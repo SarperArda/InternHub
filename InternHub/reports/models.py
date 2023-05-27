@@ -245,25 +245,5 @@ class Statistic(models.Model):
         self.company_evaluation_grade_average = self.calculate_company_evaluation_grade_average()
         self.internship_satisfaction_number, self.internship_pending_number, self.internship_unsatisfaction_number = self.calculate_internship_statuses()
         print(self.report_grade_average, self.work_evaluation_grade_average, self.company_evaluation_grade_average)
-class StatisticManager:
-    @staticmethod
-    def create_statistics():
-        for department in EngineeringDepartment.objects.all():
-            statistic = Statistic(department=department)
-            statistic.save()
-    @staticmethod
-    def update_statistics():
-        for statistic in Statistic.objects.all():
-            statistic.save()
 
-    @staticmethod
-    def display_statistics():
-        for statistic in Statistic.objects.all():
-            print("Report grade average: ",statistic.report_grade_average )
-            print("Work evaluation average: ", statistic.work_evaluation_grade_average)
-            print("Company Average: ", statistic.company_evaluation_grade_average)
-            print("Unsatisfactory Number: ", statistic.internship_unsatisfaction_number)
-            print("Satisfactory Number: ", statistic.internship_satisfaction_number)
-            print("Pending Number: ",statistic.internship_pending_number)
-            print("Department Name: ", statistic.department)
 
