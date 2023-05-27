@@ -14,6 +14,7 @@ class Status(models.TextChoices):
     ACCEPTED = 'AC', 'Accepted'
     REJECTED = 'RE', 'Rejected'
 
+
 class SubmissionStatus(models.TextChoices):
     SATISFACTORY = 'SA', 'Satisfactory',
     REVISION_REQUIRED = 'RR', 'Revision Required',
@@ -133,12 +134,14 @@ class Internship(models.Model):
     def __str__(self):
         return self.student.first_name + " " + self.student.last_name + "'s " + self.course.name + " Course"
 
+
 class StudentReport(models.Model):
     report = models.FileField(upload_to='reports/', null=True)
 
 
 class InstructorFeedback(models.Model):
     feedback = models.FileField(upload_to='feedbacks/', null=True)
+
 
 class InternshipManager:
     @staticmethod
