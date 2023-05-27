@@ -38,8 +38,7 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
             student=student,
         )
 
-        department_secretary = User.objects.get(
-            user_id="hasat")
+        department_secretary = User.objects.get(department=student.department, role='DEPARTMENT_SECRETARY')
         Notification.create_notification(
             title="New Company Request",
             content=f"Student {str(self.request.user)} has submitted a new company request for {company.name}.",
@@ -130,11 +129,10 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         cava.student = student
         cava.demand_date = timezone.now()
 
-        department_secretary = User.objects.get(
-            user_id="hasat")
+        department_secretary = User.objects.get(department=student.department, role='DEPARTMENT_SECRETARY')
         Notification.create_notification(
             title="CAVA Request Submitted",
-            content='Student {{student.first_name}} {{student.last_name}} has submitted a CAVA request.'
+            content='Student {student.first_name} {student.last_name} has submitted a CAVA request.'
               'Please review the details in your dashboard. Thank you.',
             receiver=department_secretary
         )
