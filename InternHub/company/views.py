@@ -132,7 +132,7 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         department_secretary = User.objects.get(department=student.department, role='DEPARTMENT_SECRETARY')
         Notification.create_notification(
             title="CAVA Request Submitted",
-            content='Student {student.first_name} {student.last_name} has submitted a CAVA request.'
+            content=f'Student { student.first_name } { student.last_name } has submitted a CAVA request.'
               'Please review the details in your dashboard. Thank you.',
             receiver=department_secretary
         )
