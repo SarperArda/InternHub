@@ -280,7 +280,7 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                 context['feedback_needed'][internship.pk] = False
                 Notification.create_notification(
                         title="New Submission",
-                        content=f"Instructor {str(self.request.user)} has submitted a new submission for {internship.student.department.code}{internship.course}.",
+                        content=f"Instructor {str(self.request.user)} has assigned a new submission for {internship.student.department.code}{internship.course}.",
                         receiver=internship.student,
                 )
         return context
@@ -288,7 +288,7 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     def post(self, request, *args, **kwargs):
         form = ExtensionForm(request.POST)
         if form.is_valid():
-            due_date = form.cleaned_data['due_date']
+            due_date = form.cleaned_data['extension_date']
             internships = self.get_queryset()
             for internship in internships:
                 # Get the existing submission with status "PENDING"
@@ -299,16 +299,18 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                     report = Submission.objects.create(
                         internship=internship, due_date=due_date)
                 else:
+                    Notification.create_notification(
+                        title="New Due Date",
+                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                        receiver=internship.student,
+                    )
                     report.due_date = due_date
                     report.save()
                 # Add the submission to the internship if it doesn't exist
                 if report.id is None:
                     internship.submissions.add(report)
-                Notification.create_notification(
-                        title="New Due Date",
-                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
-                        receiver=internship.student,
-                )
+
+                
             # Redirect to the view page
             return redirect('reports:view_internships')
 
