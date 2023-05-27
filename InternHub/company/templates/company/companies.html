@@ -72,21 +72,25 @@
             <div id="company-list-div">
                 <h1 class="display-6 text-center fw-semibold" id="titles">Company List</h1>
                 <hr class="my-4 border-2 text-dark">
-                <ul class="list-group">
-                    {% for company in companies %}
-                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1 fs-5">{{ company.name }} \ {{ company.field }}</h5>
-                                {% for dep in company.departments.all %}
-                                    <small class="text-muted d-block text-end">{{ dep.name }}</small>
-                                {% endfor %}
-                            </div>
-                            <!-- TODO: implement email, currently hard-coded -->
-                            <a href="mailto: alper.gocmen@ug.bilkent.edu.tr"
-                               class="text-muted">company@internhub.com</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div class="card border-0" style="height: 85vh;">
+                    <div class="card-body overflow-auto">
+                        <ul class="list-group">
+                            {% for company in companies %}
+                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1 fs-5">{{ company.name }} \ {{ company.field }}</h5>
+                                        {% for dep in company.departments.all %}
+                                            <small class="text-muted d-block text-end">{{ dep.name }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    <!-- TODO: implement email, currently hard-coded -->
+                                    <a href="mailto: alper.gocmen@ug.bilkent.edu.tr"
+                                       class="text-muted">company@internhub.com</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     {% endblock %}
