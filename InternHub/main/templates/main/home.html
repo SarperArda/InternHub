@@ -69,6 +69,7 @@
                                             </ul>
                                         </div>
                                     </li>
+                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
                                     <li class="nav-item py-2 py-sm-2 rounded">
                                         <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                                 data-bs-toggle="collapse"
@@ -81,18 +82,37 @@
                                         <div class="collapse" id="company-collapse">
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
+                                                {% if request.user.role == 'STUDENT' %}
                                                 <li>
                                                     <button onclick="navigateToAnotherPage('/company/companies/')"
                                                             class="btn text-white rounded fs-4 w-100">Company list
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button class="btn text-white rounded fs-4 w-100">Company form
+                                                    <button class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
                                                     </button>
                                                 </li>
+                                                <li>
+                                                    <button class="btn text-white rounded fs-4 w-100">Company Request
+                                                    </button>
+                                                </li>
+                                                {% endif %}
+
+                                                {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                                <li>
+                                                    <button class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button class="btn text-white rounded fs-4 w-100">Company Request
+                                                    </button>
+                                                </li>
+                                                {% endif %}
+
                                             </ul>
                                         </div>
                                     </li>
+                                    {% endif %}
                                 </ul>
                             </div>
                             <ul class="nav nav-pills flex-column mt-4">
