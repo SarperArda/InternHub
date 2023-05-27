@@ -1,3 +1,8 @@
+from django.shortcuts import render, redirect
+from django.views.generic.edit import FormView, UpdateView, CreateView, View
+from django.views.generic.base import TemplateView
+from reports.forms import ConfidentialCompanyForm
+from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import WorkAndReportEvaluationForm, InternshipAssignmentForm
 from .models import Internship,Feedback, ConfidentialCompany
@@ -10,20 +15,23 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
-from django.shortcuts import render
-from django.urls import reverse
-from django.urls import reverse_lazy
-from django.utils import timezone
-from django.utils.decorators import method_decorator
-from django.views import View
+from .models import StudentReport, WorkAndReportEvaluation
+from .models import InstructorFeedback
 from django.views.generic import ListView
-from django.views.generic import UpdateView, CreateView
+from django.core.exceptions import ObjectDoesNotExist
+from django.urls import reverse
+from users.models import DepartmentSecretary, Instructor
+from users.decorators import allowed_users
+from main import decorators
+from django.shortcuts import redirect, get_object_or_404
+from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import FormView
-from reports.forms import ConfidentialCompanyForm
-from reports.forms import SummerTrainingGradingForm
+from django.utils.decorators import method_decorator
+from django.utils import timezone
+from users.views import RoleRequiredMixin
 from reports.models import Status
+from django.urls import reverse_lazy
 from reports.models import SubmissionStatus
 from announcements.models import Notification
 from users.models import Student, User, DepartmentSecretary, Instructor
