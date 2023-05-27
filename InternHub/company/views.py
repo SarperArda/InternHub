@@ -170,11 +170,11 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):
         cava_request = self.get_object()
         action = request.POST.get('action')
-
+        student = cava_request.student
         # Todo Send notification
         if action == 'approve':
             cava_request.status = 'APPROVED'
-            student = cava_request.student
+           
             company = cava_request.requested_company
             course = cava_request.course
 
