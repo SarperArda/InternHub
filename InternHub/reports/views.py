@@ -61,6 +61,10 @@ class CreateConfidentialForm(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         internship_id = self.kwargs["pk"]
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         if Internship.objects.filter(id = internship_id).exists():
             internship = Internship.objects.get(id = internship_id)
             context['student_name'] = internship.student.first_name + " " + internship.student.last_name
@@ -68,36 +72,6 @@ class CreateConfidentialForm(CreateView):
             context['instructor_name'] = internship.instructor.first_name + " " + internship.instructor.last_name
             context['course'] = internship.student.department.code + " " + internship.course.code
         return context
-
-
-#not completed
-class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
-    form_class = SummerTrainingGradingForm
-    template_name = 'reports/create_summer_training_form.html'
-    success_url = '/student/students/'  # not good name
-
-    def form_valid(self, form):
-        # Checking if the report is satisfactory.
-
-        if form.cleaned_data['sum_score_evaluation_except_one'] < 7:
-            status = 'REJECTED'
-        elif form.cleaned_data['sum_score_evaluation_except_one'] < 30:
-            status = 'REJECTED'
-        elif not form.cleaned_data['score_evaluation_report']:
-            status = 'REJECTED'
-        else:
-            status = 'ACCEPTED'
-
-        # Getting the user_id from the form.
-        user_id = form.cleaned_data['student_id']
-
-        # If the form is not valid, return the form with the errors.
-        if form.errors != {}:
-            return super().form_invalid(form)
-
-        # If there are no errors, save the form.
-        form.save()
-        return super().form_valid(form)
 
 
 class WorkAndReportEvaluationFormCreation(CreateView):
@@ -119,6 +93,10 @@ class WorkAndReportEvaluationFormCreation(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         context['student_name'] = internship.student.first_name + " " + internship.student.last_name
         context['department'] = internship.student.department.name
         context['course'] = internship.student.department.code + " " + internship.course.code
@@ -144,6 +122,10 @@ class WorkAndReportEvaluationFormUpdate(UpdateView):
         context['student_name'] = internship.student.first_name + " " + internship.student.last_name
         context['department'] = internship.student.department.name
         context['course'] = internship.student.department.code + " " + internship.course.code
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         #context['form'] = self.get_form()
         return context
 class EditWorkAndReportEvaluation(View):
@@ -163,14 +145,6 @@ class ReportsView(ListView):
     template_name = 'reports/view_reports.html'
     context_object_name = 'reports'
 
-
-class MainView(LoginRequiredMixin, FormView):
-    template_name = 'reports/main.html'
-
-    def get(self, request):
-        return render(request, 'reports/main.html')
-
-
 class InternshipAssignmentView(FormView, LoginRequiredMixin):
     form_class = InternshipAssignmentForm
     template_name = 'reports/internship_assignment.html'
@@ -186,6 +160,10 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         return context
 
     def get_success_url(self):
@@ -258,6 +236,10 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         context['submission_statuses'] = {}
         context['feedback_needed'] = {}
         context['feedback_recieved'] = {}
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
 
         for internship in context['internships']:
             if internship.submissions.exists():
@@ -359,6 +341,10 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['submission_set'] = self.get_object().submissions.exists()
         context['now'] = timezone.now()
         context['action'] = self.request.POST.get('action')
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         return context
 
 class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
@@ -386,6 +372,10 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         context['form'] = StudentReportForm()
         context['extension_form'] = ExtensionForm()
         context['date_passed'] = {}
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
 
         for internship in internships:
             if internship.submissions.exists():
@@ -498,6 +488,14 @@ class ListFeedbackView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     context_object_name = 'feedbacks'
     allowed_roles = ['STUDENT', 'INSTRUCTOR']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+    
     def get_queryset(self):
         if self.request.user.role == 'STUDENT':
             return Feedback.objects.filter(submission_field__internship__student__user_id=self.request.user.user_id).order_by('id')
