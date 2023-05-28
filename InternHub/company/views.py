@@ -182,9 +182,8 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         ).exists()
 
         if pending_internship:
-            # Raise a ValidationError if a pending internship exists
-            raise ValidationError(
-                "You have a pending internship for this course. You cannot submit another CAVA.")
+            form.add_error(None, "You have a pending internship for this course. You cannot submit another CAVA.")
+            return self.form_invalid(form)
 
         cava = form.save(commit=False)
         cava.status = 'PENDING'
