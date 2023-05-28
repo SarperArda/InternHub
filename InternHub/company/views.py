@@ -13,7 +13,7 @@ from django.utils import timezone
 from reports.models import Internship, Status
 from users.models import Student, User, DepartmentSecretary
 from django.core.exceptions import ValidationError
-from users.views import RoleRequiredMixin
+from users.views import RoleRequiredMixin, UserRequiredMixin
 from announcements.models import Notification
 # Create your views here.
 
@@ -283,10 +283,11 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         return redirect('company:cava-requests')
 
 ##ToDo Add Roles
-class CompanyEvaluationView(LoginRequiredMixin, FormView):
+class CompanyEvaluationView(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/evaluate-company.html'
     form_class = CompanyEvaluationForm
     success_url = reverse_lazy('main:home')
+    allowed_roles = ['STUDENT']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

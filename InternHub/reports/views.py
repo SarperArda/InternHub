@@ -201,6 +201,17 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
                 instructor_index += 1
                 if instructor_index >= instructor_count:
                     instructor_index = 0
+                Notification.create_notification(
+                        title="New Internship Assignment",
+                        content=f"Secretary {str(self.request.user)} has assigned a new instructor {str(internship.instructor)} for {internship.student.department.code}{internship.course}.",
+                        receiver=internship.student,
+                )
+
+                Notification.create_notification(
+                        title="New Internship Assignment",
+                        content=f"Secretary {str(self.request.user)} has assigned a new student {str(internship.student)} for {internship.student.department.code}{internship.course}.",
+                        receiver=internship.instructor,
+                )
 
         elif action == 'Clear':
             internships = Internship.objects.filter(
@@ -261,44 +272,57 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             else:
                 context['submission_statuses'][internship.pk] = None
                 context['feedback_needed'][internship.pk] = False
-                Notification.create_notification(
-                        title="New Submission",
-                        content=f"Instructor {str(self.request.user)} has assigned a new submission for {internship.student.department.code}{internship.course}.",
-                        receiver=internship.student,
-                )
         return context
 
     def post(self, request, *args, **kwargs):
-        form = ExtensionForm(request.POST)
-        if form.is_valid():
-            due_date = form.cleaned_data['extension_date']
-            internships = self.get_queryset()
-            for internship in internships:
-                # Get the existing submission with status "PENDING"
-                report = internship.submissions.filter(
-                    status=SubmissionStatus.PENDING).first()
-                # Create a new submission if it doesn't exist
-                if report is None:
-                    report = Submission.objects.create(
-                        internship=internship, due_date=due_date)
-                else:
-                    Notification.create_notification(
-                        title="New Due Date",
-                        content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+        action = request.POST.get('action')
+        if action == 'Unsatisfactory':
+            internship_id = request.POST.get('internship_id')
+            internship = Internship.objects.get(pk=internship_id)
+            internship.status = SubmissionStatus.UNSATISFACTORY
+            internship.save()
+            Notification.create_notification(
+                        title="Unsatisfactory Internship",
+                        content=f"Your internship {internship.student.department.code}{internship.course} has been marked as unsatisfactory by {str(self.request.user)}.",
                         receiver=internship.student,
-                    )
-                    report.due_date = due_date
-                    report.save()
-                # Add the submission to the internship if it doesn't exist
-                if report.id is None:
-                    internship.submissions.add(report)
+            )
+        elif action == 'Extend': 
+            form = ExtensionForm(request.POST)
+            if form.is_valid():
+                due_date = form.cleaned_data['extension_date']
+                internships = self.get_queryset().filter(status=SubmissionStatus.PENDING)
+                for internship in internships:
+                    # Get the existing submission with status "PENDING"
+                    report = internship.submissions.filter(
+                        status=SubmissionStatus.PENDING).first()
+                    # Create a new submission if it doesn't exist
+                    if report is None:
+                        report = Submission.objects.create(
+                            internship=internship, due_date=due_date)
+                        Notification.create_notification(
+                            title="New Submission",
+                            content=f"Instructor {str(self.request.user)} has assigned a new submission for {internship.student.department.code}{internship.course}.",
+                            receiver=internship.student,
+                        )
+                    else:
+                        Notification.create_notification(
+                            title="New Due Date",
+                            content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                            receiver=internship.student,
+                        )
+                        report.due_date = due_date
+                        report.save()
+                    # Add the submission to the internship if it doesn't exist
+                    if report.id is None:
+                        internship.submissions.add(report)
 
-                
-            # Redirect to the view page
-            return redirect('reports:view_internships')
+                    
+                # Redirect to the view page
+                return redirect('reports:view_internships')
 
         # Re-render the page with the same context if form is not valid
-        return self.get(request, *args, **kwargs)
+            return self.get(request, *args, **kwargs)
+        return redirect('reports:view_internships')
 
 
 class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
@@ -313,8 +337,6 @@ class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         report_form = StudentReportForm(request.POST, request.FILES)
         # Form for the due date and feedback
         form = ExtensionForm(request.POST)
-
-
         if action == 'extend':
             # handle the extend action here
             if form.is_valid():

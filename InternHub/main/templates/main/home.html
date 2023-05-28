@@ -292,7 +292,7 @@
                                 <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h5 class="mb-1">{{ internship.student.department.code }}{{ internship.course }}
-                                            \ {{ internship.status }}</h5>
+                                            \ {{ internship.get_status_display }}</h5>
                                     </div>
                                     <p class="mb-1">{{ internship.company }}</p>
                                     <small class="text-muted d-block text-end">{{ internship.instructor }}</small>

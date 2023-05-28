@@ -5,6 +5,7 @@ from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin
+from reports.models import Internship
 
 # Create your views here.
 class RoleRequiredMixin(UserPassesTestMixin):
@@ -16,6 +17,22 @@ class RoleRequiredMixin(UserPassesTestMixin):
     def handle_no_permission(self):
         return redirect('users:forbidden')
 
+class UserRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.role in ['STUDENT', 'INSTRUCTOR']:
+            try:
+                internship = Internship.objects.get(id=self.kwargs['pk'])
+                user_id = self.request.user.user_id
+                # Only pass if user is the student or instructor associated with the Internship
+                return user_id == internship.student.user_id or user_id == internship.instructor.user_id
+            except Internship.DoesNotExist:
+                return False
+        else:
+            # If user's role is neither 'student' nor 'instructor', they pass automatically
+            return True
+
+    def handle_no_permission(self):
+        return redirect('users:forbidden')
 
 class LoginView(FormView):
     template_name = 'users/login.html'
