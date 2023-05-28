@@ -23,6 +23,14 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = CompanyForm
     success_url = reverse_lazy('company:companies')
     allowed_roles = ['STUDENT']
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
 
     def form_valid(self, form):
         company = form.save(commit=False)
@@ -57,6 +65,14 @@ class CompaniesView(LoginRequiredMixin, ListView):
     model = Company
     context_object_name = 'companies'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+    
     def get_queryset(self):
         return self.model.objects.filter(status='APPROVED')
 
@@ -68,12 +84,28 @@ class ListCompanyRequestsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     ordering = 'id'
     allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
 
 class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyRequest
     template_name = 'company/request-detail.html'
     context_object_name = 'request'
     allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
 
     def post(self, request, *args, **kwargs):
         company_request = self.get_object()
@@ -109,6 +141,14 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = CAVAForm
     success_url = reverse_lazy('main:home')
     allowed_roles = ['STUDENT']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
 
     def form_valid(self, form):
         student = Student.objects.get(user_id=self.request.user.user_id)
@@ -158,6 +198,14 @@ class ListCAVASView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     ordering = 'id'
     allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
     def get_queryset(self):
         return CompanyApprovalValidationApplication.objects.filter(status='PENDING')
 
@@ -167,6 +215,14 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     model = CompanyApprovalValidationApplication
     context_object_name = 'request'
     allowed_roles = ['SUPERUSER', 'DEPARTMENT_SECRETARY']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
 
     def post(self, request, *args, **kwargs):
         cava_request = self.get_object()
@@ -212,6 +268,14 @@ class CompanyEvaluationView(LoginRequiredMixin, FormView):
     form_class = CompanyEvaluationForm
     success_url = reverse_lazy('main:home')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
     def form_valid(self, form, *args, **kwargs):
         internship = Internship.objects.get(id=self.kwargs['pk'])
         internship.company_evaluation = form.save()
@@ -224,13 +288,15 @@ class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
     model = Internship
     context_object_name = 'internships'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
     def get_queryset(self):
         student = Student.objects.get(user_id=self.request.user.user_id)
         return self.model.objects.filter(student=student)
 
-
-class MainView(LoginRequiredMixin, FormView):
-    template_name = 'company/main.html'
-
-    def get(self, request):
-        return render(request, 'company/main.html')

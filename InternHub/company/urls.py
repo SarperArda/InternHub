@@ -14,8 +14,6 @@ urlpatterns = [
     path('cava-requests/', views.ListCAVASView.as_view(), name="cava-requests"),
     path('cava-requests/<int:pk>/', views.CAVADetailView.as_view(), name="cava-detail"),
 
-    path('main/', views.MainView.as_view(), name='main'),
-
     path('company-evaluation/<int:pk>/', views.CompanyEvaluationView.as_view(), name="evaluate-company"),
     path('company-evaluation/', views.ListCompanyEvaluationsView.as_view(), name="company-evaluations"),
 ]
