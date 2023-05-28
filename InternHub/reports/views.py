@@ -471,9 +471,15 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                 feedback.save()
                 last_submission.save()
 
+                Notification.create_notification(
+                    title="Revision Required",
+                    content=f"Your report for {internship.student.department.code} {internship.course} has been marked as revision required.",
+                    receiver=internship.student,
+                )
                 # Create a new submission with the provided due date
                 new_submission = Submission.objects.create(
                     internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+
         elif action == 'submit_report':
             form = StudentReportForm(request.POST, request.FILES)
 
@@ -486,6 +492,18 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                     existing_report.creation_date = timezone.now()
                     existing_report.save()
 
+                    Notification.create_notification(
+                        title="Report Submitted",
+                        content=f"Your report for {internship.student.department.code} {internship.course} has been submitted.",
+                        receiver=internship.student,
+                    )
+
+                    Notification.create_notification(
+                        title="Report Submitted",
+                        content=f"Student {str(self.request.user)} has submitted a report for {internship.student.department.code} {internship.course}.",
+                        receiver=internship.instructor,
+                    )
+            
                 # Handle the file upload and any other necessary logic
         elif action == 'approve_extension':
             latest_submission.due_date = latest_submission.extension.extension_date
