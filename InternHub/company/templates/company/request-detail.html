@@ -5,6 +5,8 @@
 
 {% block styling %}
 <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+
+
 {% endblock %}
 
 
@@ -76,23 +78,39 @@
                 <hr class="my-4 border-2 text-dark">
                 <div class="card border-0" style="height: 85vh;">
                     <div class="card-body overflow-auto">
-                        <div>
-                            <p>Company Name: {{ request.company.name }}</p>
-                            <p>Requested By: {{ request.student.first_name}} {{ request.student.last_name}}</p>
-                            <p>Field: {{ request.company.field }}</p>
-                            <p>Departments:</p>
-                                <ul>
+                        <a href="{% url 'company:company-requests' %}" class="btn btn-secondary btn-sm mb-4">
+                            <i class="fas fa-arrow-left"></i> Back to list
+                        </a>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="card-title mb-3">Company
+                                Name: {{ request.company.name }}</h5>
+                            <div class="text-end">
+                                <p class="text-muted">Requested on {{ request.demand_date }}</p>
+                            </div>
+                        </div>
+                        <p class="card-text mb-4">Requested
+                            By: {{ request.student.first_name }} {{ request.student.last_name }}</p>
+                        <p class="card-text mb-4">
+                            Field: {{ request.student.department }}</p>
+                        <p class="card-text mb-4">
+                            Departments:</p>
+                            <ul>
                                 {% for department in request.company.departments.all %}
                                     <li>{{ department.name }}</li>
                                 {% endfor %}
-                                </ul>
+                            </ul>
+                        <div class="d-flex justify-content-center">
                             <form method="post" action="{% url 'company:request-detail' request.id %}">
                                 {% csrf_token %}
-                                <button type="submit" name="action" value="approve">Approve</button>
-                                <button type="submit" name="action" value="reject">Reject</button>
+                                <button class="btn btn-primary btn-sm mx-2 text-center" type="submit"
+                                        name="action" value="approve" style="width: 100px;">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm mx-2 text-center" type="submit"
+                                        name="action" value="reject" style="width: 100px;">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
                             </form>
-                    
-                            <a href="{% url 'company:company-requests' %}">Back to list</a>
                         </div>
                     </div>
                 </div>

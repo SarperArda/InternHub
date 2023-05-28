@@ -3,6 +3,12 @@
 
 {% block styling %}
 <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+
+<style>
+    #cr-btn:hover {
+        background-color: #DCDCDC;
+    }
+</style>
 {% endblock %}
 
 
@@ -76,13 +82,15 @@
                     <div class="card-body overflow-auto">
                         <ul class="list-group">
                             {% for request in requests %}
-                            <div>
-                                <p>
-                                    <button onclick="navigateToAnotherPage('/company/company-requests/<int:pk>/')">
-                                        <a href="{% url 'company:request-detail' request.id %}">{{ request.company.name }}</a>
-                                    </button>
-                                </p>
-                            </div>
+                            <li class="list-group-item border-0 border-bottom rounded-0 mb-3" id="cr-btn">
+                                <button onclick="navigateToAnotherPage('/company/company-requests/{{ request.id }}/')"
+                                        class="btn d-flex w-100 justify-content-between">
+                                    <span class="mb-1 fs-4">{{ request.company.name }}</span>
+                                    <small class="text-muted d-block text-end">Requested by
+                                        {{ request.student.first_name }} {{ request.student.last_name }}
+                                    </small>
+                                </button>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
