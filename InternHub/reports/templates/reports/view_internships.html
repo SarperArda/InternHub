@@ -143,9 +143,13 @@
                                     </button>
                                     {% endif %}
                                     {% if request.user|can_submit %}
-                                    <button 
-                                    class="btn d-flex w-100 border-2 border-danger justify-content-between">Unsatisfactory
-                                    </button>
+                                    <form method="POST" action="{% url 'reports:view_internships' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                        <button 
+                                        class="btn d-flex w-100 border-2 border-danger justify-content-between" type="submit" name="action" value="Unsatisfactory">Unsatisfactory
+                                        </button>
+                                    </form>
                                     {% endif %}
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
                                         <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
@@ -160,7 +164,7 @@
                                     <form method="post">
                                         {% csrf_token %}
                                         {{ form.as_p }}
-                                        <button type="submit">Set</button>
+                                        <button type="submit" name="action" value="Extend">Set</button>
                                     </form>
                                 {% endif %}
 
