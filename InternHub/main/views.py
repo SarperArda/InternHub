@@ -11,7 +11,7 @@ class HomeView(LoginRequiredMixin, View):
 
     def get(self, request):
         announcements = Announcement.objects.all()
-        notifications = Notification.objects.filter(receiver=request.user)
+        notifications = Notification.objects.filter(receiver=request.user).order_by('-id')
         full_name = str(request.user)
         user = request.user
         id = request.user.user_id

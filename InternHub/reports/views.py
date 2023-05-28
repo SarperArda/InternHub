@@ -429,7 +429,6 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
                 )
                 latest_submission.save()
         elif action == 'satisfactory':
-            print("Hey")
             latest_submission.status = SubmissionStatus.SATISFACTORY
             internship.status = SubmissionStatus.SATISFACTORY
             latest_submission.save()
@@ -442,7 +441,6 @@ class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
         elif action == 'revision_required':
             feedback_form = FeedbackForm(request.POST, request.FILES)
             if feedback_form.is_valid():
-                print("Hey")
                 # Process the feedback upload
                 feedback_description = feedback_form.cleaned_data['description']
                 due_date = feedback_form.cleaned_data['due_date']
