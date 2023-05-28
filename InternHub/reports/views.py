@@ -36,6 +36,7 @@ from django.urls import reverse_lazy
 from reports.models import SubmissionStatus
 from announcements.models import Notification
 from users.models import Student, User, DepartmentSecretary, Instructor
+from InternHub.manager import StatisticManager
 # Create your views here.
 
 
@@ -518,5 +519,12 @@ class StatisticView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['user'] = user
         context['check'] = True
         statistic = Statistic.objects.get(id=self.kwargs['pk'])
+        StatisticManager.update_statistics()
+        if statistic.calculate_report_grade_average() is None:
+            statistic.report_grade_average = 0
+        if statistic.calculate_work_grade_average() is None:
+            statistic.work_evaluation_grade_average = 0
+        if statistic.calculate_company_evaluation_grade_average() is None:
+            statistic.company_evaluation_grade_average = 0
         context['statistic'] = statistic
         return context
