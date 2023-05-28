@@ -56,18 +56,25 @@
                                         <div class="collapse" id="reports-collapse">
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
+                                                {% if request.user.role == 'STUDENT' %}
                                                 <li>
-                                                    <button id="submissions-button"
+                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')" 
+                                                     id="submissions-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Submissions
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button id="feedbacks-button"
+                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')" 
+                                                    id="feedbacks-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Feedbacks
                                                     </button>
                                                 </li>
+                                                {% endif %}
+                                                {% if request.user.role == 'INSTRUCTOR' %}
+                                                {% endif %}
+                                            
                                             </ul>
                                         </div>
                                     </li>
