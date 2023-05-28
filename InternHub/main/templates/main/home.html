@@ -44,133 +44,135 @@
                                         </li>
                                     {% endif %}
                                     {% if request.user.role == 'INSTRUCTOR' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')"
-                                                class="nav-link text-white w-100"
-                                                style="padding-left: 12px;">
-                                            <i class="fs-5 fa-regular fa-briefcase"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline"
-                                                  id="sidebar-span">Internships</span>
-                                        </button>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                    class="nav-link text-white w-100"
+                                                    style="padding-left: 12px;">
+                                                <i class="fs-5 fa-regular fa-briefcase"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Internships</span>
+                                            </button>
+                                        </li>
                                     {% endif %}
-
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#internships-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-file"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Internships</span>
-                                        </button>
-                                        <div class="collapse" id="internships-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')" 
-                                                     id="submissions-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Confidential Forms
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')" 
-                                                    id="feedbacks-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Internship Assignments
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    
-                                    {% endif %}
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#internships-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-file"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Internships</span>
+                                            </button>
+                                            <div class="collapse" id="internships-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
 
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                                id="submissions-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Confidential Forms
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/assign-internships/')"
+                                                                id="feedbacks-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Internship Assignments
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    {% endif %}
                                     {% if request.user.role != 'DEPARTMENT_SECRETARY' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#reports-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-file"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
-                                        </button>
-                                        <div class="collapse" id="reports-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')" 
-                                                     id="submissions-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Submissions
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')" 
-                                                    id="feedbacks-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Feedbacks
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#reports-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-file"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Reports</span>
+                                            </button>
+                                            <div class="collapse" id="reports-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/submissions/')"
+                                                                id="submissions-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Submissions
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/feedbacks/')"
+                                                                id="feedbacks-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Feedbacks
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
 
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#company-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-building"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
-                                        </button>
-                                        <div class="collapse" id="company-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/companies/')"
-                                                            class="btn text-white rounded fs-4 w-100">Company list
-                                                    </button>
-                                                </li>
-                                                {% if request.user.role == 'STUDENT' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-cava/')" 
-                                                            class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-company/')" 
-                                                            class="btn text-white rounded fs-4 w-100">Company Request
-                                                    </button>
-                                                </li>
-                                                {% endif %}
-
-                                                {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/cava-requests/')" 
-                                                    class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/company-requests/')" 
-                                                    class="btn text-white rounded fs-4 w-100">Company Request
-                                                    </button>
-                                                </li>
-                                                {% endif %}
-
-                                            </ul>
-                                        </div>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#company-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-building"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Company</span>
+                                            </button>
+                                            <div class="collapse" id="company-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/companies/')"
+                                                                class="btn text-white rounded fs-4 w-100">Company list
+                                                        </button>
+                                                    </li>
+                                                    {% if request.user.role == 'STUDENT' %}
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/request-cava/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Approval Validation Application
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/request-company/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Request
+                                                            </button>
+                                                        </li>
+                                                    {% endif %}
+                                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Approval Validation Application
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/company-requests/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Request
+                                                            </button>
+                                                        </li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
                                 </ul>
                             </div>
@@ -267,21 +269,23 @@
                         <hr class="my-4 border-2 text-dark">
                         {% for contacts in contacts_set %}
                             {% for contact in contacts %}
-                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
-                                        {% if contact.role == 'DEPARTMENT_SECRETARY' %}
-                                            <small>Department Secretary</small>
-                                        {% else %}
-                                            <small>{{ contact.role|title }}</small>
-                                        {% endif %}
-                                    </div>
-                                    <div class="d-flex w-100 justify-content-between mb-2">
-                                        <a href="mailto: {{ contact.email }}" id="contacts-mail"
-                                           class="text-muted">{{ contact.email }}</a>
-                                        <small class="d-block text-end">{{ contact.department }}</small>
-                                    </div>
-                                </li>
+                                {% if contact %}
+                                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
+                                            {% if contact.role == 'DEPARTMENT_SECRETARY' %}
+                                                <small>Department Secretary</small>
+                                            {% else %}
+                                                <small>{{ contact.role|title }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-flex w-100 justify-content-between mb-2">
+                                            <a href="mailto: {{ contact.email }}" id="contacts-mail"
+                                               class="text-muted">{{ contact.email }}</a>
+                                            <small class="d-block text-end">{{ contact.department }}</small>
+                                        </div>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
