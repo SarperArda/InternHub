@@ -46,12 +46,12 @@
                                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
                                         <li>
                                             <button onclick="navigateToAnotherPage('/company/cava-requests/')" 
-                                            class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
+                                            class="btn text-white rounded fs-4 w-100">Company Approval Validation Applications
                                             </button>
                                         </li>
                                         <li>
                                             <button onclick="navigateToAnotherPage('/company/company-requests/')" 
-                                            class="btn text-white rounded fs-4 w-100">Company Request
+                                            class="btn text-white rounded fs-4 w-100">Company Requests
                                             </button>
                                         </li>
                                     </ul>
@@ -82,19 +82,15 @@
                             <i class="fas fa-arrow-left"></i> Back to list
                         </a>
                         <div class="d-flex justify-content-between">
-                            <h5 class="card-title mb-3">Company
+                            <h5 class="card-title mb-4">Company
                                 Name: {{ request.company.name }}</h5>
-                            <div class="text-end">
-                                <p class="text-muted">Requested on {{ request.demand_date }}</p>
-                            </div>
                         </div>
-                        <p class="card-text mb-4">Requested
+                        <p class="card-text mb-3">Requested
                             By: {{ request.student.first_name }} {{ request.student.last_name }}</p>
                         <p class="card-text mb-4">
                             Field: {{ request.student.department }}</p>
-                        <p class="card-text mb-4">
-                            Departments:</p>
-                            <ul>
+                        <p class="card-text mb-2">Departments:</p>
+                            <ul class="mb-5">
                                 {% for department in request.company.departments.all %}
                                     <li>{{ department.name }}</li>
                                 {% endfor %}

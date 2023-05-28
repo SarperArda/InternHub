@@ -70,52 +70,56 @@
                                         </div>
                                     </li>
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#company-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-building"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
-                                        </button>
-                                        <div class="collapse" id="company-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                {% if request.user.role == 'STUDENT' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/companies/')"
-                                                            class="btn text-white rounded fs-4 w-100">Company list
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-cava/')" 
-                                                            class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-company/')" 
-                                                            class="btn text-white rounded fs-4 w-100">Company Request
-                                                    </button>
-                                                </li>
-                                                {% endif %}
-
-                                                {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/cava-requests/')" 
-                                                    class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('company/company-requests/')" 
-                                                    class="btn text-white rounded fs-4 w-100">Company Request
-                                                    </button>
-                                                </li>
-                                                {% endif %}
-
-                                            </ul>
-                                        </div>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#company-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-building"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Company</span>
+                                            </button>
+                                            <div class="collapse" id="company-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+                                                    {% if request.user.role == 'STUDENT' %}
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/companies/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                List
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/request-cava/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Approval Validation Applications
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/request-company/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Requests
+                                                            </button>
+                                                        </li>
+                                                    {% endif %}
+                                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Approval Validation Applications
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button onclick="navigateToAnotherPage('company/company-requests/')"
+                                                                    class="btn text-white rounded fs-4 w-100">Company
+                                                                Requests
+                                                            </button>
+                                                        </li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
                                 </ul>
                             </div>
@@ -151,18 +155,22 @@
                     <div id="announcement-div">
                         <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
                         <hr class="my-4 border-2 text-dark">
-                        <ul class="list-group">
-                            {% for announcement in announcements %}
-                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ announcement.title }}</h5>
-                                        <small>{{ announcement.sender }}</small>
-                                    </div>
-                                    <p class="mb-1">{{ announcement.content }}</p>
-                                    <small class="text-muted d-block text-end">{{ announcement.date }}</small>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+                                <ul class="list-group">
+                                    {% for announcement in announcements %}
+                                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">{{ announcement.title }}</h5>
+                                                <small>{{ announcement.sender }}</small>
+                                            </div>
+                                            <p class="mb-1">{{ announcement.content }}</p>
+                                            <small class="text-muted d-block text-end">{{ announcement.date }}</small>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div id="internship-div">
                         <h1 class="display-6 text-center fw-semibold" id="titles">Internships</h1>
@@ -201,21 +209,23 @@
                         <hr class="my-4 border-2 text-dark">
                         {% for contacts in contacts_set %}
                             {% for contact in contacts %}
-                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
-                                        {% if contact.role == 'DEPARTMENT_SECRETARY' %}
-                                            <small>Department Secretary</small>
-                                        {% else %}
-                                            <small>{{ contact.role|title }}</small>
-                                        {% endif %}
-                                    </div>
-                                    <div class="d-flex w-100 justify-content-between mb-2">
-                                        <a href="mailto: {{ contact.email }}" id="contacts-mail"
-                                           class="text-muted">{{ contact.email }}</a>
-                                        <small class="d-block text-end">{{ contact.department }}</small>
-                                    </div>
-                                </li>
+                                {% if contact %}
+                                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
+                                            {% if contact.role == 'DEPARTMENT_SECRETARY' %}
+                                                <small>Department Secretary</small>
+                                            {% else %}
+                                                <small>{{ contact.role|title }}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-flex w-100 justify-content-between mb-2">
+                                            <a href="mailto: {{ contact.email }}" id="contacts-mail"
+                                               class="text-muted">{{ contact.email }}</a>
+                                            <small class="d-block text-end">{{ contact.department }}</small>
+                                        </div>
+                                    </li>
+                                {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
