@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div>
+        <canvas id="PFStatusesChart"></canvas>
+        <canvas id="AGStudentsChart"></canvas>
+    </div>
+
+    <script>
+        const NOSSatisfactory = {{ NOSSatisfactory }};
+        const NOSUnsatisfactory = {{ NOSUnsatisfactory }};
+        const NOSPending = {{ NOSPending }};
+
+        const pfsc = document.getElementById('PFStatusesChart');
+        const agsc = document.getElementById('AGStudentsChart');
+
+        new Chart(pfsc, {
+            type: 'pie',
+            data: {
+                labels: ['Satisfactory', 'Unsatisfactory', 'Pending'],
+                datasets: [{
+                    label: 'Chart 1',
+                    data: [NOSSatisfactory, NOSUnsatisfactory, NOSPending],
+                    backgroundColor: [
+                        'rgb(75, 192, 192)',
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 205, 86)',
+                    ],
+                    borderWidth: 1,
+                    hoverOffset: 4,
+                }],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            },
+        });
+
+        new Chart(agsc, {
+            type: 'bar',
+            data: {
+                labels: ['Work average grade', 'Company average grade', 'Report average grade'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            },
+        });
+    </script>
+{% endblock %}
