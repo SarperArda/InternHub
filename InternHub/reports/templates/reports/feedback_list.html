@@ -1,23 +1,121 @@
-{% extends 'base.html' %}
+{% extends 'main/home.html' %}
 {% load static %}
 {% load permissions %}
 
 {% block title %}Feedbacks{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
 {% endblock %}
 
 {% block body %}
-    {% for feedback in feedbacks %}
-        <div class="feedback">
-            <h2>Course: {{ feedback.submission_field.internship.course }}</h2>
-            <h2>Submission: <a href="{{feedback.file.url}}">{{ feedback.submission_field.file.name }}</a></h2>
-            <h3>Feedback File: <a href="{{feedback.file.url}}">{{feedback.file.name}}</a></h3>
-            {% if feedback.description %}
-                <p>Description: {{ feedback.description }}</p>
-            {% endif %}
-            <p>Status: {{ feedback.submission_field.status }}</p>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {% block left-column %}
+                <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
+                    <div class="bg-dark p2">
+                        <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                            <b class="display-4">
+                                <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                            </b>
+                        </a>
+                        <hr class="bg-white border-2 border-top border-white">
+                        <div class="container">
+                            <div class="content">
+                                <ul class="nav nav-pills flex-column mt-4">
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Home</span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#company-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-file"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
+                                        </button>
+                                        <div class="collapse" id="company-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')" 
+                                                            class="btn text-white rounded fs-4 w-100">Submissions
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')" 
+                                                            class="btn text-white rounded fs-4 w-100">Feedbacks
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                        <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block middle-column %}
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Feedbacks</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+
+
+                            {% for feedback in feedbacks %}
+                                <div class="feedback">
+                                    <h2>Course: {{ feedback.submission_field.internship.course }}</h2>
+                                    <h2>Submission: <a href="{{feedback.file.url}}">{{ feedback.submission_field.file.name }}</a></h2>
+                                    <h3>Feedback File: <a href="{{feedback.file.url}}">{{feedback.file.name}}</a></h3>
+                                    {% if feedback.description %}
+                                        <p>Description: {{ feedback.description }}</p>
+                                    {% endif %}
+                                    <p>Status: {{ feedback.submission_field.status }}</p>
+                                </div>
+                            {% endfor %}
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block right-column %}
+                <div class="col text-white" id="side-bar-right">
+                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <div class="container" id="profile-info">
+                        <div class="row">
+                            {% if check %}
+                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4 border-2 text-black">
+                        <h1 class="display-6 text-center fw-semibold" id="due-date">
+                            Due Date</h1>
+                    </div>
+                </div>
+            {% endblock %}
         </div>
-    {% endfor %}
+    </div>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}
