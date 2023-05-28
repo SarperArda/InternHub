@@ -5,7 +5,6 @@
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
-    
 {% endblock %}
 
 {% block body %}
@@ -32,63 +31,63 @@
                                         </button>
                                     </li>
                                     {% if request.user.role == 'CHAIR' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ chair_department }}')"
-                                            class="nav-link text-white w-100"
-                                                id="announcement-button"
-                                                style="padding-left: 12px;">
-                                            <i class="fs-5 fa-regular fa-bullhorn"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline"
-                                                  id="sidebar-span">Statistics</span>
-                                        </button>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button onclick="navigateToAnotherPage('/reports/statistics/{{ chair_department }}')"
+                                                    class="nav-link text-white w-100"
+                                                    id="announcement-button"
+                                                    style="padding-left: 12px;">
+                                                <i class="fs-5 fa-regular fa-bullhorn"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Statistics</span>
+                                            </button>
+                                        </li>
                                     {% endif %}
-                                    
                                     {% if request.user.role == 'DEAN' %}
                                         <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#reports-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-chart-pie"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Statistics</span>
-                                        </button>
-                                        <div class="collapse" id="reports-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ cs }}')"
-                                                     id="cs-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Computer Science
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ ee }}')"
-                                                    id="ee-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Electrics and Electronical Engineering
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ me }}')"
-                                                     id="me-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Mechanical Engineering
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ ie }}')"
-                                                    id="ie-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Industrial Engineering
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#reports-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-chart-pie"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Statistics</span>
+                                            </button>
+                                            <div class="collapse" id="reports-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ cs }}')"
+                                                                id="cs-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Computer Science
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ ee }}')"
+                                                                id="ee-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Electrics and Electronics Engineering
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ me }}')"
+                                                                id="me-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Mechanical Engineering
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ ie }}')"
+                                                                id="ie-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Industrial Engineering
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
                                 </ul>
                             </div>
@@ -105,24 +104,29 @@
                 </div>
             {% endblock %}
             {% block middle-column %}
-            <div class="col-auto col-6" id="middle-column">
-                <div id="company-list-div">
-                    <h1 class="display-6 text-center fw-semibold" id="titles">Statistics</h1>
-                    <hr class="my-4 border-2 text-dark">
-                    <div class="card border-0" style="height: 85vh;">
-                        <div class="card-body overflow-auto">
-                            <ul class="list-group">
-                                <div style="width: 50vh; height: 50vh;">
-                                    <canvas id="PFStatusesChart" class="chart-canvas"></canvas>
-                                    <canvas id="AGStudentsChart" class="chart-canvas"></canvas>
-                                </div>
-                            </ul>
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Statistics</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+                                <ul class="list-group list-unstyled"
+                                    style="display: flex; justify-content: center;
+                                        align-items: center; flex-direction: column;">
+                                    <li class="mb-5" style="width: 60vh; height: 70vh;">
+                                        <h4>PFStatusesChart (rename)</h4>
+                                        <canvas id="PFStatusesChart" class="chart-canvas"></canvas>
+                                    </li>
+                                    <li class="mb-3" style="width: 70vh; height: 40vh;">
+                                        <h4>PFStatusesChart (rename)</h4>
+                                        <canvas id="AGStudentsChart" class="chart-canvas"></canvas>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             {% endblock %}
-
             {% block right-column %}
                 <div class="col text-white" id="side-bar-right">
                     <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
@@ -143,19 +147,17 @@
             {% endblock %}
         </div>
     </div>
+
     <script src="{% static 'main/home.js' %}"></script>
 
     <script>
-        const NOSSatisfactory = {{ statistic.internship_satisfaction_number }};
-        const NOSUnsatisfactory = {{ statistic.internship_unsatisfaction_number }};
-        const NOSPending = {{ statistic.internship_pending_number }};
-
+        // Chart 1
         const pfsc = document.getElementById('PFStatusesChart');
-        const agsc = document.getElementById('AGStudentsChart');
 
-        const wag = {{ statistic.work_evaluation_grade_average }};
-        const cag = {{ statistic.company_evaluation_grade_average }};
-        const rag = {{ statistic.report_grade_average }};
+        // Chart 1 Data
+        const noss = {{ statistic.internship_satisfaction_number }};
+        const nosu = {{ statistic.internship_unsatisfaction_number }};
+        const nosp = {{ statistic.internship_pending_number }};
 
         new Chart(pfsc, {
             type: 'pie',
@@ -163,7 +165,7 @@
                 labels: ['Satisfactory', 'Unsatisfactory', 'Pending'],
                 datasets: [{
                     label: 'Distribution of Internships regarding statuses in {{ statistic.department.name }}',
-                    data: [NOSSatisfactory, NOSUnsatisfactory, NOSPending],
+                    data: [noss, nosu, nosp],
                     backgroundColor: [
                         'rgb(75, 192, 192)',
                         'rgb(255, 99, 132)',
@@ -181,6 +183,14 @@
                 }
             },
         });
+
+        // Chart 2
+        const agsc = document.getElementById('AGStudentsChart');
+
+        // Chart 2 Data
+        const wag = {{ statistic.work_evaluation_grade_average }};
+        const cag = {{ statistic.company_evaluation_grade_average }};
+        const rag = {{ statistic.report_grade_average }};
 
         new Chart(agsc, {
             type: 'bar',

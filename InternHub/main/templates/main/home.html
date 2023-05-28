@@ -69,7 +69,6 @@
                                             <div class="collapse" id="internships-collapse">
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                     id="dropdown-ul">
-
                                                     <li>
                                                         <button onclick="navigateToAnotherPage('/reports/view-internships/')"
                                                                 id="submissions-button"
@@ -88,100 +87,98 @@
                                             </div>
                                         </li>
                                     {% endif %}
-
                                     {% if request.user.role == 'STUDENT' or request.user.role == 'INSTRUCTOR' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#reports-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-file"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
-                                        </button>
-                                        <div class="collapse" id="reports-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')" 
-                                                     id="submissions-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Submissions
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')" 
-                                                    id="feedbacks-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Feedbacks
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#reports-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-file"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Reports</span>
+                                            </button>
+                                            <div class="collapse" id="reports-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/submissions/')"
+                                                                id="submissions-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Submissions
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/feedbacks/')"
+                                                                id="feedbacks-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Feedbacks
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
-
                                     {% if request.user.role == 'CHAIR' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ statistics }}')"
-                                            class="nav-link text-white w-100"
-                                                id="announcement-button"
-                                                style="padding-left: 12px;">
-                                            <i class="fs-5 fa-regular fa-bullhorn"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline"
-                                                  id="sidebar-span">Statistics</span>
-                                        </button>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button onclick="navigateToAnotherPage('/reports/statistics/{{ statistics }}')"
+                                                    class="nav-link text-white w-100"
+                                                    id="announcement-button"
+                                                    style="padding-left: 12px;">
+                                                <i class="fs-5 fa-regular fa-bullhorn"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Statistics</span>
+                                            </button>
+                                        </li>
                                     {% endif %}
-                                    
                                     {% if request.user.role == 'DEAN' %}
                                         <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#reports-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-chart-pie"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Statistics</span>
-                                        </button>
-                                        <div class="collapse" id="reports-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ csPk }}')"
-                                                     id="cs-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Computer Science
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ eePk }}')"
-                                                    id="ee-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Electrics and Electronical Engineering
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ mePk }}')"
-                                                     id="me-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Mechanical Engineering
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ iePk }}')"
-                                                    id="ie-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Industrial Engineering
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#reports-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-chart-pie"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Statistics</span>
+                                            </button>
+                                            <div class="collapse" id="reports-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ csPk }}')"
+                                                                id="cs-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Computer Science
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ eePk }}')"
+                                                                id="ee-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Electrics and Electronical Engineering
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ mePk }}')"
+                                                                id="me-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Mechanical Engineering
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ iePk }}')"
+                                                                id="ie-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Industrial Engineering
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
-
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
                                         <li class="nav-item py-2 py-sm-2 rounded">
                                             <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
@@ -329,23 +326,23 @@
                         {% for contacts in contacts_set %}
                             {% for contact in contacts %}
                                 {% if contact %}
-                                {% if request.user.role != contact.role %}
-                                <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
-                                        {% if contact.role == 'DEPARTMENT_SECRETARY' %}
-                                            <small>Department Secretary</small>
-                                        {% else %}
-                                            <small>{{ contact.role|title }}</small>
-                                        {% endif %}
-                                    </div>
-                                    <div class="d-flex w-100 justify-content-between mb-2">
-                                        <a href="mailto: {{ contact.email }}" id="contacts-mail"
-                                           class="text-muted">{{ contact.email }}</a>
-                                        <small class="d-block text-end">{{ contact.department }}</small>
-                                    </div>
-                                </li>
-                                {% endif %}
+                                    {% if request.user.role != contact.role %}
+                                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h5 class="mb-1">{{ contact.first_name }} {{ contact.last_name }}</h5>
+                                                {% if contact.role == 'DEPARTMENT_SECRETARY' %}
+                                                    <small>Department Secretary</small>
+                                                {% else %}
+                                                    <small>{{ contact.role|title }}</small>
+                                                {% endif %}
+                                            </div>
+                                            <div class="d-flex w-100 justify-content-between mb-2">
+                                                <a href="mailto: {{ contact.email }}" id="contacts-mail"
+                                                   class="text-muted">{{ contact.email }}</a>
+                                                <small class="d-block text-end">{{ contact.department }}</small>
+                                            </div>
+                                        </li>
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
