@@ -4,27 +4,56 @@
 {% block title %}Something Went Wrong!{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding: 50px;
+        }
+
+        .error-template {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .error-template h1 {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .error-template h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .error-details {
+            margin-bottom: 20px;
+        }
+
+        .error-actions {
+            margin-top: 20px;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="error-template">
-          <h1>Oops!</h1>
-          <h2>403 Forbidden</h2>
-          <div class="error-details">
-            Sorry, you do not have the necessary permissions to access this page.
-          </div>
-          <div class="error-actions">
-            <a href="{% url 'main:home' %}" class="btn btn-primary btn-lg">
-              <span class="glyphicon glyphicon-home"></span>
-              Take me home 
-            </a>
-          </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="error-template">
+                    <h1>Oops!</h1>
+                    <h2>Something went wrong...</h2>
+                    <div class="error-details">
+                        Sorry, it seems you do not have the necessary permissions to access this page.
+                    </div>
+                    <div class="error-actions mb-5">
+                        <a href="{% url 'main:home' %}" class="btn btn-primary btn-lg">
+                            <i class="fa fa-house"></i>
+                            <br>Take me back to<br>the homepage
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 {% endblock %}
