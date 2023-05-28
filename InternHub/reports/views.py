@@ -519,6 +519,30 @@ class StatisticView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         context['user'] = user
         context['check'] = True
         statistic = Statistic.objects.get(id=self.kwargs['pk'])
+
+        if user.role == 'CHAIR':
+            context['chair_department'] = Statistic.objects.all().filter(department=user.department).first().pk
+        if statistic.department.code == 'CS':
+            context['cs'] = statistic.pk
+            context['me'] = statistic.pk + 1
+            context['ee'] = statistic.pk + 2
+            context['ie'] = statistic.pk + 3
+        if statistic.department.code == 'ME':
+            context['me'] = statistic.pk
+            context['cs'] = statistic.pk - 1
+            context['ee'] = statistic.pk + 1
+            context['ie'] = statistic.pk + 2
+        if statistic.department.code == 'EEE':
+            context['ee'] = statistic.pk
+            context['cs'] = statistic.pk - 2
+            context['me'] = statistic.pk - 1
+            context['ie'] = statistic.pk + 1
+        if statistic.department.code == 'IE':
+            context['ie'] = statistic.pk
+            context['cs'] = statistic.pk - 3
+            context['me'] = statistic.pk - 2
+            context['ee'] = statistic.pk - 1
+    
         StatisticManager.update_statistics()
         if statistic.calculate_report_grade_average() is None:
             statistic.report_grade_average = 0

@@ -124,7 +124,8 @@
 
                                     {% if request.user.role == 'CHAIR' %}
                                     <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="nav-link text-white w-100"
+                                        <button onclick="navigateToAnotherPage('/reports/statistics/{{ statistics }}')"
+                                            class="nav-link text-white w-100"
                                                 id="announcement-button"
                                                 style="padding-left: 12px;">
                                             <i class="fs-5 fa-regular fa-bullhorn"></i>
@@ -135,7 +136,7 @@
                                     {% endif %}
                                     
                                     {% if request.user.role == 'DEAN' %}
-                                                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                        <li class="nav-item py-2 py-sm-2 rounded">
                                         <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
                                                 data-bs-toggle="collapse"
@@ -149,28 +150,28 @@
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
                                                 <li>
-                                                    <button 
+                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ csPk }}')"
                                                      id="cs-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Computer Science
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button
+                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ eePk }}')"
                                                     id="ee-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Electrics and Electronical Engineering
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button 
+                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ mePk }}')"
                                                      id="me-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Mechanical Engineering
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button 
+                                                    <button onclick="navigateToAnotherPage('/reports/statistics/{{ iePk }}')"
                                                     id="ie-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Industrial Engineering

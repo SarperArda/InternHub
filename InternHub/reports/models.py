@@ -181,7 +181,7 @@ class Statistic(models.Model):
         count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
             if internship.work_and_report_evaluation_form and internship.work_and_report_evaluation_form.grade_of_preparing_reports :
-                report_grade_average += internship.student_report.grade
+                report_grade_average += internship.work_and_report_evaluation_form.grade_of_preparing_reports
                 count = count + 1
         if count:
             report_grade_average /= count
