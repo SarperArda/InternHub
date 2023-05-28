@@ -7,6 +7,7 @@ urlpatterns = [
     path('companies/', views.CompaniesView.as_view(), name='companies'),
 
     path('request-company/', views.CreateCompanyRequestView.as_view(), name='company-creation'),
+    path('add-company/', views.CompanyAddView.as_view(), name='company-addition'),
     path('company-requests/', views.ListCompanyRequestsView.as_view(), name='company-requests'),
     path('company-requests/<int:pk>/', views.CompanyRequestDetailView.as_view(), name='request-detail'),
 

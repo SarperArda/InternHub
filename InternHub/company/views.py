@@ -59,7 +59,28 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         )
         return super().form_valid(form)
 
+class CompanyAddView(LoginRequiredMixin, RoleRequiredMixin, FormView):
+    template_name = 'company/company-add.html'
+    form_class = CompanyForm
+    success_url = reverse_lazy('company:companies')
+    allowed_roles = ['DEPARTMENT_SECRETARY']
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
 
+    def form_valid(self, form):
+        company = form.save(commit=False)
+        company.status = 'APPROVED'
+
+        company.save()
+        form.save_m2m()
+        return super().form_valid(form)
+    
 class CompaniesView(LoginRequiredMixin, ListView):
     template_name = 'company/companies.html'
     model = Company
