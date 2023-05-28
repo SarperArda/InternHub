@@ -43,6 +43,53 @@
                                         </button>
                                     </li>
                                     {% endif %}
+                                    {% if request.user.role == 'INSTRUCTOR' %}
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-briefcase"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Internships</span>
+                                        </button>
+                                    </li>
+                                    {% endif %}
+
+                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center
+                                                       rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#internships-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-file"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Internships</span>
+                                        </button>
+                                        <div class="collapse" id="internships-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')" 
+                                                     id="submissions-button"
+                                                            class="btn rounded text-white fs-4 w-100">
+                                                        Confidential Forms
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')" 
+                                                    id="feedbacks-button"
+                                                            class="btn rounded text-white fs-4 w-100">
+                                                        Internship Assignments
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    
+                                    {% endif %}
+
                                     <li class="nav-item py-2 py-sm-2 rounded">
                                         <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
@@ -56,7 +103,7 @@
                                         <div class="collapse" id="reports-collapse">
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
-                                                {% if request.user.role == 'STUDENT' %}
+                                                
                                                 <li>
                                                     <button onclick="navigateToAnotherPage('/reports/submissions/')" 
                                                      id="submissions-button"
@@ -71,10 +118,6 @@
                                                         Feedbacks
                                                     </button>
                                                 </li>
-                                                {% endif %}
-                                                {% if request.user.role == 'INSTRUCTOR' %}
-                                                {% endif %}
-                                            
                                             </ul>
                                         </div>
                                     </li>
@@ -91,12 +134,12 @@
                                         <div class="collapse" id="company-collapse">
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
-                                                {% if request.user.role == 'STUDENT' %}
                                                 <li>
                                                     <button onclick="navigateToAnotherPage('/company/companies/')"
                                                             class="btn text-white rounded fs-4 w-100">Company list
                                                     </button>
                                                 </li>
+                                                {% if request.user.role == 'STUDENT' %}
                                                 <li>
                                                     <button onclick="navigateToAnotherPage('/company/request-cava/')" 
                                                             class="btn text-white rounded fs-4 w-100">Company Approval Validation Application
@@ -116,7 +159,7 @@
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button onclick="navigateToAnotherPage('company/company-requests/')" 
+                                                    <button onclick="navigateToAnotherPage('/company/company-requests/')" 
                                                     class="btn text-white rounded fs-4 w-100">Company Request
                                                     </button>
                                                 </li>
