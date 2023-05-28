@@ -5,7 +5,7 @@ from reports.forms import ConfidentialCompanyForm
 from reports.forms import SummerTrainingGradingForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import WorkAndReportEvaluationForm, InternshipAssignmentForm
-from .models import Internship,Feedback, ConfidentialCompany
+from .models import Internship,Feedback, ConfidentialCompany,Statistic
 from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .forms import StudentReportForm
 from .forms import FeedbackForm
@@ -504,3 +504,19 @@ class ListFeedbackView(LoginRequiredMixin, RoleRequiredMixin, ListView):
 
 
 # class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView)
+
+class StatisticView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
+    model = Statistic
+    template_name = 'reports/statistics.html'
+    context_object_name = 'statistic'
+    allowed_roles = ['DEAN', 'CHAIR']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        statistic = Statistic.objects.get(id=self.kwargs['pk'])
+        context['statistic'] = statistic
+        return context

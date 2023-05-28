@@ -16,4 +16,5 @@ urlpatterns = [
 
     path('submissions/', views.ListSubmissionView.as_view(), name='submission_list'),
     path('feedbacks/', views.ListFeedbackView.as_view(), name='feedback_list'),
+    path('statistics/<int:pk>', views.StatisticView.as_view(), name='statistics'),
 ]
