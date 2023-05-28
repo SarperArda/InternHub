@@ -90,6 +90,7 @@
                                     
                                     {% endif %}
 
+                                    {% if request.user.role != 'DEPARTMENT_SECRETARY' %}
                                     <li class="nav-item py-2 py-sm-2 rounded">
                                         <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
@@ -121,6 +122,8 @@
                                             </ul>
                                         </div>
                                     </li>
+                                    {% endif %}
+
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
                                     <li class="nav-item py-2 py-sm-2 rounded">
                                         <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
