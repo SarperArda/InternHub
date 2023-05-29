@@ -1,18 +1,18 @@
 [
-    {
-        "model": "users.course",
-        "pk": 1,
-        "fields": {
-            "code": "299",
-            "name": "Summer Training I"
-        }
-    },
-    {
-        "model": "users.course",
-        "pk": 2,
-        "fields": {
-            "code": "399",
-            "name": "Summer Training II"
-        }
+  {
+    "model": "users.course",
+    "pk": 1,
+    "fields": {
+      "code": "299",
+      "name": "Summer Training I"
     }
+  },
+  {
+    "model": "users.course",
+    "pk": 2,
+    "fields": {
+      "code": "399",
+      "name": "Summer Training II"
+    }
+  }
 ]

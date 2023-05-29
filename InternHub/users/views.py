@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.views.generic.edit import FormView
-from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
-from django.views import View
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import render, redirect
+from django.views import View
+from django.views.generic.edit import FormView
+
 from reports.models import Internship
+from .forms import LoginForm
+
 
 # Create your views here.
 class RoleRequiredMixin(UserPassesTestMixin):
@@ -16,6 +17,7 @@ class RoleRequiredMixin(UserPassesTestMixin):
 
     def handle_no_permission(self):
         return redirect('users:forbidden')
+
 
 class UserRequiredMixin(UserPassesTestMixin):
     def test_func(self):
@@ -33,6 +35,7 @@ class UserRequiredMixin(UserPassesTestMixin):
 
     def handle_no_permission(self):
         return redirect('users:forbidden')
+
 
 class LoginView(FormView):
     template_name = 'users/login.html'
@@ -62,7 +65,8 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect('users:login')
-    
+
+
 class ForbiddenView(View):
     def get(self, request):
         return render(request, 'users/forbidden.html')

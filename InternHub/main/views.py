@@ -1,10 +1,11 @@
-from django.shortcuts import render
-from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
+from django.utils import timezone
+from django.views import View
+
 from announcements.models import Announcement, Notification
 from reports.models import Internship, Statistic
 from users.models import DepartmentSecretary, Chair, Dean
-from django.utils import timezone
 
 
 class HomeView(LoginRequiredMixin, View):
@@ -32,7 +33,7 @@ class HomeView(LoginRequiredMixin, View):
                 for internship in internships:
                     contacts_set.add((internship.instructor,))
                     if internship.submissions.exists():
-                        last_submission = internship.submissions.last()               
+                        last_submission = internship.submissions.last()
                         if last_submission.status == 'PE' and last_submission.due_date > timezone.now():
                             if due_date is None or last_submission.due_date > due_date:
                                 due_date = last_submission.due_date
@@ -47,5 +48,8 @@ class HomeView(LoginRequiredMixin, View):
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
                            'internships': internships, 'check': check, 'contacts_set': contacts_set,
-                             'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk, 'eePk': eePk, 'iePk': iePk, 'due_date': due_date})  
-        return render(request, 'main/home.html', {'user': user, 'announcements': announcements, 'notifications': notifications, 'full_name': full_name})
+                           'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk,
+                           'eePk': eePk, 'iePk': iePk, 'due_date': due_date})
+        return render(request, 'main/home.html',
+                      {'user': user, 'announcements': announcements, 'notifications': notifications,
+                       'full_name': full_name})

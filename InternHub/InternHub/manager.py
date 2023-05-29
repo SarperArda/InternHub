@@ -1,10 +1,10 @@
-from django.contrib.auth.base_user import BaseUserManager
-from users.models import User, Student, Instructor, DepartmentSecretary, Chair, Dean
-from users.models import Course, EngineeringDepartment
-from company.models import Company, CompanyApprovalValidationApplication,EvaluationByStudent
-from reports.models import Internship, Statistic
 import json
 import random
+
+from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
+from reports.models import Internship, Statistic
+from users.models import Course, EngineeringDepartment
+from users.models import User, Student
 from users.models import UserManager
 
 
@@ -40,8 +40,8 @@ class DatabaseManager:
                 eee_pk = EngineeringDepartment.objects.all()[2].pk
                 ie_pk = EngineeringDepartment.objects.all()[3].pk
                 company = Company(name=company_data['fields']['name'],
-                                    status=company_data['fields']['status'],
-                                    field=company_data['fields']['field'])
+                                  status=company_data['fields']['status'],
+                                  field=company_data['fields']['field'])
                 company.save()  # Save the company first
 
                 # Refresh the company instance to get the updated values, including the id
@@ -76,6 +76,7 @@ class DatabaseManager:
         EvaluationByStudent.objects.all().delete()
         Statistic.objects.all().delete()
 
+
 class InternshipManager:
     @staticmethod
     def create_internships():
@@ -83,12 +84,13 @@ class InternshipManager:
         for cava in cavas:
             if cava.status == "APPROVED":
                 internship = Internship(student=cava.student, course=cava.course, company=cava.requested_company,
-                                    company_approval=cava)
+                                        company_approval=cava)
                 internship.save()
+
     @staticmethod
     def list_instructors():
         for internship in Internship.objects.all():
-            print("Internship name: " , internship, "Instructor name: " , internship.instructor)
+            print("Internship name: ", internship, "Instructor name: ", internship.instructor)
 
 
 class CAVAManager:
@@ -105,8 +107,9 @@ class CAVAManager:
             else:
                 pk = Course.objects.all()[1].pk
             cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
-                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2],
-                                                    requested_company=companies[number])
+                                                        file='uploads/empty.pdf', status='APPROVED',
+                                                        student=students[i // 2],
+                                                        requested_company=companies[number])
             cava.save()
         for i in range(5, student_count):
             number = random.randint(0, companies_count - 1)
@@ -120,12 +123,14 @@ class CAVAManager:
                                                         requested_company=companies[number])
             cava.save()
 
+
 class StatisticManager:
     @staticmethod
     def create_statistics():
         for department in EngineeringDepartment.objects.all():
             statistic = Statistic(department=department)
             statistic.save()
+
     @staticmethod
     def update_statistics():
         for statistic in Statistic.objects.all():
@@ -134,10 +139,10 @@ class StatisticManager:
     @staticmethod
     def display_statistics():
         for statistic in Statistic.objects.all():
-            print("Report grade average: ",statistic.report_grade_average )
+            print("Report grade average: ", statistic.report_grade_average)
             print("Work evaluation average: ", statistic.work_evaluation_grade_average)
             print("Company Average: ", statistic.company_evaluation_grade_average)
             print("Unsatisfactory Number: ", statistic.internship_unsatisfaction_number)
             print("Satisfactory Number: ", statistic.internship_satisfaction_number)
-            print("Pending Number: ",statistic.internship_pending_number)
+            print("Pending Number: ", statistic.internship_pending_number)
             print("Department Name: ", statistic.department)

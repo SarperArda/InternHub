@@ -1,4 +1,5 @@
-from django.views.generic.edit import FormView
+import random
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
@@ -10,6 +11,7 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
+
 from InternHub.manager import StatisticManager
 from announcements.models import Notification
 from reports.forms import ConfidentialCompanyForm
@@ -24,7 +26,6 @@ from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .models import Internship, Feedback, ConfidentialCompany, Statistic
 from .models import StudentReport, WorkAndReportEvaluation
 from .models import Submission, ExtensionRequest
-import random
 
 
 # Create your views here.
@@ -196,7 +197,8 @@ class InternshipAssignmentView(FormView, RoleRequiredMixin, LoginRequiredMixin):
             # Iterate over the internships and assign instructors
             for internship in internships:
                 # Sort the instructors by the number of internships they have been assigned
-                sorted_instructors = sorted(instructors, key=lambda instructor: internship_count_per_instructor[instructor])
+                sorted_instructors = sorted(instructors,
+                                            key=lambda instructor: internship_count_per_instructor[instructor])
 
                 # Assign the instructor with the least internships to the current internship
                 instructor = sorted_instructors[0]

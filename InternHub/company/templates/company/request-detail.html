@@ -4,134 +4,136 @@
 {% block title %}Company Evaluation{% endblock %}
 
 {% block styling %}
-<link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
 
 
 {% endblock %}
 
 
 {% block body %}
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-    {% block left-column %}
-        <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
-            <div class="bg-dark p2">
-                <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
-                    <b class="display-4">
-                        <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
-                    </b>
-                </a>
-                <hr class="bg-white border-2 border-top border-white">
-                <div class="container">
-                    <div class="content">
-                        <ul class="nav nav-pills flex-column mt-4">
-                            <li class="nav-item py-2 py-sm-2 rounded">
-                                <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
-                                        style="padding-left: 12px;">
-                                    <i class="fs-5 fa-regular fa-house"></i>
-                                    <span class="fs-3 ms-3 d-none d-sm-inline"
-                                          id="sidebar-span">Home</span>
-                                </button>
-                            </li>
-                            <li class="nav-item py-2 py-sm-2 rounded">
-                                <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#company-collapse"
-                                        aria-expanded="true"
-                                        id="main-button">
-                                    <i class="fs-5 fa-regular fa-building"></i>
-                                    <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
-                                </button>
-                                <div class="collapse" id="company-collapse">
-                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small" id="dropdown-ul">
-                                        <li>
-                                            <button onclick="navigateToAnotherPage('/company/cava-requests/')" 
-                                            class="btn text-white rounded fs-4 w-100">Company Approval Validation Applications
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button onclick="navigateToAnotherPage('/company/company-requests/')" 
-                                            class="btn text-white rounded fs-4 w-100">Company Requests
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    <ul class="nav nav-pills flex-column mt-4">
-                        <li class="nav-item py-2 py-sm-2 rounded">
-                            <a href="{% url 'users:logout' %}" class="nav-link text-white">
-                                <i class="fs-5 fa-solid fa-right-from-bracket"></i>
-                                <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    {% endblock %}
-    {% block middle-column %}
-        <div class="col-auto col-6" id="middle-column">
-            <div id="company-list-div">
-                <h1 class="display-6 text-center fw-semibold" id="titles">Company Request Detail</h1>
-                <hr class="my-4 border-2 text-dark">
-                <div class="card border-0" style="height: 85vh;">
-                    <div class="card-body overflow-auto">
-                        <a href="{% url 'company:company-requests' %}" class="btn btn-secondary btn-sm mb-4">
-                            <i class="fas fa-arrow-left"></i> Back to list
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {% block left-column %}
+                <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
+                    <div class="bg-dark p2">
+                        <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                            <b class="display-4">
+                                <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                            </b>
                         </a>
-                        <div class="d-flex justify-content-between">
-                            <h5 class="card-title mb-4">Company
-                                Name: {{ request.company.name }}</h5>
-                        </div>
-                        <p class="card-text mb-3">Requested
-                            By: {{ request.student.first_name }} {{ request.student.last_name }}</p>
-                        <p class="card-text mb-4">
-                            Field: {{ request.student.department }}</p>
-                        <p class="card-text mb-2">Departments:</p>
-                            <ul class="mb-5">
-                                {% for department in request.company.departments.all %}
-                                    <li>{{ department.name }}</li>
-                                {% endfor %}
+                        <hr class="bg-white border-2 border-top border-white">
+                        <div class="container">
+                            <div class="content">
+                                <ul class="nav nav-pills flex-column mt-4">
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Home</span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#company-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-building"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
+                                        </button>
+                                        <div class="collapse" id="company-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                            class="btn text-white rounded fs-4 w-100">Company Approval
+                                                        Validation Applications
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/company/company-requests/')"
+                                                            class="btn text-white rounded fs-4 w-100">Company Requests
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                        <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
+                                    </a>
+                                </li>
                             </ul>
-                        <div class="d-flex justify-content-center">
-                            <form method="post" action="{% url 'company:request-detail' request.id %}">
-                                {% csrf_token %}
-                                <button class="btn btn-primary btn-sm mx-2 text-center" type="submit"
-                                        name="action" value="approve" style="width: 100px;">
-                                    <i class="fas fa-check"></i> Approve
-                                </button>
-                                <button class="btn btn-danger btn-sm mx-2 text-center" type="submit"
-                                        name="action" value="reject" style="width: 100px;">
-                                    <i class="fas fa-times"></i> Reject
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    {% endblock %}
-
-    {% block right-column %}
-        <div class="col text-white" id="side-bar-right">
-            <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
-            <hr class="my-4 border-2 text-black">
-            <div class="container" id="profile-info">
-                <div class="row">
-                    {% if check %}
-                        <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
-                        <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
-                        <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
-                    {% endif %}
+            {% endblock %}
+            {% block middle-column %}
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Company Request Detail</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+                                <a href="{% url 'company:company-requests' %}" class="btn btn-secondary btn-sm mb-4">
+                                    <i class="fas fa-arrow-left"></i> Back to list
+                                </a>
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title mb-4">Company
+                                        Name: {{ request.company.name }}</h5>
+                                </div>
+                                <p class="card-text mb-3">Requested
+                                    By: {{ request.student.first_name }} {{ request.student.last_name }}</p>
+                                <p class="card-text mb-4">
+                                    Field: {{ request.student.department }}</p>
+                                <p class="card-text mb-2">Departments:</p>
+                                <ul class="mb-5">
+                                    {% for department in request.company.departments.all %}
+                                        <li>{{ department.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="d-flex justify-content-center">
+                                    <form method="post" action="{% url 'company:request-detail' request.id %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-primary btn-sm mx-2 text-center" type="submit"
+                                                name="action" value="approve" style="width: 100px;">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn btn-danger btn-sm mx-2 text-center" type="submit"
+                                                name="action" value="reject" style="width: 100px;">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <hr class="my-4 border-2 text-black">
-                
-            </div>
+            {% endblock %}
+
+            {% block right-column %}
+                <div class="col text-white" id="side-bar-right">
+                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <div class="container" id="profile-info">
+                        <div class="row">
+                            {% if check %}
+                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4 border-2 text-black">
+
+                    </div>
+                </div>
+            {% endblock %}
         </div>
-    {% endblock %}
     </div>
-</div>
-<script src="{% static 'main/home.js' %}"></script>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}

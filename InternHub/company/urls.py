@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 app_name = 'company'
@@ -19,6 +20,6 @@ urlpatterns = [
     path('company-evaluation/', views.ListCompanyEvaluationsView.as_view(), name="company-evaluations"),
 
     path('generate-pdf/<int:pk>', views.generate_pdf, name='generate-pdf'),
-    #path('download-pdf/<int:pk>', views.download_file, name='download-file')
+    # path('download-pdf/<int:pk>', views.download_file, name='download-file')
 
 ]

@@ -13,7 +13,7 @@
             font-weight: bold;
             margin-top: 10px;
         }
-    
+
         /* Styles for form inputs */
         input[type="text"],
         input[type="date"],
@@ -25,7 +25,7 @@
             box-sizing: border-box;
             margin-bottom: 10px;
         }
-    
+
         /* Styles for form buttons */
         button {
             padding: 8px 16px;
@@ -33,17 +33,17 @@
             border-radius: 4px;
             cursor: pointer;
         }
-    
+
         .btn-primary {
             background-color: #007bff;
             color: #fff;
         }
-    
+
         .btn-danger {
             background-color: #dc3545;
             color: #fff;
         }
-    
+
         /* Styles for form container */
         .form-container {
             margin-top: 20px;
@@ -52,7 +52,7 @@
             border-radius: 4px;
             background-color: #f5f5f5;
         }
-    
+
         /* Additional styles */
         .mt-3 {
             margin-top: 3rem;
@@ -132,9 +132,10 @@
                             <div class="card-body overflow-auto">
                                 {% for internship in internships %}
                                     {% if request.user.role == 'STUDENT' %}
-                                    <h3>Submissions for Internship in {{ internship.company.name }}</h3>
+                                        <h3>Submissions for Internship in {{ internship.company.name }}</h3>
                                     {% elif request.user.role == 'INSTRUCTOR' %}
-                                    <h3>Submissions of {{ internship.student.first_name }} {{ internship.student.last_name }}</h3>
+                                        <h3>Submissions
+                                            of {{ internship.student.first_name }} {{ internship.student.last_name }}</h3>
                                     {% endif %}
                                     <table class="table table-bordered">
                                         <thead>
@@ -166,28 +167,28 @@
                                     {% with latest_submission=latest_submissions|get_item:internship.pk %}
                                         {% if latest_submission %}
 
-                                        <table class="table table-bordered">
-                                            <tr>
-                                                <th class="fw-bold">Status:</th>
-                                                <td>{{ latest_submission.get_status_display }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="fw-bold">Due Date:</th>
-                                                <td>{{ latest_submission.due_date|date:"F j, Y H:i" }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="fw-bold">Uploaded File:</th>
-                                                <td>{% if latest_submission.file == "" %}
-                                                    No file uploaded.
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th class="fw-bold">Status:</th>
+                                                    <td>{{ latest_submission.get_status_display }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Due Date:</th>
+                                                    <td>{{ latest_submission.due_date|date:"F j, Y H:i" }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Uploaded File:</th>
+                                                    <td>{% if latest_submission.file == "" %}
+                                                        No file uploaded.
                                                     {% else %}
-                                                    <a href="{{ latest_submission.file.url }}">{{ latest_submission.file.name }}</a>
-                                                    <td>Submitted
-                                                        Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</td>
+                                                        <a href="{{ latest_submission.file.url }}">{{ latest_submission.file.name }}</a>
+                                                        <td>Submitted
+                                                            Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</td>
                                                     {% endif %}
-                                                </td>
-                                            </tr>
-                                        
-                                        </table>                                
+                                                    </td>
+                                                </tr>
+
+                                            </table>
                                         {% endif %}
 
 
@@ -204,19 +205,26 @@
                                                         <form method="post" enctype="multipart/form-data">
                                                             {% csrf_token %}
                                                             {{ form.as_p }}
-                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="submit_report" class="btn btn-primary">Submit</button>
+                                                            <input type="hidden" name="internship_id"
+                                                                   value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="submit_report"
+                                                                    class="btn btn-primary">Submit
+                                                            </button>
                                                         </form>
                                                         <h3 class="mt-3">Request Extension</h3>
                                                         {% if latest_submission.extension %}
                                                             <p>Extension Requested</p>
-                                                            <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                            <p>Due
+                                                                Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
                                                         {% else %}
                                                             <form method="post">
                                                                 {% csrf_token %}
                                                                 {{ extension_form.as_p }}
-                                                                <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                                <button type="submit" name="action" value="extension_request" class="btn btn-primary">
+                                                                <input type="hidden" name="internship_id"
+                                                                       value="{{ internship.id }}">
+                                                                <button type="submit" name="action"
+                                                                        value="extension_request"
+                                                                        class="btn btn-primary">
                                                                     Request Extension
                                                                 </button>
                                                             </form>
@@ -228,17 +236,25 @@
                                                         <h3>Evaluate Submission</h3>
                                                         <form method="post">
                                                             {% csrf_token %}
-                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="satisfactory" class="btn btn-primary mt-2">Satisfactory</button>
-                                                            <p class="mt-3">(Clicking this button marks internship as "Satisfactory". This operation cannot be retrieved back.)</p>
+                                                            <input type="hidden" name="internship_id"
+                                                                   value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="satisfactory"
+                                                                    class="btn btn-primary mt-2">Satisfactory
+                                                            </button>
+                                                            <p class="mt-3">(Clicking this button marks internship as
+                                                                "Satisfactory". This operation cannot be retrieved
+                                                                back.)</p>
                                                         </form>
                                                         <hr class="bg-white border-2 border-top border-black">
                                                         <h3>Give Feedback</h3>
                                                         <form method="post" enctype="multipart/form-data">
                                                             {% csrf_token %}
                                                             {{ feedback_form.as_p }}
-                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="revision_required" class="btn btn-primary mb-3">
+                                                            <input type="hidden" name="internship_id"
+                                                                   value="{{ internship.id }}">
+                                                            <button type="submit" name="action"
+                                                                    value="revision_required"
+                                                                    class="btn btn-primary mb-3">
                                                                 Revision Required
                                                             </button>
                                                         </form>
@@ -246,14 +262,19 @@
                                                     {% if latest_submission.extension %}
                                                         <h3>Extension Request</h3>
                                                         <p>Student has requested an extension.</p>
-                                                        <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                        <p>Due
+                                                            Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
                                                         <form method="post">
                                                             {% csrf_token %}
-                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="approve_extension" class="btn btn-primary">
+                                                            <input type="hidden" name="internship_id"
+                                                                   value="{{ internship.id }}">
+                                                            <button type="submit" name="action"
+                                                                    value="approve_extension" class="btn btn-primary">
                                                                 Approve Extension
                                                             </button>
-                                                            <button type="submit" name="action" value="reject_extension" class="btn btn-danger">Reject Extension</button>
+                                                            <button type="submit" name="action" value="reject_extension"
+                                                                    class="btn btn-danger">Reject Extension
+                                                            </button>
                                                         </form>
                                                     {% endif %}
                                                 {% endif %}
@@ -284,7 +305,7 @@
                             {% endif %}
                         </div>
                         <hr class="my-4 border-2 text-black">
-                        
+
                     </div>
                 </div>
             {% endblock %}

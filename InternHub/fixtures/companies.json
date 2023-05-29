@@ -1,92 +1,92 @@
 [
-    {
-        "model": "company.company",
-        "pk": 1,
-        "fields": {
-            "name": "Software Solutions Inc",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 2,
-        "fields": {
-            "name": "Mechanics Corp",
-            "field": "Mechanics",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 3,
-        "fields": {
-            "name": "Electronical Engineering Services",
-            "field": "Electronics",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 4,
-        "fields": {
-            "name": "Industrial Innovations Ltd",
-            "field": "Industry",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 5,
-        "fields": {
-            "name": "Developer's Place",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 6,
-        "fields": {
-            "name": "High Exclusive Techniques",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 7,
-        "fields": {
-            "name": "Innovations&Ideas",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 8,
-        "fields": {
-            "name": "Shining Solutions",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
-    },
-    {
-        "model": "company.company",
-        "pk": 9,
-        "fields": {
-            "name": "Mobile Behaviors",
-            "field": "Software",
-            "status": "APPROVED",
-            "departments": 1
-        }
+  {
+    "model": "company.company",
+    "pk": 1,
+    "fields": {
+      "name": "Software Solutions Inc",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
     }
+  },
+  {
+    "model": "company.company",
+    "pk": 2,
+    "fields": {
+      "name": "Mechanics Corp",
+      "field": "Mechanics",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 3,
+    "fields": {
+      "name": "Electronical Engineering Services",
+      "field": "Electronics",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 4,
+    "fields": {
+      "name": "Industrial Innovations Ltd",
+      "field": "Industry",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 5,
+    "fields": {
+      "name": "Developer's Place",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 6,
+    "fields": {
+      "name": "High Exclusive Techniques",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 7,
+    "fields": {
+      "name": "Innovations&Ideas",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 8,
+    "fields": {
+      "name": "Shining Solutions",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  },
+  {
+    "model": "company.company",
+    "pk": 9,
+    "fields": {
+      "name": "Mobile Behaviors",
+      "field": "Software",
+      "status": "APPROVED",
+      "departments": 1
+    }
+  }
 ]

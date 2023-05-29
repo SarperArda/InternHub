@@ -1,30 +1,23 @@
-from django.shortcuts import redirect
-from django.shortcuts import render
-from django.views.generic.edit import FormView
-from .forms import CompanyForm, CAVAForm, CompanyEvaluationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.list import ListView
-from django.views.generic.base import TemplateView
-from .models import Company, CompanyRequest, CompanyApprovalValidationApplication
-from django.views.generic.detail import DetailView
-from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
-from users.decorators import allowed_users
-from django.utils import timezone
-from reports.models import Internship, Status
-from users.models import Student, User, DepartmentSecretary
-from django.core.exceptions import ValidationError
-from users.views import RoleRequiredMixin, UserRequiredMixin
-from announcements.models import Notification
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
-from django.views import View
 from django.http import FileResponse
-from reports.models import SubmissionStatus
-import io
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+
+from announcements.models import Notification
+from reports.models import Internship, Status
+from users.models import Student, User
+from users.views import RoleRequiredMixin, UserRequiredMixin
+from .forms import CompanyForm, CAVAForm, CompanyEvaluationForm
+from .models import Company, CompanyRequest, CompanyApprovalValidationApplication
+
+
 # Create your views here.
 
 
@@ -33,7 +26,7 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     form_class = CompanyForm
     success_url = reverse_lazy('company:companies')
     allowed_roles = ['STUDENT']
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -69,12 +62,13 @@ class CreateCompanyRequestView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         )
         return super().form_valid(form)
 
+
 class CompanyAddView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/company-add.html'
     form_class = CompanyForm
     success_url = reverse_lazy('company:companies')
     allowed_roles = ['DEPARTMENT_SECRETARY']
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -90,7 +84,8 @@ class CompanyAddView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         company.save()
         form.save_m2m()
         return super().form_valid(form)
-    
+
+
 class CompaniesView(LoginRequiredMixin, ListView):
     template_name = 'company/companies.html'
     model = Company
@@ -103,7 +98,7 @@ class CompaniesView(LoginRequiredMixin, ListView):
         context['user'] = user
         context['check'] = True
         return context
-    
+
     def get_queryset(self):
         return self.model.objects.filter(status='APPROVED')
 
@@ -153,7 +148,7 @@ class CompanyRequestDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView
                 content="Your company request has been approved.",
                 receiver=student
             )
-            
+
         elif action == 'reject':
             company_request.company.delete()
             company_request.delete()
@@ -203,8 +198,8 @@ class CreateCAVAView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         department_secretary = User.objects.get(department=student.department, role='DEPARTMENT_SECRETARY')
         Notification.create_notification(
             title="CAVA Request Submitted",
-            content=f'Student { student.first_name } { student.last_name } has submitted a CAVA request.'
-            ' Please review the details in your dashboard. Thank you.',
+            content=f'Student {student.first_name} {student.last_name} has submitted a CAVA request.'
+                    ' Please review the details in your dashboard. Thank you.',
             receiver=department_secretary
         )
 
@@ -261,7 +256,7 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
         # Todo Send notification
         if action == 'approve':
             cava_request.status = 'APPROVED'
-           
+
             company = cava_request.requested_company
             course = cava_request.course
 
@@ -292,6 +287,7 @@ class CAVADetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
 
         return redirect('company:cava-requests')
 
+
 ##ToDo Add Roles
 class CompanyEvaluationView(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'company/evaluate-company.html'
@@ -313,6 +309,7 @@ class CompanyEvaluationView(LoginRequiredMixin, UserRequiredMixin, RoleRequiredM
         internship.save()
         return super().form_valid(form)
 
+
 ##ToDo Add Roles
 class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
     template_name = 'company/company-evaluations.html'
@@ -330,6 +327,7 @@ class ListCompanyEvaluationsView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         student = Student.objects.get(user_id=self.request.user.user_id)
         return self.model.objects.filter(student=student)
+
 
 def generate_pdf(request, pk):
     internship_pk = pk
@@ -661,5 +659,3 @@ def generate_pdf(request, pk):
 
     c.save()
     return FileResponse(open('uploads/output.pdf', 'rb'), as_attachment=True, filename=internship.__str__())
-
-

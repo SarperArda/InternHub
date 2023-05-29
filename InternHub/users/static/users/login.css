@@ -86,7 +86,7 @@ html, body {
 .form button:hover,
 .form button:active,
 .form button:focus {
-    background:  #f47174;
+    background: #f47174;
 }
 
 .form input:focus {

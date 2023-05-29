@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Student, Dean, Chair, Instructor, DepartmentSecretary, User
 from django.contrib.auth.models import Group
+
+from .models import Student, Dean, Chair, Instructor, DepartmentSecretary, User
 
 
 # Registering user models to admin
@@ -13,7 +14,7 @@ class DefaultAdmin(UserAdmin):
         (None, {'fields': ('user_id', 'first_name', 'last_name', 'role',)}),
         ('Personal info', {'fields': ('email',)}),
         ('Permissions', {'fields': ('is_active',
-         'is_staff', 'is_superuser', 'user_permissions',)}),
+                                    'is_staff', 'is_superuser', 'user_permissions',)}),
     )
 
     add_fieldsets = (
@@ -45,7 +46,7 @@ class RoleAdmin(DefaultAdmin):
         (None, {'fields': ('user_id', 'first_name', 'last_name',)}),
         ('Personal info', {'fields': ('email', 'department',)}),
         ('Permissions', {'fields': ('is_active',
-         'is_staff', 'is_superuser', 'user_permissions',)}),
+                                    'is_staff', 'is_superuser', 'user_permissions',)}),
     )
 
     add_fieldsets = (
@@ -69,7 +70,7 @@ class StudentAdmin(RoleAdmin):
         (None, {'fields': ('user_id', 'first_name', 'last_name',)}),
         ('Personal info', {'fields': ('email', 'department',)}),
         ('Permissions', {'fields': ('is_active',
-         'is_staff', 'is_superuser', 'user_permissions',)}),
+                                    'is_staff', 'is_superuser', 'user_permissions',)}),
     )
 
     add_fieldsets = (
@@ -81,8 +82,8 @@ class StudentAdmin(RoleAdmin):
     )
 
     list_display = ('user_id', 'first_name',
-                    'last_name', 'department', )
-    list_filter = ('department', )
+                    'last_name', 'department',)
+    list_filter = ('department',)
     search_fields = ('user_id', 'first_name',
                      'last_name', 'department',)
     ordering = ('department', 'user_id',)

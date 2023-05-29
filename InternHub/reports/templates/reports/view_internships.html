@@ -165,18 +165,18 @@
                                         <table class="table table-bordered">
                                             <tr>
                                                 {% if request.user.role != 'STUDENT' %}
-                                                <th class="fw-bold">Student Name:</th>
-                                                <td>{{ internship.student.first_name }} {{ internship.student.last_name }}</td>
-                                            
+                                                    <th class="fw-bold">Student Name:</th>
+                                                    <td>{{ internship.student.first_name }} {{ internship.student.last_name }}</td>
+
                                                 {% endif %}
                                                 {% if request.user.role != 'INSTRUCTOR' %}
-                                                <tr>
-                                                    <th class="fw-bold">Instructor Name:</th>
-                                                    <td>{{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</td>
-                                                </tr>
-                                            
+                                                    <tr>
+                                                        <th class="fw-bold">Instructor Name:</th>
+                                                        <td>{{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</td>
+                                                    </tr>
+
                                                 {% endif %}
-                                            
+
                                             </tr>
                                             <tr>
                                                 <th class="fw-bold">Company Name:</th>
@@ -261,7 +261,7 @@
                             {% endif %}
                         </div>
                         <hr class="my-4 border-2 text-black">
-                        
+
                     </div>
                 </div>
             {% endblock %}

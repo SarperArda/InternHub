@@ -4,24 +4,24 @@
 {% block title %}Create Confidential Company Form{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
 
     <style>
         .form-page {
             max-width: 600px;
             margin: 0 auto;
         }
-        
+
         .form {
             background-color: #e6e4e4;
             padding: 20px;
             border-radius: 5px;
         }
-        
+
         .form p {
             margin-bottom: 10px;
         }
-        
+
         .form input[type="text"],
         .form input[type="email"],
         .form select,
@@ -33,18 +33,18 @@
             box-sizing: border-box;
             margin-bottom: 10px;
         }
-        
+
         .form .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form .submit-button {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
         }
-        
+
         .form button[type="submit"] {
             padding: 10px 20px;
             border-radius: 4px;
@@ -53,12 +53,12 @@
             color: #fff;
             cursor: pointer;
         }
-        
+
         .form button[type="submit"]:hover {
             background-color: #0056b3;
         }
     </style>
-    
+
 {% endblock %}
 
 
@@ -93,22 +93,23 @@
                                                 aria-expanded="true"
                                                 id="main-button">
                                             <i class="fs-5 fa-regular fa-briefcase"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Internships</span>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Internships</span>
                                         </button>
                                         <div class="collapse" id="internships-collapse">
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
-                                                
+
                                                 <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')" 
-                                                     id="submissions-button"
+                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                            id="submissions-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Confidential Forms
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')" 
-                                                    id="feedbacks-button"
+                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')"
+                                                            id="feedbacks-button"
                                                             class="btn rounded text-white fs-4 w-100">
                                                         Internship Assignments
                                                     </button>
@@ -164,11 +165,11 @@
                                             <div class="submit-button">
                                                 <button type="submit" class="btn btn-primary">Submit!</button>
                                             </div>
-                                        
+
                                         </form>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -187,7 +188,7 @@
                             {% endif %}
                         </div>
                         <hr class="my-4 border-2 text-black">
-                        
+
                     </div>
                 </div>
             {% endblock %}

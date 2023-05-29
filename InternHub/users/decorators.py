@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect
 
 
 def allowed_users(allowed_roles=[]):
@@ -13,9 +12,9 @@ def allowed_users(allowed_roles=[]):
                 return view_func(request, *args, **kwargs)
             else:
                 return HttpResponse('You are not authorized to view this page.')
-        
+
         return wrapper_func
-    
+
     return decorator
 
 
@@ -24,4 +23,3 @@ def decorate_get_all(model_cls):
         return model_cls.objects.all()
 
     return get_all
-

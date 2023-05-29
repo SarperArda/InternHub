@@ -1,9 +1,10 @@
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
-from .decorators import decorate_get_all
 import json
-from django.contrib.auth.hashers import make_password
 
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
+from django.db import models
+
+from .decorators import decorate_get_all
 
 
 # Create your models here.
@@ -50,6 +51,7 @@ class RoleMixin(models.Model):
             self.role = self.Role[role]
         super().save(*args, **kwargs)
 
+
 class UserManager(BaseUserManager):
 
     def create_user(self, user_id, password=None, email=None, first_name=None, last_name=None):
@@ -92,6 +94,7 @@ class UserManager(BaseUserManager):
                 user['fields']['department'] = department
                 instructor = Instructor(**user['fields'], password=hashed_password)
                 instructor.save()
+
     @staticmethod
     def create_students():
         with open('fixtures/students.json') as file:
@@ -152,6 +155,7 @@ class UserManager(BaseUserManager):
                 super_user = User(**user['fields'], password=hashed_password)
                 super_user.role = RoleMixin.Role.SUPERUSER
                 super_user.save()
+
     @staticmethod
     def create_users():
         UserManager.create_instructors()
@@ -175,6 +179,8 @@ class UserManager(BaseUserManager):
             return eee_pk
         else:
             return ie_pk
+
+
 # Your existing code here
 
 class User(AbstractBaseUser, PermissionsMixin, RoleMixin):
@@ -227,6 +233,7 @@ class Instructor(User):
             self.assign_students_to_instructor(student)
         else:
             self.students.remove(student)
+
     def __str__(self):
         return self.first_name + " " + self.last_name
 
