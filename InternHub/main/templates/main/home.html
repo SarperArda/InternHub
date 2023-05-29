@@ -279,9 +279,8 @@
                                 </button>
                             </div>
                         </div>
-                        {% endif %}
 
-                        {% if request.user.role != 'DEPARTMENT_SECRETARY' %}
+                        {% else %}
                             <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
                         {% endif %}
                         <hr class="my-4 border-2 text-dark">
