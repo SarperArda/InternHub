@@ -33,7 +33,7 @@ class HomeView(LoginRequiredMixin, View):
                     contacts_set.add((internship.instructor,))
                     if internship.submissions.exists():
                         last_submission = internship.submissions.last()               
-                        if (last_submission.status == 'PE' and last_submission.due_date > timezone.now()):
+                        if last_submission.status == 'PE' and last_submission.due_date > timezone.now():
                             if due_date is None or last_submission.due_date > due_date:
                                 due_date = last_submission.due_date
 

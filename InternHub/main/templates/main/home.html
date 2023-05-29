@@ -441,7 +441,7 @@
                 hour = minute * 60,
                 day = hour * 24;
 
-            const countDown = new Date("{{ due_date|date:'F/d/Y' }}").getTime(),
+            const countDown = new Date("{{ due_date|date:'n/d/Y' }}").getTime(),
                 x = setInterval(function () {
 
                     const now = new Date().getTime(),
