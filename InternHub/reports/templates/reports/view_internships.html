@@ -155,6 +155,9 @@
                                         <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
                                         class="btn d-flex w-100 border-2 border-danger justify-content-between">Fill Confidential Company
                                         </button>
+                                        <button onclick="navigateToAnotherPage('/company/generate-pdf/{{ internship.id }}')"
+                                        class="btn d-flex w-100 border-2 border-danger justify-content-between">Export Internship
+                                        </button>
                                     {% endif %}
                                 </div>
                                 {% endfor %}
