@@ -34,12 +34,10 @@
         {% else %}
             <h2>Your Instructor has not assigned you a submission yet!</h2>
         {% endif %}
-
         {% if request.user|can_submit_feedback and last_submission.file %}
             <form method="post" action="{% url 'reports:internship_detail' internship.id %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <button type="submit" name="action" value="satisfactory">Satisfactory</button>   
-                
+                <button type="submit" name="action" value="satisfactory">Satisfactory</button>
                 {{ form.as_p }}
                 {% if form.action.value == 'revision_required' %}
                     <p>Upload Revision File:</p>
@@ -49,7 +47,6 @@
                 <button type="submit" name="action" value="revision_required">Revision Required</button>  
             </form>
         {% endif %}
-
         {% if submissions %}
             <h2>Previous Submissions</h2>
             {% for submission in submissions %}
@@ -65,10 +62,6 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-
-
         <a href="{% url 'reports:view_internships' %}">Back to list</a>
     </div>
-
-    
 {% endblock %}

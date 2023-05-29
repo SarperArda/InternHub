@@ -155,20 +155,79 @@
                         <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
                           class="btn btn-primary d-flex justify-content-between">Fill Confidential Company</button>
                         {% endif %}
-                      </div>
-                      <hr class="my-4 border-2 text-dark">
-                      {% endfor %}
-                      
-              
-                      {% if request.user.role == 'INSTRUCTOR'%}
-                      <h2>Set Due Date For All Submissions</h2>
-                      <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" name="action" value="Extend" class="btn btn-primary">Set</button>
-                      </form>
-                      {% endif %}
-              
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+
+                                
+                                {% for internship in internships %}
+                                <div>
+                                    {% if request.user.role != 'STUDENT' %}
+                                        <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name }}</p>
+                                    {% endif %}
+                                    {% if request.user.role != 'INSTRUCTOR'%}
+                                        <p>Instructor Name: {{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</p>
+                                    {% endif %}
+                                    <p>Company Name: {{ internship.company.name }}</p>
+                                    <p>Course: {{ internship.course }}</p>
+                                    <p>Status: {{ internship.get_status_display }}</p>
+                                    
+                                    {% if request.user.role == 'INSTRUCTOR'%}
+                                        {% if feedback_needed|get_item:internship.pk %}
+                                            <p>Feedback Needed!</p>
+                                        {% endif %}
+                                    {% endif %}
+                            
+                                    {% if request.user.role == 'STUDENT' %}
+                                        {% if internship.company_evaluation %}
+                                            <p>Your Evaluation to Company: {{ internship.company_evaluation.grade }}</p>
+                                        {% else %}
+                                            <p>You have not evaluated this company.</p>
+                                        {% endif %}
+                                        {% if feedback_recieved|get_item:internship.pk %}
+                                            <p>You Recieved Feedback For Your Submission!</p>
+                                        {% endif %}
+                                        
+                            
+                                        <a href="{% url 'company:evaluate-company' internship.pk %}"><button type="submit" name="action" value="detail">Evaluate Company</button></a>
+                                    {% endif %}
+                                    {% if request.user.role == 'INSTRUCTOR' %}
+                                    <button onclick="navigateToAnotherPage('/reports/create-work-and-report-ev-form/{{ internship.id }}')"
+                                    class="btn d-flex w-100 border-2 border-danger justify-content-between">Fill Work and Report Evaluation
+                                    </button>
+                                    {% endif %}
+                                    {% if request.user|can_submit %}
+                                    <form method="POST" action="{% url 'reports:view_internships' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                        <button 
+                                        class="btn d-flex w-100 border-2 border-danger justify-content-between" type="submit" name="action" value="Unsatisfactory">Unsatisfactory
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                        <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
+                                        class="btn d-flex w-100 border-2 border-danger justify-content-between">Fill Confidential Company
+                                        </button>
+                                        <button onclick="navigateToAnotherPage('/company/generate-pdf/{{ internship.id }}')"
+                                        class="btn d-flex w-100 border-2 border-danger justify-content-between">Export Internship
+                                        </button>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            
+                                {% if request.user.role == 'INSTRUCTOR'%}
+                                    <h2>Set Due Date For All Submissions</h2>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                        <button type="submit" name="action" value="Extend">Set</button>
+                                    </form>
+                                {% endif %}
+
+
+                            </div>
+                        </div>
                     </div>
                   </div>
                 </div>
