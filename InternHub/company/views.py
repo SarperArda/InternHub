@@ -422,7 +422,7 @@ def generate_pdf(request, pk):
     write_left_aligned_text("Is the work done related to computer engineering [Y/N]: " + str(answer1),
                             k, 'Helvetica', 14)
     k = k + 1
-    write_left_aligned_text("Is the supervisor related to" + department_name + " or has a similar ",
+    write_left_aligned_text("Is the supervisor related to " + department_name + " or has a similar ",
                             k, 'Helvetica', 14)
     k = k + 1
     write_left_aligned_text("background: [Y/N]: " + str(answer2), k, 'Helvetica', 14)
@@ -452,7 +452,7 @@ def generate_pdf(request, pk):
 
     k = k + 1
     if internship.instructor is not None:
-        instructor = internship.instructor.first_name + internship.instructor.last_name
+        instructor = internship.instructor.first_name + " " + internship.instructor.last_name
     else:
         instructor = "No Data"
 
