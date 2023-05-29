@@ -32,9 +32,10 @@ class HomeView(LoginRequiredMixin, View):
                 for internship in internships:
                     contacts_set.add((internship.instructor,))
                     if internship.submissions.exists():
-                        last_submission = internship.submissions.last()
-                        if last_submission.status == 'PE' or due_date is None or (last_submission.due_date < due_date and last_submission.due_date < timezone.now()):
-                            due_date = last_submission.due_date
+                        last_submission = internship.submissions.last()               
+                        if (last_submission.status == 'PE' and last_submission.due_date > timezone.now()):
+                            if due_date is None or last_submission.due_date > due_date:
+                                due_date = last_submission.due_date
 
             if user.role == 'DEAN':
                 csPk = Statistic.objects.all()[0].pk
