@@ -44,12 +44,12 @@
                                             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                 id="dropdown-ul">
                                                 <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')" 
+                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')"
                                                             class="btn text-white rounded fs-4 w-100">Submissions
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')" 
+                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')"
                                                             class="btn text-white rounded fs-4 w-100">Feedbacks
                                                     </button>
                                                 </li>
@@ -77,21 +77,44 @@
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0" style="height: 85vh;">
                             <div class="card-body overflow-auto">
-
-
-                            {% for feedback in feedbacks %}
-                                <div class="feedback">
-                                    <h2>Course: {{ feedback.submission_field.internship.course }}</h2>
-                                    <h2>Submission: <a href="{{feedback.file.url}}">{{ feedback.submission_field.file.name }}</a></h2>
-                                    <h3>Feedback File: <a href="{{feedback.file.url}}">{{feedback.file.name}}</a></h3>
-                                    {% if feedback.description %}
-                                        <p>Description: {{ feedback.description }}</p>
-                                    {% endif %}
-                                    <p>Status: {{ feedback.submission_field.status }}</p>
-                                </div>
-                            {% endfor %}
-
-
+                                {% for feedback in feedbacks %}
+                                    <div class="container">
+                                        <h4>Feedback to {{ feedback.submission_field.internship.student.first_name }}
+                                            {{ feedback.submission_field.internship.student.last_name }}</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                <tr>
+                                                    <th>Course</th>
+                                                    <td>{{ feedback.submission_field.internship.student.department.code }}{{ feedback.submission_field.internship.course }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Submission</th>
+                                                    <td>
+                                                        <a href="{{ feedback.file.url }}">{{ feedback.submission_field.file.name }}</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Feedback File</th>
+                                                    <td>
+                                                        <a href="{{ feedback.file.url }}">{{ feedback.file.name }}</a>
+                                                    </td>
+                                                </tr>
+                                                {% if feedback.description %}
+                                                    <tr>
+                                                        <th>Description</th>
+                                                        <td>{{ feedback.description }}</td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr>
+                                                    <th>Status</th>
+                                                    <td>{{ feedback.submission_field.get_status_display }}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
