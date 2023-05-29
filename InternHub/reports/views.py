@@ -30,7 +30,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.detail import DetailView
 from django.utils.decorators import method_decorator
 from django.utils import timezone
-from users.views import RoleRequiredMixin
+from users.views import RoleRequiredMixin, UserRequiredMixin
 from reports.models import Status
 from django.urls import reverse_lazy
 from reports.models import SubmissionStatus
@@ -75,10 +75,11 @@ class CreateConfidentialForm(CreateView):
         return context
 
 
-class WorkAndReportEvaluationFormCreation(CreateView):
+class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, CreateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
+    allowed_roles = ['INSTRUCTOR']
 
     # Create a new WorkAndReportEvaluation instance
     def get_success_url(self):
@@ -104,10 +105,11 @@ class WorkAndReportEvaluationFormCreation(CreateView):
         #ontext['form'] = self.get_form()
         return context
 
-class WorkAndReportEvaluationFormUpdate(UpdateView):
+class WorkAndReportEvaluationFormUpdate(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, UpdateView): 
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
+    allowed_roles = ['INSTRUCTOR']
 
     def get_success_url(self):
         work_and_report_evaluation = self.object
@@ -129,7 +131,8 @@ class WorkAndReportEvaluationFormUpdate(UpdateView):
         context['check'] = True
         #context['form'] = self.get_form()
         return context
-class EditWorkAndReportEvaluation(View):
+class EditWorkAndReportEvaluation(LoginRequiredMixin,RoleRequiredMixin,View):
+    allowed_roles = ['INSTRUCTOR']
     def get(self, request, **kwargs):
         target_form = Internship.objects.filter(pk=self.kwargs['pk']).first().work_and_report_evaluation_form
         if target_form:
@@ -146,9 +149,10 @@ class ReportsView(ListView):
     template_name = 'reports/view_reports.html'
     context_object_name = 'reports'
 
-class InternshipAssignmentView(FormView, LoginRequiredMixin):
+class InternshipAssignmentView(FormView, RoleRequiredMixin, LoginRequiredMixin):
     form_class = InternshipAssignmentForm
     template_name = 'reports/internship_assignment.html'
+    allowed_roles = ['DEPARTMENT_SECRETARY']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
