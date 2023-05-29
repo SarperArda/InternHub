@@ -160,52 +160,50 @@
                                                         </form>
                                                     {% endif %}
                                                 {% endif %}
-                                                {% if request.user.role == 'INSTRUCTOR' %}
-                                                    {% if feedback_needed|get_item:internship.pk %}
-                                                        <h3>Evaluate Submission</h3>
-                                                        <form method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="internship_id"
-                                                                   value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="satisfactory"
-                                                                    class="btn btn-primary">Satisfactory
-                                                            </button>
-                                                        </form>
-                                                        <form method="post" enctype="multipart/form-data">
-                                                            {% csrf_token %}
-                                                            {{ feedback_form.as_p }}
-                                                            <input type="hidden" name="internship_id"
-                                                                   value="{{ internship.id }}">
-                                                            <button type="submit" name="action"
-                                                                    value="revision_required" class="btn btn-primary">
-                                                                Revision Required
-                                                            </button>
-                                                        </form>
-                                                    {% endif %}
-                                                    {% if latest_submission.extension %}
-                                                        <h3>Extension Request</h3>
-                                                        <p>Student has requested an extension.</p>
-                                                        <p>Due
-                                                            Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
-                                                        <form method="post">
-                                                            {% csrf_token %}
-                                                            <input type="hidden" name="internship_id"
-                                                                   value="{{ internship.id }}">
-                                                            <button type="submit" name="action"
-                                                                    value="approve_extension" class="btn btn-primary">
-                                                                Approve Extension
-                                                            </button>
-                                                            <button type="submit" name="action" value="reject_extension"
-                                                                    class="btn btn-danger">Reject Extension
-                                                            </button>
-                                                        </form>
-                                                    {% endif %}
+                                            {% endif %}
+                                            {% if request.user.role == 'INSTRUCTOR' %}
+                                                {% if feedback_needed|get_item:internship.pk %}
+                                                    <h3>Evaluate Submission</h3>
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="internship_id"
+                                                                value="{{ internship.id }}">
+                                                        <button type="submit" name="action" value="satisfactory"
+                                                                class="btn btn-primary">Satisfactory
+                                                        </button>
+                                                    </form>
+                                                    <form method="post" enctype="multipart/form-data">
+                                                        {% csrf_token %}
+                                                        {{ feedback_form.as_p }}
+                                                        <input type="hidden" name="internship_id"
+                                                                value="{{ internship.id }}">
+                                                        <button type="submit" name="action"
+                                                                value="revision_required" class="btn btn-primary">
+                                                            Revision Required
+                                                        </button>
+                                                    </form>
                                                 {% endif %}
-                                            {% else %}
-                                                <p>No pending submissions found.</p>
+                                                {% if latest_submission.extension %}
+                                                    <h3>Extension Request</h3>
+                                                    <p>Student has requested an extension.</p>
+                                                    <p>Due
+                                                        Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                    <form method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="internship_id"
+                                                                value="{{ internship.id }}">
+                                                        <button type="submit" name="action"
+                                                                value="approve_extension" class="btn btn-primary">
+                                                            Approve Extension
+                                                        </button>
+                                                        <button type="submit" name="action" value="reject_extension"
+                                                                class="btn btn-danger">Reject Extension
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
                                             {% endif %}
                                         {% else %}
-                                            <p>Instructor has not set a submission yet.</p>
+                                                <p>No pending submissions found.</p>
                                         {% endif %}
                                     {% endwith %}
                                     <hr class="border-5 my-4 text-dark">
