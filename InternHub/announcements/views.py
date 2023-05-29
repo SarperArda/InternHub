@@ -1,10 +1,8 @@
-from django.shortcuts import render
-from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from users.decorators import allowed_users
-from django.utils.decorators import method_decorator
-from .forms import AnnouncementForm
+from django.views.generic.edit import FormView
+
 from users.views import RoleRequiredMixin
+from .forms import AnnouncementForm
 
 
 class MakeAnnouncementView(LoginRequiredMixin, RoleRequiredMixin, FormView):
@@ -13,6 +11,7 @@ class MakeAnnouncementView(LoginRequiredMixin, RoleRequiredMixin, FormView):
     template_name = 'announcements/announcement.html'
     success_url = '/'
     allowed_roles = ['SUPERUSER', 'DEAN', 'CHAIR', 'DEPARTMENT_SECRETARY']
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -20,6 +19,7 @@ class MakeAnnouncementView(LoginRequiredMixin, RoleRequiredMixin, FormView):
         context['user'] = user
         context['check'] = True
         return context
+
     def form_valid(self, form):
         form.instance.sender = self.request.user
         form.save()

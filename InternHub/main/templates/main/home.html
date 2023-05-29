@@ -6,6 +6,20 @@
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+    <style>
+        #countdown li {
+            display: inline-block;
+            font-size: 1.5em;
+            list-style-type: none;
+            padding: 1em;
+            text-transform: uppercase;
+        }
+
+        #countdown li span {
+            display: block;
+            font-size: 4.5rem;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -264,21 +278,22 @@
                     <div id="announcement-div">
 
                         {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'DEAN' or request.user.role == 'CHAIR' %}
-                        <div class="row">
-                            <div class="col-4">
-                            </div>
-                            <div class="col-auto">
-                                <div id="company-list-div" class="d-flex justify-content-between align-items-center">
-                                    <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+                            <div class="row">
+                                <div class="col-4">
+                                </div>
+                                <div class="col-auto">
+                                    <div id="company-list-div"
+                                         class="d-flex justify-content-between align-items-center">
+                                        <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+                                    </div>
+                                </div>
+                                <div class="col align-items-center d-flex justify-content-end">
+                                    <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
+                                            onclick="navigateToAnotherPage('/announcements/make-announcement/')">
+                                        Announce
+                                    </button>
                                 </div>
                             </div>
-                            <div class="col align-items-center d-flex justify-content-end">
-                                <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
-                                        onclick="navigateToAnotherPage('/announcements/make-announcement/')">
-                                    Announce
-                                </button>
-                            </div>
-                        </div>
 
                         {% else %}
                             <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
@@ -299,7 +314,7 @@
                                     {% endfor %}
                                 </ul>
 
-                                
+
                             </div>
                         </div>
                     </div>
@@ -370,23 +385,55 @@
             {% endblock %}
             {% block right-column %}
                 <div class="col text-white" id="side-bar-right">
-                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                <hr class="my-4 border-2 text-black">
+                <div class="container" id="profile-info">
+                    <div class="row">
+                        {% if check %}
+                            <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                            <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                        {% endif %}
+                    </div>
                     <hr class="my-4 border-2 text-black">
-                    <div class="container" id="profile-info">
-                        <div class="row">
-                            {% if check %}
-                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
-                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
-                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
-                            {% endif %}
+                    <div class="row" id="row-countdown">
+                        <div class="container">
+                            <h1 id="headline" class="text-center">Report Upload Deadline</h1>
+                            <div id="countdown">
+                                <ul>
+                                    <li><span id="days"></span>days</li>
+                                    <li><span id="hours"></span>Hours</li>
+                                    <li><span id="minutes"></span>Minutes</li>
+                                    <li><span id="seconds"></span>Seconds</li>
+                                </ul>
+                            </div>
                         </div>
-                        <hr class="my-4 border-2 text-black">
-                        <h1 class="display-6 text-center fw-semibold" id="due-date">
-                            Due Date</h1>
                     </div>
                 </div>
             {% endblock %}
+            </div>
         </div>
     </div>
     <script src="{% static 'main/home.js' %}"></script>
+
+    <script>
+        (function () {
+            const second = 1000,
+                minute = second * 60,
+                hour = minute * 60,
+                day = hour * 24;
+
+            const countDown = new Date("{{ due_date|date:'F/d/Y' }}").getTime(),
+                x = setInterval(function () {
+
+                    const now = new Date().getTime(),
+                        distance = countDown - now;
+
+                    document.getElementById("days").innerText = Math.floor(distance / (day)),
+                        document.getElementById("hours").innerText = Math.floor((distance % (day)) / (hour)),
+                        document.getElementById("minutes").innerText = Math.floor((distance % (hour)) / (minute)),
+                        document.getElementById("seconds").innerText = Math.floor((distance % (minute)) / second);
+                }, 0)
+        }());
+    </script>
 {% endblock %}

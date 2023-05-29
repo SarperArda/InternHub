@@ -6,7 +6,6 @@
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
-
     <style>
         .form-container {
             max-width: 400px;
@@ -51,7 +50,6 @@
             border-color: #333;
         }
     </style>
-
 {% endblock %}
 
 
@@ -86,14 +84,13 @@
                                                     data-bs-target="#internships-collapse"
                                                     aria-expanded="true"
                                                     id="main-button">
-                                                <i class="fs-5 fa-regular fa-file"></i>
+                                                <i class="fs-5 fa-regular fa-briefcase"></i>
                                                 <span class="fs-3 ms-3 d-none d-sm-inline"
                                                       id="sidebar-span">Internships</span>
                                             </button>
                                             <div class="collapse" id="internships-collapse">
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
                                                     id="dropdown-ul">
-
                                                     <li>
                                                         <button onclick="navigateToAnotherPage('/reports/view-internships/')"
                                                                 id="submissions-button"
@@ -112,20 +109,17 @@
                                             </div>
                                         </li>
                                     {% endif %}
-
                                     {% if request.user.role == 'INSTRUCTOR' %}
-
                                         <li class="nav-item py-2 py-sm-2 rounded">
                                             <button onclick="navigateToAnotherPage('/reports/view-internships/')"
                                                     class="nav-link text-white w-100"
                                                     style="padding-left: 12px;">
-                                                <i class="fs-5 fa-regular fa-house"></i>
+                                                <i class="fs-5 fa-regular fa-briefcase"></i>
                                                 <span class="fs-3 ms-3 d-none d-sm-inline"
                                                       id="sidebar-span">Internships</span>
                                             </button>
                                         </li>
                                     {% endif %}
-
                                 </ul>
                             </div>
                             <ul class="nav nav-pills flex-column mt-4">
@@ -140,7 +134,6 @@
                     </div>
                 </div>
             {% endblock %}
-
             {% block middle-column %}
                 <div class="col-auto col-6" id="middle-column">
                     <div id="company-list-div">
@@ -153,7 +146,6 @@
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0" style="height: 85vh;">
                             <div class="card-body overflow-auto">
-
                                 {% if request.user.role == 'INSTRUCTOR' %}
                                     <div class="form-container">
                                         <h3>Set Due Date For All Submissions</h3>
@@ -164,11 +156,9 @@
                                                 Set
                                             </button>
                                         </form>
-
                                     </div>
                                     <hr class="my-4 border-2 text-dark">
                                 {% endif %}
-
                                 {% for internship in internships %}
                                     <div class="mb-4">
 
@@ -207,7 +197,6 @@
                                                 <p>Feedback Needed!</p>
                                             {% endif %}
                                         {% endif %}
-
                                         {% if request.user.role == 'STUDENT' %}
                                             {% if internship.company_evaluation %}
                                                 <p>Your Evaluation to
@@ -218,22 +207,18 @@
                                             {% if feedback_recieved|get_item:internship.pk %}
                                                 <p>You Received Feedback For Your Submission!</p>
                                             {% endif %}
-
                                             <a href="{% url 'company:evaluate-company' internship.pk %}">
                                                 <button type="submit" name="action" value="detail"
                                                         class="btn btn-primary">Evaluate Company
                                                 </button>
                                             </a>
                                         {% endif %}
-
                                         {% if request.user.role == 'INSTRUCTOR' %}
                                             <div class="d-flex justify-content-between">
                                             <button onclick="navigateToAnotherPage('/reports/edit-work-and-report-ev-form/{{ internship.id }}')"
                                                     class="btn btn-primary">Fill Work and Report Evaluation
                                             </button>
-
                                         {% endif %}
-
                                         {% if request.user|can_submit %}
                                             <form method="POST" action="{% url 'reports:view_internships' %}"
                                                   class="d-flex justify-content-between">
@@ -245,8 +230,6 @@
                                             </form>
                                             </div>
                                         {% endif %}
-
-
                                         {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
                                             <div class="d-flex justify-content-between">
                                                 <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
@@ -265,7 +248,6 @@
                     </div>
                 </div>
             {% endblock %}
-
             {% block right-column %}
                 <div class="col text-white" id="side-bar-right">
                     <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
