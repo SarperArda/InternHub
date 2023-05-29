@@ -49,30 +49,32 @@
                                                     </button>
                                                 </li>
                                                 {% if request.user.role == 'STUDENT' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-cava/')"
-                                                            class="btn text-white rounded fs-4 w-100">
-                                                        Company Approval Validation Applications
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-company')"
-                                                            class="btn text-white rounded fs-4 w-100">Company Requests
-                                                    </button>
-                                                </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/request-cava/')"
+                                                                class="btn text-white rounded fs-4 w-100">
+                                                            Company Approval Validation Applications
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/request-company')"
+                                                                class="btn text-white rounded fs-4 w-100">Company
+                                                            Requests
+                                                        </button>
+                                                    </li>
                                                 {% endif %}
                                                 {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/cava-requests/')"
-                                                            class="btn text-white rounded fs-4 w-100">
-                                                        Company Approval Validation Applications
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/company-requests/')"
-                                                            class="btn text-white rounded fs-4 w-100">Company Requests
-                                                    </button>
-                                                </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">
+                                                            Company Approval Validation Applications
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/company-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">Company
+                                                            Requests
+                                                        </button>
+                                                    </li>
                                                 {% endif %}
                                             </ul>
                                         </div>
@@ -93,27 +95,38 @@
             {% endblock %}
             {% block middle-column %}
                 <div class="col-auto col-6" id="middle-column">
-                    <div id="company-list-div">
-                        <h1 class="display-6 text-center fw-semibold" id="titles">Company List</h1>
-                        <hr class="my-4 border-2 text-dark">
-                        <div class="card border-0" style="height: 85vh;">
-                            <div class="card-body overflow-auto">
-                                <ul class="list-group">
-                                    {% for company in companies %}
-                                        <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
-                                            <div class="d-flex w-100 justify-content-between">
-                                                <h5 class="mb-1 fs-5">{{ company.name }} \ {{ company.field }}</h5>
-                                                {% for dep in company.departments.all %}
-                                                    <small class="text-muted d-block text-end">{{ dep.name }}</small>
-                                                {% endfor %}
-                                            </div>
-                                            <!-- TODO: implement email, currently hard-coded -->
-                                            <a href="mailto: alper.gocmen@ug.bilkent.edu.tr"
-                                               class="text-muted">company@internhub.com</a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                    <div class="row">
+                        <div class="col-4">
+                        </div>
+                        <div class="col-auto">
+                            <div id="company-list-div" class="d-flex justify-content-between align-items-center">
+                                <h1 class="display-6 text-center fw-semibold" id="titles">Company List</h1>
                             </div>
+                        </div>
+                        <div class="col align-items-center d-flex justify-content-end">
+                            <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
+                                    onclick="navigateToAnotherPage('/company/add-company/')">
+                                Add New Company
+                            </button>
+                        </div>
+                    </div>
+                    <hr class="my-4 border-2 text-dark">
+                    <div class="card border-0" style="height: 85vh;">
+                        <div class="card-body overflow-auto">
+                            <ul class="list-group">
+                                {% for company in companies %}
+                                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1 fs-5">{{ company.name }} \ {{ company.field }}</h5>
+                                            {% for dep in company.departments.all %}
+                                                <small class="text-muted d-block text-end">{{ dep.name }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        <!-- TODO: implement email, currently hard-coded -->
+                                        <a href="mailto:alper.gocmen@ug.bilkent.edu.tr" class="text-muted">company@internhub.com</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>

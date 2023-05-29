@@ -96,17 +96,20 @@
                                                             class="btn text-white rounded fs-4 w-100">Company List
                                                     </button>
                                                 </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-cava/')"
-                                                     class="btn text-white rounded fs-4 w-100">Company Approval
-                                                        Validation Applications
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/company/request-company')" 
-                                                     class="btn text-white rounded fs-4 w-100">Company Requests
-                                                    </button>
-                                                </li>
+                                                {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">
+                                                            Company Approval Validation Applications
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/company-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">Company
+                                                            Requests
+                                                        </button>
+                                                    </li>
+                                                {% endif %}
                                             </ul>
                                         </div>
                                     </li>
