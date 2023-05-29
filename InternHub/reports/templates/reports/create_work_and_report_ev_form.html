@@ -6,6 +6,11 @@
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
     <style>
+        .form {
+            margin: 10px;
+            background-color: #e6e4e4; /* Set your desired background color here */
+            padding: 20px;
+        }
         .form p {
             margin-bottom: 1rem;
         }
@@ -58,6 +63,7 @@
         .form a:hover {
             text-decoration: underline;
         }
+        
     </style>
 {% endblock %}
 
@@ -89,7 +95,7 @@
                                         <button onclick="navigateToAnotherPage('/reports/view-internships/')"
                                                 class="nav-link text-white w-100"
                                                 style="padding-left: 12px;">
-                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <i class="fs-5 fa-regular fa-briefcase"></i>
                                             <span class="fs-3 ms-3 d-none d-sm-inline"
                                                   id="sidebar-span">Internships</span>
                                         </button>
@@ -118,11 +124,8 @@
                                 <div class="form-page">
                                     <div class="form">
                                         <form method="post" class="form">
-                                            <button class="btn btn-secondary mb-3">
-                                                <i class="fa-regular fa-arrow-left"></i> Back to List
-                                            </button>
                                             {% csrf_token %}
-                                            <table class="table table-bordered">
+                                            <table class="table table-bordered border-black">
                                                 <tr>
                                                     <th class="fw-bold">Student Name:</th>
                                                     <td>{{ student_name }}</td>

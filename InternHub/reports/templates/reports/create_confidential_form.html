@@ -92,7 +92,7 @@
                                                 data-bs-target="#internships-collapse"
                                                 aria-expanded="true"
                                                 id="main-button">
-                                            <i class="fs-5 fa-regular fa-file"></i>
+                                            <i class="fs-5 fa-regular fa-briefcase"></i>
                                             <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Internships</span>
                                         </button>
                                         <div class="collapse" id="internships-collapse">
@@ -142,18 +142,24 @@
                                     <div class="form">
                                         <form method="post" class="form">
                                             {% csrf_token %}
-                                            <div class="form-group">
-                                                <p>Instructor Name: {{ instructor_name }}</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <p>Student Name: {{ student_name }}</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <p>Department: {{ department }}</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <p>Course: {{ course }}</p>
-                                            </div>
+                                            <table class="table table-bordered" style="border-color:#000000">
+                                                <tr>
+                                                    <th class="fw-bold">Instructor Name:</th>
+                                                    <td>{{ instructor_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Student Name:</th>
+                                                    <td>{{ student_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Department:</th>
+                                                    <td>{{ department }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Course:</th>
+                                                    <td>{{ course }}</td>
+                                                </tr>
+                                            </table>
                                             {{ form.as_p }}
                                             <div class="submit-button">
                                                 <button type="submit" class="btn btn-primary">Submit!</button>

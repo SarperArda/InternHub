@@ -13,23 +13,23 @@
             align-items: center;
             height: 70vh;
         }
-    
+
         .main-section {
             width: 50vh;
             background-color: #e6e4e4;
             padding: 20px;
             border-radius: 5px;
-            
+
         }
-    
+
         .form-control {
             margin-bottom: 10px;
         }
-    
+
         label {
             font-weight: bold;
         }
-    
+
         input[type="text"],
         input[type="email"],
         textarea {
@@ -38,13 +38,13 @@
             border: 2px solid #dedede;
             border-radius: 3px;
         }
-    
+
         .error-message {
             color: red;
             font-size: 12px;
             margin-top: 5px;
         }
-    
+
     </style>
 {% endblock %}
 
@@ -90,27 +90,27 @@
                     <div id="company-list-div">
                         <h1 class="display-6 text-center fw-semibold" id="titles">Make Announcement</h1>
                         <hr class="my-4 border-2 text-dark">
-                        
-                                <div class="main-container">
-                                    <div class="main-section">
-                                        <form action="" method="POST">
-                                            {% csrf_token %}
-                                            {% for field in form%}
-                                            <div class="form-control">
-                                                <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                                                {{ field }}
-                                                <div class="error-message">
-                                                    {{ field.errors }}
-                                                </div>
+
+                        <div class="main-container">
+                            <div class="main-section">
+                                <form action="" method="POST">
+                                    {% csrf_token %}
+                                    {% for field in form %}
+                                        <div class="form-control">
+                                            <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                                            {{ field }}
+                                            <div class="error-message">
+                                                {{ field.errors }}
                                             </div>
-                                            {% endfor %}
-                                            <div class="text-center">
-                                                <button type="submit" class="btn btn-primary">Announce!</button>
-                                            </div>
-                                        
-                                        </form>
+                                        </div>
+                                    {% endfor %}
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Announce!</button>
                                     </div>
-                                </div>
+
+                                </form>
+                            </div>
+                        </div>
 
                     </div>
                 </div>

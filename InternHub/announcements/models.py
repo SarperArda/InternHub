@@ -1,6 +1,6 @@
 from django.db import models
+
 from users.models import User
-from datetime import datetime
 
 
 class Announcement(models.Model):

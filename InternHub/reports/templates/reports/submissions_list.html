@@ -6,6 +6,59 @@
 
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+
+    <style>
+        /* Styles for form labels */
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    
+        /* Styles for form inputs */
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    
+        /* Styles for form buttons */
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+    
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    
+        /* Styles for form container */
+        .form-container {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+        }
+    
+        /* Additional styles */
+        .mt-3 {
+            margin-top: 3rem;
+        }
+    </style>
+
 {% endblock %}
 
 {% block body %}
@@ -112,99 +165,104 @@
                                     <h3>Latest Submission:</h3>
                                     {% with latest_submission=latest_submissions|get_item:internship.pk %}
                                         {% if latest_submission %}
-                                        <p>Status: {{ latest_submission.get_status_display }}</p>
-                                        <p>Due Date: {{ latest_submission.due_date|date:"F j, Y H:i" }}</p>
-                                        <p>Uploaded File:
-                                            {% if latest_submission.file == "" %}
-                                                No file uploaded.
-                                            {% else %}
-                                                <a href="{{ latest_submission.file.url }}">{{ latest_submission.file.name }}</a>
-                                                </p>
-                                                <p>Submission
-                                                    Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</p>
-                                            {% endif %}
-                                        {% endif %}
-                                        {% if latest_submission.status == 'PE' %}
-                                            {% if request.user.role == 'STUDENT' %}
-                                                {% if feedback_recieved|get_item:internship.pk %}
-                                                    <p>You Received Feedback For Your Submission!</p>
-                                                {% endif %}
-                                                {% if date_passed|get_item:internship.pk %}
-                                                    <h3>Submission Date Has Passed!</h3>
-                                                {% else %}
-                                                    <h3>Submit new file</h3>
-                                                    <form method="post" enctype="multipart/form-data">
-                                                        {% csrf_token %}
-                                                        {{ form.as_p }}
-                                                        <input type="hidden" name="internship_id"
-                                                               value="{{ internship.id }}">
-                                                        <button type="submit" name="action" value="submit_report"
-                                                                class="btn btn-primary">Submit
-                                                        </button>
-                                                    </form>
-                                                    <h3 class="mt-3">Request Extension</h3>
-                                                    {% if latest_submission.extension %}
-                                                        <p>Extension Requested</p>
-                                                        <p>Due
-                                                            Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th class="fw-bold">Status:</th>
+                                                <td>{{ latest_submission.get_status_display }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="fw-bold">Due Date:</th>
+                                                <td>{{ latest_submission.due_date|date:"F j, Y H:i" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="fw-bold">Uploaded File:</th>
+                                                <td>{% if latest_submission.file == "" %}
+                                                    No file uploaded.
                                                     {% else %}
+                                                    <a href="{{ latest_submission.file.url }}">{{ latest_submission.file.name }}</a>
+                                                    <td>Submitted
+                                                        Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</td>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        
+                                        </table>                                
+                                        {% endif %}
+
+
+                                        <div class="form-container">
+                                            {% if latest_submission.status == 'PE' %}
+                                                {% if request.user.role == 'STUDENT' %}
+                                                    {% if feedback_recieved|get_item:internship.pk %}
+                                                        <p>You Received Feedback For Your Submission!</p>
+                                                    {% endif %}
+                                                    {% if date_passed|get_item:internship.pk %}
+                                                        <h3>Submission Date Has Passed!</h3>
+                                                    {% else %}
+                                                        <h3>Submit new file</h3>
+                                                        <form method="post" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            {{ form.as_p }}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="submit_report" class="btn btn-primary">Submit</button>
+                                                        </form>
+                                                        <h3 class="mt-3">Request Extension</h3>
+                                                        {% if latest_submission.extension %}
+                                                            <p>Extension Requested</p>
+                                                            <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                        {% else %}
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                                {{ extension_form.as_p }}
+                                                                <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                                <button type="submit" name="action" value="extension_request" class="btn btn-primary">
+                                                                    Request Extension
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if request.user.role == 'INSTRUCTOR' %}
+                                                    {% if feedback_needed|get_item:internship.pk %}
+                                                        <h3>Evaluate Submission</h3>
                                                         <form method="post">
                                                             {% csrf_token %}
-                                                            {{ extension_form.as_p }}
-                                                            <input type="hidden" name="internship_id"
-                                                                   value="{{ internship.id }}">
-                                                            <button type="submit" name="action"
-                                                                    value="extension_request" class="btn btn-primary">
-                                                                Request Extension
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="satisfactory" class="btn btn-primary mt-2">Satisfactory</button>
+                                                            <p class="mt-3">(Clicking this button marks internship as "Satisfactory". This operation cannot be retrieved back.)</p>
+                                                        </form>
+                                                        <hr class="bg-white border-2 border-top border-black">
+                                                        <h3>Give Feedback</h3>
+                                                        <form method="post" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            {{ feedback_form.as_p }}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="revision_required" class="btn btn-primary">
+                                                                Revision Required
                                                             </button>
                                                         </form>
                                                     {% endif %}
+                                                    {% if latest_submission.extension %}
+                                                        <h3>Extension Request</h3>
+                                                        <p>Student has requested an extension.</p>
+                                                        <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                        <form method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="approve_extension" class="btn btn-primary">
+                                                                Approve Extension
+                                                            </button>
+                                                            <button type="submit" name="action" value="reject_extension" class="btn btn-danger">Reject Extension</button>
+                                                        </form>
+                                                    {% endif %}
                                                 {% endif %}
-                                            {% endif %}
-                                            {% if request.user.role == 'INSTRUCTOR' %}
-                                                {% if feedback_needed|get_item:internship.pk %}
-                                                    <h3>Evaluate Submission</h3>
-                                                    <form method="post">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="internship_id"
-                                                                value="{{ internship.id }}">
-                                                        <button type="submit" name="action" value="satisfactory"
-                                                                class="btn btn-primary">Satisfactory
-                                                        </button>
-                                                    </form>
-                                                    <form method="post" enctype="multipart/form-data">
-                                                        {% csrf_token %}
-                                                        {{ feedback_form.as_p }}
-                                                        <input type="hidden" name="internship_id"
-                                                                value="{{ internship.id }}">
-                                                        <button type="submit" name="action"
-                                                                value="revision_required" class="btn btn-primary">
-                                                            Revision Required
-                                                        </button>
-                                                    </form>
-                                                {% endif %}
-                                                {% if latest_submission.extension %}
-                                                    <h3>Extension Request</h3>
-                                                    <p>Student has requested an extension.</p>
-                                                    <p>Due
-                                                        Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
-                                                    <form method="post">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="internship_id"
-                                                                value="{{ internship.id }}">
-                                                        <button type="submit" name="action"
-                                                                value="approve_extension" class="btn btn-primary">
-                                                            Approve Extension
-                                                        </button>
-                                                        <button type="submit" name="action" value="reject_extension"
-                                                                class="btn btn-danger">Reject Extension
-                                                        </button>
-                                                    </form>
-                                                {% endif %}
-                                            {% endif %}
-                                        {% else %}
+                                            {% else %}
                                                 <p>No pending submissions found.</p>
-                                        {% endif %}
+                                            {% endif %}
+                                        </div>
+
+
                                     {% endwith %}
                                     <hr class="border-5 my-4 text-dark">
                                 {% endfor %}
