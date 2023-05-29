@@ -5,53 +5,52 @@
 {% block title %}Internships{% endblock %}
 
 {% block styling %}
-<link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+
+    <style>
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
 
 
-<style>
-    .form-container {
-        max-width: 400px;
-        margin: 0 auto;
-        padding: 20px;
-     
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Added this line */
+        }
 
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center; /* Added this line */
-    }
+        .form-container h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    .form-container h3 {
-        margin-bottom: 20px;
-        color: #333;
-    }
+        .form-container form {
+            margin-bottom: 20px;
+        }
 
-    .form-container form {
-        margin-bottom: 20px;
-    }
+        .form-container label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
 
-    .form-container label {
-        display: block;
-        margin-bottom: 10px;
-        color: #333;
-    }
+        .form-container input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
 
-    .form-container input[type="submit"] {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 3px;
-        cursor: pointer;
-    }
+        .form-container input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
 
-    .form-container input[type="submit"]:hover {
-        background-color: #0056b3;
-    }
-
-    .form-container hr {
-        border-color: #333;
-    }
-</style>
+        .form-container hr {
+            border-color: #333;
+        }
+    </style>
 
 {% endblock %}
 
@@ -80,51 +79,53 @@
                                         </button>
                                     </li>
                                     {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button class="btn btn-toggle align-items-center
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button class="btn btn-toggle align-items-center
                                                        rounded collapsed text-white w-100"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#internships-collapse"
-                                                aria-expanded="true"
-                                                id="main-button">
-                                            <i class="fs-5 fa-regular fa-file"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Internships</span>
-                                        </button>
-                                        <div class="collapse" id="internships-collapse">
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
-                                                id="dropdown-ul">
-                                                
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')" 
-                                                     id="submissions-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Confidential Forms
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')" 
-                                                    id="feedbacks-button"
-                                                            class="btn rounded text-white fs-4 w-100">
-                                                        Internship Assignments
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#internships-collapse"
+                                                    aria-expanded="true"
+                                                    id="main-button">
+                                                <i class="fs-5 fa-regular fa-file"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Internships</span>
+                                            </button>
+                                            <div class="collapse" id="internships-collapse">
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                    id="dropdown-ul">
+
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                                id="submissions-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Confidential Forms
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/reports/assign-internships/')"
+                                                                id="feedbacks-button"
+                                                                class="btn rounded text-white fs-4 w-100">
+                                                            Internship Assignments
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </li>
                                     {% endif %}
-                                    
+
                                     {% if request.user.role == 'INSTRUCTOR' %}
 
-                                    <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')" class="nav-link text-white w-100"
-                                                style="padding-left: 12px;">
-                                            <i class="fs-5 fa-regular fa-house"></i>
-                                            <span class="fs-3 ms-3 d-none d-sm-inline"
-                                                  id="sidebar-span">Internships</span>
-                                        </button>
-                                    </li>
+                                        <li class="nav-item py-2 py-sm-2 rounded">
+                                            <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                    class="nav-link text-white w-100"
+                                                    style="padding-left: 12px;">
+                                                <i class="fs-5 fa-regular fa-house"></i>
+                                                <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                      id="sidebar-span">Internships</span>
+                                            </button>
+                                        </li>
                                     {% endif %}
-                                  
+
                                 </ul>
                             </div>
                             <ul class="nav nav-pills flex-column mt-4">
@@ -141,97 +142,110 @@
             {% endblock %}
 
             {% block middle-column %}
-            <div class="col-auto col-6" id="middle-column">
-                <div id="company-list-div">
-                  {% if request.user.role == 'INSTRUCTOR' %}
-                  <h1 class="display-6 text-center fw-semibold" id="titles">Internships</h1>
-                  {% endif %}
-                  {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                  <h1 class="display-6 text-center fw-semibold" id="titles">Confidential Forms</h1>
-                  {% endif %}
-                  <hr class="my-4 border-2 text-dark">
-                  <div class="card border-0" style="height: 85vh;">
-                    <div class="card-body overflow-auto">
-              
-                        {% if request.user.role == 'INSTRUCTOR'%}
-                        <div class="form-container">
-                            <h3>Set Due Date For All Submissions</h3>
-                            <form method="post">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <button type="submit" name="action" value="Extend" class="btn btn-primary">Set</button>
-                            </form>
-                            
-                        </div>
-                        <hr class="my-4 border-2 text-dark">
-                        {% endif %}
-                 
-                      {% for internship in internships %}
-                      <div class="mb-4">
-
-                        {% if request.user.role != 'STUDENT' %}
-                        <p>Student Name: {{ internship.student.first_name }} {{ internship.student.last_name }}</p>
-                        {% endif %}
-                        {% if request.user.role != 'INSTRUCTOR'%}
-                        <p>Instructor Name: {{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</p>
-                        {% endif %}
-                        <p>Company Name: {{ internship.company.name }}</p>
-                        <p>Course: {{ internship.course }}</p>
-                        <p>Status: {{ internship.get_status_display }}</p>
-              
-                        {% if request.user.role == 'INSTRUCTOR'%}
-                        {% if feedback_needed|get_item:internship.pk %}
-                        <p>Feedback Needed!</p>
-                        {% endif %}
-                        {% endif %}
-              
-                        {% if request.user.role == 'STUDENT' %}
-                        {% if internship.company_evaluation %}
-                        <p>Your Evaluation to Company: {{ internship.company_evaluation.grade }}</p>
-                        {% else %}
-                        <p>You have not evaluated this company.</p>
-                        {% endif %}
-                        {% if feedback_recieved|get_item:internship.pk %}
-                        <p>You Received Feedback For Your Submission!</p>
-                        {% endif %}
-              
-                        <a href="{% url 'company:evaluate-company' internship.pk %}">
-                          <button type="submit" name="action" value="detail" class="btn btn-primary">Evaluate Company</button>
-                        </a>
-                        {% endif %}
-              
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
                         {% if request.user.role == 'INSTRUCTOR' %}
-                        <div class="d-flex justify-content-between">
-                        <button onclick="navigateToAnotherPage('/reports/create-work-and-report-ev-form/{{ internship.id }}')"
-                            class="btn btn-primary">Fill Work and Report Evaluation</button>
-                        
+                            <h1 class="display-6 text-center fw-semibold" id="titles">Internships</h1>
                         {% endif %}
-
-                        {% if request.user|can_submit %}
-                        <form method="POST" action="{% url 'reports:view_internships' %}" class="d-flex justify-content-between">
-                        {% csrf_token %}
-                        <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                        <button type="submit" name="action" value="Unsatisfactory" class="btn btn-secondary">Unsatisfactory</button>
-                        </form>
-                        </div>
-                        {% endif %}
-                        
-              
                         {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
-                        <div class="d-flex justify-content-between">
-                            <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
-                                    class="btn btn-primary">Fill Confidential Company</button>
-                            <button onclick="navigateToAnotherPage('/company/generate-pdf/{{ internship.id }}')"
-                                    class="btn btn-secondary">Export Internship to PDF</button>
-                        </div>
+                            <h1 class="display-6 text-center fw-semibold" id="titles">Confidential Forms</h1>
                         {% endif %}
-                      </div>
-                      <hr class="my-4 border-2 text-dark">
-                      {% endfor %}              
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+
+                                {% if request.user.role == 'INSTRUCTOR' %}
+                                    <div class="form-container">
+                                        <h3>Set Due Date For All Submissions</h3>
+                                        <form method="post">
+                                            {% csrf_token %}
+                                            {{ form.as_p }}
+                                            <button type="submit" name="action" value="Extend" class="btn btn-primary">
+                                                Set
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                    <hr class="my-4 border-2 text-dark">
+                                {% endif %}
+
+                                {% for internship in internships %}
+                                    <div class="mb-4">
+
+                                        {% if request.user.role != 'STUDENT' %}
+                                            <p>Student
+                                                Name: {{ internship.student.first_name }} {{ internship.student.last_name }}</p>
+                                        {% endif %}
+                                        {% if request.user.role != 'INSTRUCTOR' %}
+                                            <p>Instructor
+                                                Name: {{ internship.instructor.first_name }} {{ internship.instructor.last_name }}</p>
+                                        {% endif %}
+                                        <p>Company Name: {{ internship.company.name }}</p>
+                                        <p>Course: {{ internship.course }}</p>
+                                        <p>Status: {{ internship.get_status_display }}</p>
+
+                                        {% if request.user.role == 'INSTRUCTOR' %}
+                                            {% if feedback_needed|get_item:internship.pk %}
+                                                <p>Feedback Needed!</p>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        {% if request.user.role == 'STUDENT' %}
+                                            {% if internship.company_evaluation %}
+                                                <p>Your Evaluation to
+                                                    Company: {{ internship.company_evaluation.grade }}</p>
+                                            {% else %}
+                                                <p>You have not evaluated this company.</p>
+                                            {% endif %}
+                                            {% if feedback_recieved|get_item:internship.pk %}
+                                                <p>You Received Feedback For Your Submission!</p>
+                                            {% endif %}
+
+                                            <a href="{% url 'company:evaluate-company' internship.pk %}">
+                                                <button type="submit" name="action" value="detail"
+                                                        class="btn btn-primary">Evaluate Company
+                                                </button>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if request.user.role == 'INSTRUCTOR' %}
+                                            <div class="d-flex justify-content-between">
+                                            <button onclick="navigateToAnotherPage('/reports/create-work-and-report-ev-form/{{ internship.id }}')"
+                                                    class="btn btn-primary">Fill Work and Report Evaluation
+                                            </button>
+
+                                        {% endif %}
+
+                                        {% if request.user|can_submit %}
+                                            <form method="POST" action="{% url 'reports:view_internships' %}"
+                                                  class="d-flex justify-content-between">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                <button type="submit" name="action" value="Unsatisfactory"
+                                                        class="btn btn-secondary">Unsatisfactory
+                                                </button>
+                                            </form>
+                                            </div>
+                                        {% endif %}
+
+
+                                        {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                            <div class="d-flex justify-content-between">
+                                                <button onclick="navigateToAnotherPage('/reports/create-confidential-form/{{ internship.id }}')"
+                                                        class="btn btn-primary">Fill Confidential Company
+                                                </button>
+                                                <button onclick="navigateToAnotherPage('/company/generate-pdf/{{ internship.id }}')"
+                                                        class="btn btn-secondary">Export Internship to PDF
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <hr class="my-4 border-2 text-dark">
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             {% endblock %}
 
             {% block right-column %}

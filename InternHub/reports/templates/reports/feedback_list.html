@@ -77,16 +77,17 @@
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0" style="height: 85vh;">
                             <div class="card-body overflow-auto">
-                                {% for feedback in feedbacks %}
-                                    <div class="container">
+                                <div class="container">
+                                    {% for feedback in feedbacks %}
                                         <h4>Feedback to {{ feedback.submission_field.internship.student.first_name }}
                                             {{ feedback.submission_field.internship.student.last_name }}</h4>
-                                        <div class="table-responsive">
+                                        <div class="table-responsive mb-4">
                                             <table class="table table-bordered">
                                                 <tbody>
                                                 <tr>
                                                     <th>Course</th>
-                                                    <td>{{ feedback.submission_field.internship.student.department.code }}{{ feedback.submission_field.internship.course }}</td>
+                                                    <td>
+                                                        {{ feedback.submission_field.internship.student.department.code }}{{ feedback.submission_field.internship.course }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Submission</th>
@@ -112,9 +113,10 @@
                                                 </tr>
                                                 </tbody>
                                             </table>
+                                            <hr class="border-dark">
                                         </div>
-                                    </div>
-                                {% endfor %}
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
