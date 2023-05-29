@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import Student, Dean, Chair, Instructor, DepartmentSecretary, User
+from django.contrib.auth.models import Group
 
 
 # Registering user models to admin
@@ -91,3 +92,5 @@ class StudentAdmin(RoleAdmin):
 admin.site.site_title = 'InternHub'
 admin.site.index_title = 'Welcome to Administration Page'
 admin.site.site_header = 'InternHub Administration System'
+
+admin.site.unregister(Group)
