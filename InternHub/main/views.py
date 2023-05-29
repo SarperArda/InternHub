@@ -10,7 +10,7 @@ class HomeView(LoginRequiredMixin, View):
     template_name = 'main/home.html'
 
     def get(self, request):
-        announcements = Announcement.objects.all()
+        announcements = Announcement.objects.all().order_by('-id')
         notifications = Notification.objects.filter(receiver=request.user).order_by('-id')
         full_name = str(request.user)
         user = request.user
@@ -26,9 +26,15 @@ class HomeView(LoginRequiredMixin, View):
             eePk = None
             iePk = None
             statistics = None
+            due_dates = []
             if user.role == 'STUDENT':
                 for internship in internships:
                     contacts_set.add((internship.instructor,))
+                    if internship.submissions.exists():
+                        last_submission = internship.submissions.last()
+                        if( last_submission.status == 'PE'):
+                            due_dates.append(last_submission.due_date)
+
             if user.role == 'DEAN':
                 csPk = Statistic.objects.all()[0].pk
                 mePk = Statistic.objects.all()[1].pk
@@ -39,5 +45,5 @@ class HomeView(LoginRequiredMixin, View):
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
                            'internships': internships, 'check': check, 'contacts_set': contacts_set,
-                             'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk, 'eePk': eePk, 'iePk': iePk})  
+                             'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk, 'eePk': eePk, 'iePk': iePk, 'due_dates': due_dates})  
         return render(request, 'main/home.html', {'user': user, 'announcements': announcements, 'notifications': notifications, 'full_name': full_name})
