@@ -17,4 +17,8 @@ urlpatterns = [
 
     path('company-evaluation/<int:pk>/', views.CompanyEvaluationView.as_view(), name="evaluate-company"),
     path('company-evaluation/', views.ListCompanyEvaluationsView.as_view(), name="company-evaluations"),
+
+    path('generate-pdf/<int:pk>', views.generate_pdf, name='generate-pdf'),
+    #path('download-pdf/<int:pk>', views.download_file, name='download-file')
+
 ]
