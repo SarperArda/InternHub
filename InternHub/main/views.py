@@ -26,14 +26,14 @@ class HomeView(LoginRequiredMixin, View):
             eePk = None
             iePk = None
             statistics = None
-            due_dates = []
+            due_date = None
             if user.role == 'STUDENT':
                 for internship in internships:
                     contacts_set.add((internship.instructor,))
                     if internship.submissions.exists():
                         last_submission = internship.submissions.last()
-                        if( last_submission.status == 'PE'):
-                            due_dates.append(last_submission.due_date)
+                        if last_submission.status == 'PE' or due_date is None or last_submission.due_date < due_date:
+                            due_date = last_submission.due_date
 
             if user.role == 'DEAN':
                 csPk = Statistic.objects.all()[0].pk
