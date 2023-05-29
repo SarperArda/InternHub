@@ -258,6 +258,7 @@
                                 </ul>
                             </div>
                             <ul class="nav nav-pills flex-column mt-4">
+                                {% if request.user.role != 'SUPERUSER' %}
                                 <li class="nav-item py-2 py-sm-2 rounded">
                                     <button class="nav-link text-white w-100"
                                             id="notification-button">
@@ -273,6 +274,7 @@
                                         <span class="fs-4 ms-3 d-none d-sm-inline" id="sidebar-span">Contact</span>
                                     </button>
                                 </li>
+                                {% endif %}
                                 <li class="nav-item py-2 py-sm-2 rounded">
                                     <a href="{% url 'users:logout' %}" class="nav-link text-white">
                                         <i class="fs-5 fa-solid fa-right-from-bracket"></i>

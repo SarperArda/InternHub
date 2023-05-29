@@ -238,7 +238,7 @@
                                                             {% csrf_token %}
                                                             {{ feedback_form.as_p }}
                                                             <input type="hidden" name="internship_id" value="{{ internship.id }}">
-                                                            <button type="submit" name="action" value="revision_required" class="btn btn-primary">
+                                                            <button type="submit" name="action" value="revision_required" class="btn btn-primary mb-3">
                                                                 Revision Required
                                                             </button>
                                                         </form>
@@ -284,8 +284,7 @@
                             {% endif %}
                         </div>
                         <hr class="my-4 border-2 text-black">
-                        <h1 class="display-6 text-center fw-semibold" id="due-date">
-                            Due Date</h1>
+                        
                     </div>
                 </div>
             {% endblock %}
