@@ -546,9 +546,9 @@ class ListFeedbackView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     
     def get_queryset(self):
         if self.request.user.role == 'STUDENT':
-            return Feedback.objects.filter(submission_field__internship__student__user_id=self.request.user.user_id).order_by('id')
+            return Feedback.objects.filter(submission_field__internship__student__user_id=self.request.user.user_id).order_by('-id')
         elif self.request.user.role == 'INSTRUCTOR':
-            return Feedback.objects.filter(submission_field__internship__instructor__user_id=self.request.user.user_id).order_by('id')
+            return Feedback.objects.filter(submission_field__internship__instructor__user_id=self.request.user.user_id).order_by('-id')
 
 
 # class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView)
