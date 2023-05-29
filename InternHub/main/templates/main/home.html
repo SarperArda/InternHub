@@ -46,6 +46,17 @@
                                                   id="sidebar-span">Announcements</span>
                                         </button>
                                     </li>
+                                    {% if request.user.role == 'SUPERUSER' %}
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/admin/')" class="nav-link text-white w-100"
+                                                id="announcement-button"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-bullhorn"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Admin Panel</span>
+                                        </button>
+                                    </li>
+                                    {% endif %}
                                     {% if request.user.role == 'STUDENT' %}
                                         <li class="nav-item py-2 py-sm-2 rounded">
                                             <button class="nav-link text-white w-100"
@@ -193,7 +204,7 @@
                                             </div>
                                         </li>
                                     {% endif %}
-                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' %}
+                                    {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'STUDENT' or request.user.role == 'SUPERUSER' %}
                                         <li class="nav-item py-2 py-sm-2 rounded">
                                             <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
                                                     data-bs-toggle="collapse"
@@ -277,7 +288,7 @@
                 <div class="col-auto col-6" id="middle-column">
                     <div id="announcement-div">
 
-                        {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'DEAN' or request.user.role == 'CHAIR' %}
+                        {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'DEAN' or request.user.role == 'CHAIR' or request.user.role == 'SUPERUSER' %}
                             <div class="row">
                                 <div class="col-4">
                                 </div>
@@ -389,6 +400,9 @@
                 <hr class="my-4 border-2 text-black">
                 <div class="container" id="profile-info">
                     <div class="row">
+                        {% if request.user.role == 'SUPERUSER'%}
+                            <span class="fs-3 text-black fw-semibold align-left text-center"> ADMIN </span>
+                        {% endif %}
                         {% if check %}
                             <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
                             <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
