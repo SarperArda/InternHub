@@ -265,10 +265,10 @@ class ExtensionForm(forms.ModelForm):
     class Meta:
         model = ExtensionRequest
         fields = ['extension_date']
-
 class InternshipAssignmentForm(forms.Form):
 
     instructor = forms.ModelChoiceField(queryset=None, label="Choose instructor to whom Internship will be assigned",
                                         required=False)
     internships = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple,
                                                  label="Choose internships to be assigned", required=False)
+

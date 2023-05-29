@@ -6,7 +6,9 @@
 {% block styling %}
     <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
     <style>
-        .form-label {
+        .form label {
+            display: inline-block;
+            margin-bottom: 10px;
             font-weight: bold;
         }
 
@@ -125,6 +127,7 @@
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0" style="height: 85vh;">
                             <div class="card-body overflow-auto">
+
                                 <div class="form-page">
                                     <div class="form">
                                         <form method="post" class="form">
@@ -147,6 +150,7 @@
                                         </form>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

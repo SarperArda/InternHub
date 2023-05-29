@@ -262,7 +262,28 @@
             {% block middle-column %}
                 <div class="col-auto col-6" id="middle-column">
                     <div id="announcement-div">
-                        <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+
+                        {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                        <div class="row">
+                            <div class="col-4">
+                            </div>
+                            <div class="col-auto">
+                                <div id="company-list-div" class="d-flex justify-content-between align-items-center">
+                                    <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+                                </div>
+                            </div>
+                            <div class="col align-items-center d-flex justify-content-end">
+                                <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
+                                        onclick="navigateToAnotherPage('/announcements/make-announcement/')">
+                                    Announce
+                                </button>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if request.user.role != 'DEPARTMENT_SECRETARY' %}
+                            <h1 class="display-6 text-center fw-semibold" id="titles">Announcements</h1>
+                        {% endif %}
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0">
                             <div class="card-body">
@@ -278,6 +299,8 @@
                                         </li>
                                     {% endfor %}
                                 </ul>
+
+                                
                             </div>
                         </div>
                     </div>

@@ -80,7 +80,7 @@ class CreateConfidentialForm(CreateView):
         return context
 
 
-class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, CreateView):
+class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, RoleRequiredMixin, CreateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
@@ -95,7 +95,7 @@ class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, UserRequiredMixin,
         internship.work_and_report_evaluation_form = work_and_report_evaluation
         print(internship.work_and_report_evaluation_form.total_work_grade)
         internship.save()
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+        return reverse('reports:view_internships')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -110,7 +110,7 @@ class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, UserRequiredMixin,
         #ontext['form'] = self.get_form()
         return context
 
-class WorkAndReportEvaluationFormUpdate(LoginRequiredMixin, UserRequiredMixin, RoleRequiredMixin, UpdateView): 
+class WorkAndReportEvaluationFormUpdate(LoginRequiredMixin, RoleRequiredMixin, UpdateView): 
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
