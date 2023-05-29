@@ -10,7 +10,6 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView, CreateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
-
 from InternHub.manager import StatisticManager
 from announcements.models import Notification
 from reports.forms import ConfidentialCompanyForm
@@ -25,6 +24,7 @@ from .forms import WorkAndReportEvaluationForm, ExtensionForm
 from .models import Internship, Feedback, ConfidentialCompany, Statistic
 from .models import StudentReport, WorkAndReportEvaluation
 from .models import Submission, ExtensionRequest
+import random
 
 
 # Create your views here.
@@ -184,25 +184,28 @@ class InternshipAssignmentView(FormView, RoleRequiredMixin, LoginRequiredMixin):
                 internship.save()
 
         elif action == 'RandomlyAssign':
-            instructors = Instructor.objects.filter(
-                department=self.request.user.department)
-            internships = Internship.objects.filter(
-                student__department=self.request.user.department)
-            instructor_count = instructors.count()
-            internship_count = len(internships)
-            internship_per_instructor = internship_count // instructor_count
+            instructors = list(Instructor.objects.filter(department=self.request.user.department))
+            internships = list(Internship.objects.filter(student__department=self.request.user.department))
 
-            instructor_index = 0
+            # Initialize a dictionary to keep track of the number of internships per instructor
+            internship_count_per_instructor = {instructor: 0 for instructor in instructors}
+
+            # Shuffle the internships so they are assigned randomly
+            random.shuffle(internships)
+
             # Iterate over the internships and assign instructors
             for internship in internships:
-                instructor = instructors[instructor_index]
+                # Sort the instructors by the number of internships they have been assigned
+                sorted_instructors = sorted(instructors, key=lambda instructor: internship_count_per_instructor[instructor])
+
+                # Assign the instructor with the least internships to the current internship
+                instructor = sorted_instructors[0]
                 internship.instructor = instructor
                 internship.save()
 
-                # Increment instructor index and loop back if needed
-                instructor_index += 1
-                if instructor_index >= instructor_count:
-                    instructor_index = 0
+                # Update the internship count for the assigned instructor
+                internship_count_per_instructor[instructor] += 1
+
                 Notification.create_notification(
                     title="New Internship Assignment",
                     content=f"Secretary {str(self.request.user)} has assigned a new instructor {str(internship.instructor)} for {internship.student.department.code}{internship.course}.",
