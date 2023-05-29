@@ -68,9 +68,12 @@ class CreateConfidentialForm(CreateView):
         context['check'] = True
         if Internship.objects.filter(id = internship_id).exists():
             internship = Internship.objects.get(id = internship_id)
-            context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+            context['student_name'] = (internship.student)
             context['department'] = internship.student.department.name
-            context['instructor_name'] = internship.instructor.first_name + " " + internship.instructor.last_name
+            if internship.instructor is not None:
+                context['instructor_name'] = (internship.instructor)
+            else:
+                context['instructor_name'] = "Not Assigned Yet"
             context['course'] = internship.student.department.code + " " + internship.course.code
         return context
 
