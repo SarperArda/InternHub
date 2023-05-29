@@ -81,9 +81,10 @@ class InternshipManager:
     def create_internships():
         cavas = CompanyApprovalValidationApplication.objects.all()
         for cava in cavas:
-            internship = Internship(student=cava.student, course=cava.course, company=cava.requested_company,
+            if cava.status == "APPROVED":
+                internship = Internship(student=cava.student, course=cava.course, company=cava.requested_company,
                                     company_approval=cava)
-            internship.save()
+                internship.save()
     @staticmethod
     def list_instructors():
         for internship in Internship.objects.all():
@@ -97,16 +98,26 @@ class CAVAManager:
         student_count = students.count()
         companies = Company.objects.all()
         companies_count = companies.count()
-        for i in range(0, student_count):
+        for i in range(0, 8):
             number = random.randint(0, companies_count - 1)
             if i % 2 == 0:
                 pk = Course.objects.all()[0].pk
             else:
                 pk = Course.objects.all()[1].pk
             cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
-                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2 + student_count//2],
+                 file='uploads/empty.pdf', status='APPROVED', student=students[i//2],
                                                     requested_company=companies[number])
-            print(students[i//2].first_name + students[i//2].last_name)
+            cava.save()
+        for i in range(5, student_count):
+            number = random.randint(0, companies_count - 1)
+            if i % 2 == 0:
+                pk = Course.objects.all()[0].pk
+            else:
+                pk = Course.objects.all()[1].pk
+            cava = CompanyApprovalValidationApplication(course=Course.objects.get(pk=pk),
+                                                        file='uploads/empty.pdf', status='PENDING',
+                                                        student=students[i],
+                                                        requested_company=companies[number])
             cava.save()
 
 class StatisticManager:

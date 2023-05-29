@@ -138,5 +138,47 @@
       "is_staff": false,
       "is_superuser": false
     }
+  },
+  {
+  "model": "users.student",
+  "fields": {
+    "first_name": "İdil",
+    "last_name": "Atmaca",
+    "email": "idil.atmaca@ug.bilkent.edu.tr",
+    "user_id": "22002491",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
   }
+},
+{
+  "model": "users.student",
+  "fields": {
+    "first_name": "Cenk Merih",
+    "last_name": "Olcay",
+    "email": "merih.olcay@ug.bilkent.edu.tr",
+    "user_id": "22002408",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+},
+{
+  "model": "users.student",
+  "fields": {
+    "first_name": "Zeynep Begüm",
+    "last_name": "Kara",
+    "email": "begum.kara@ug.bilkent.edu.tr",
+    "user_id": "22003880",
+    "department": 1,
+    "is_admin": false,
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false
+  }
+}
 ]
