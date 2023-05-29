@@ -431,21 +431,20 @@ def generate_pdf(request, pk):
 
     c.rect(0.5 * inch, letter[1] - 0.3 * (k + 7.0) * inch, letter[0] - 1 * inch, 1.4 * inch)
 
-    # Anıl'a sor son feedback status nasıl alınır diye
-    if internship.status == SubmissionStatus.PENDING:
-        status = "PENDING"
-    elif internship.status == SubmissionStatus.SATISFACTORY:
-        status = "SATISFACTORY"
-    else:
-        status = "UNSATISFACTORY"
+    status = internship.get_status_display()
+
     k = k + 3
     write_underlined_left_aligned_text("Part B: Report", k, 'Helvetica-Bold', 14)
 
     k = k + 1
     write_left_aligned_text("Report Status: " + status, k, 'Helvetica-Bold', 14)
 
-    # Anıl'a sor son due date nasıl alınır diye
-    due_date = "08/05/2023 "
+    last_submission = internship.submissions.order_by('id').first()
+    if last_submission is None:
+        due_date = "No Data"
+    else:
+        due_date = last_submission.due_date.strftime('%Y-%m-%d')
+
     k = k + 2
     write_left_aligned_text("The most recent due date is: " + due_date, k, 'Helvetica-Bold', 14)
 
