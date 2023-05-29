@@ -1,0 +1,295 @@
+{% extends 'main/home.html' %}
+{% load static %}
+{% load permissions %}
+
+{% block title %}Submissions{% endblock %}
+
+{% block styling %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+
+    <style>
+        /* Styles for form labels */
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    
+        /* Styles for form inputs */
+        input[type="text"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    
+        /* Styles for form buttons */
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+        }
+    
+        .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    
+        /* Styles for form container */
+        .form-container {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+        }
+    
+        /* Additional styles */
+        .mt-3 {
+            margin-top: 3rem;
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {% block left-column %}
+                <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
+                    <div class="bg-dark p2">
+                        <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                            <b class="display-4">
+                                <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                            </b>
+                        </a>
+                        <hr class="bg-white border-2 border-top border-white">
+                        <div class="container">
+                            <div class="content">
+                                <ul class="nav nav-pills flex-column mt-4">
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Home</span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#company-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-file"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Reports</span>
+                                        </button>
+                                        <div class="collapse" id="company-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/submissions/')"
+                                                            class="btn text-white rounded fs-4 w-100">Submissions
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/feedbacks/')"
+                                                            class="btn text-white rounded fs-4 w-100">Feedbacks
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                        <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block middle-column %}
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Submissions</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+                                {% for internship in internships %}
+                                    {% if request.user.role == 'STUDENT' %}
+                                    <h3>Submissions for Internship in {{ internship.company.name }}</h3>
+                                    {% elif request.user.role == 'INSTRUCTOR' %}
+                                    <h3>Submissions of {{ internship.student.first_name }} {{ internship.student.last_name }}</h3>
+                                    {% endif %}
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Submission File</th>
+                                            <th scope="col">Submitted Date</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for submission in internship.submissions.all|dictsortreversed:'id' %}
+                                            {% if forloop.counter > 1 %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{{ submission.file.url }}">{{ submission.file.name }}</a>
+                                                    </td>
+                                                    <td>{{ submission.creation_date|date:"F j, Y H:i" }}</td>
+                                                    <td>{{ submission.get_status_display }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="3">No previous submissions found for this internship.</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <h3>Latest Submission:</h3>
+                                    {% with latest_submission=latest_submissions|get_item:internship.pk %}
+                                        {% if latest_submission %}
+
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th class="fw-bold">Status:</th>
+                                                <td>{{ latest_submission.get_status_display }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="fw-bold">Due Date:</th>
+                                                <td>{{ latest_submission.due_date|date:"F j, Y H:i" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="fw-bold">Uploaded File:</th>
+                                                <td>{% if latest_submission.file == "" %}
+                                                    No file uploaded.
+                                                    {% else %}
+                                                    <a href="{{ latest_submission.file.url }}">{{ latest_submission.file.name }}</a>
+                                                    <td>Submitted
+                                                        Date: {{ latest_submission.creation_date|date:"F j, Y H:i" }}</td>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        
+                                        </table>                                
+                                        {% endif %}
+
+
+                                        <div class="form-container">
+                                            {% if latest_submission.status == 'PE' %}
+                                                {% if request.user.role == 'STUDENT' %}
+                                                    {% if feedback_recieved|get_item:internship.pk %}
+                                                        <p>You Received Feedback For Your Submission!</p>
+                                                    {% endif %}
+                                                    {% if date_passed|get_item:internship.pk %}
+                                                        <h3>Submission Date Has Passed!</h3>
+                                                    {% else %}
+                                                        <h3>Submit new file</h3>
+                                                        <form method="post" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            {{ form.as_p }}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="submit_report" class="btn btn-primary">Submit</button>
+                                                        </form>
+                                                        <h3 class="mt-3">Request Extension</h3>
+                                                        {% if latest_submission.extension %}
+                                                            <p>Extension Requested</p>
+                                                            <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                        {% else %}
+                                                            <form method="post">
+                                                                {% csrf_token %}
+                                                                {{ extension_form.as_p }}
+                                                                <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                                <button type="submit" name="action" value="extension_request" class="btn btn-primary">
+                                                                    Request Extension
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if request.user.role == 'INSTRUCTOR' %}
+                                                    {% if feedback_needed|get_item:internship.pk %}
+                                                        <h3>Evaluate Submission</h3>
+                                                        <form method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="satisfactory" class="btn btn-primary mt-2">Satisfactory</button>
+                                                            <p class="mt-3">(Clicking this button marks internship as "Satisfactory". This operation cannot be retrieved back.)</p>
+                                                        </form>
+                                                        <hr class="bg-white border-2 border-top border-black">
+                                                        <h3>Give Feedback</h3>
+                                                        <form method="post" enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            {{ feedback_form.as_p }}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="revision_required" class="btn btn-primary">
+                                                                Revision Required
+                                                            </button>
+                                                        </form>
+                                                    {% endif %}
+                                                    {% if latest_submission.extension %}
+                                                        <h3>Extension Request</h3>
+                                                        <p>Student has requested an extension.</p>
+                                                        <p>Due Date: {{ latest_submission.extension.extension_date|date:"F j, Y H:i" }}</p>
+                                                        <form method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="internship_id" value="{{ internship.id }}">
+                                                            <button type="submit" name="action" value="approve_extension" class="btn btn-primary">
+                                                                Approve Extension
+                                                            </button>
+                                                            <button type="submit" name="action" value="reject_extension" class="btn btn-danger">Reject Extension</button>
+                                                        </form>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% else %}
+                                                <p>No pending submissions found.</p>
+                                            {% endif %}
+                                        </div>
+
+
+                                    {% endwith %}
+                                    <hr class="border-5 my-4 text-dark">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block right-column %}
+                <div class="col text-white" id="side-bar-right">
+                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <div class="container" id="profile-info">
+                        <div class="row">
+                            {% if check %}
+                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4 border-2 text-black">
+                        <h1 class="display-6 text-center fw-semibold" id="due-date">
+                            Due Date</h1>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+    <script src="{% static 'main/home.js' %}"></script>
+{% endblock %}

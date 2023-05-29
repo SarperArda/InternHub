@@ -1,24 +1,180 @@
-{% extends 'base.html' %}
+{% extends 'main/home.html' %}
 {% load static %}
 
 {% block title %}Internship Assignment{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="{% static 'reports/login.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+    <style>
+        .form label {
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-field {
+            margin-bottom: 10px;
+        }
+
+        .checkbox-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: normal;
+        }
+
+        .checkbox-input {
+            margin-right: 5px;
+        }
+
+        .checkbox-input:checked + .checkbox-label {
+            font-weight: bold;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .submit-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-    <div class="form-page">
-        <div class="form">
-            <h1>InternHub</h1>
-            <form method="post" class="form">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" name="action" value="Assign">Assign</button>
-                <button type="submit" name="action" value="RandomlyAssign">Randomly Assign</button>
-                <button type="submit" name="action" value="Clear">Clear Assignments</button>
-            </form>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {% block left-column %}
+                <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
+                    <div class="bg-dark p2">
+                        <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                            <b class="display-4">
+                                <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                            </b>
+                        </a>
+                        <hr class="bg-white border-2 border-top border-white">
+                        <div class="container">
+                            <div class="content">
+                                <ul class="nav nav-pills flex-column mt-4">
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Home</span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center
+                                                       rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#internships-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-file"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Internships</span>
+                                        </button>
+                                        <div class="collapse" id="internships-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                            id="submissions-button"
+                                                            class="btn rounded text-white fs-4 w-100">
+                                                        Confidential Forms
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/reports/assign-internships/')"
+                                                            id="feedbacks-button"
+                                                            class="btn rounded text-white fs-4 w-100">
+                                                        Internship Assignments
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                        <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block middle-column %}
+                <div class="col-auto col-6" id="middle-column">
+                    <div id="company-list-div">
+                        <h1 class="display-6 text-center fw-semibold" id="titles">Internship Assignments</h1>
+                        <hr class="my-4 border-2 text-dark">
+                        <div class="card border-0" style="height: 85vh;">
+                            <div class="card-body overflow-auto">
+
+                                <div class="form-page">
+                                    <div class="form">
+                                        <form method="post" class="form">
+                                            {% csrf_token %}
+                                            {{ form.as_p }}
+                                            <div class="d-flex justify-content-between">
+                                                <button type="submit" class="btn btn-primary w-25 align-items-center"
+                                                        name="action"
+                                                        value="Assign"><i class="fas fa-check"></i> Assign
+                                                </button>
+                                                <button type="submit" class="btn btn-secondary ms-auto w-25"
+                                                        name="action"
+                                                        value="RandomlyAssign">
+                                                    <i class="fas fa-shuffle"></i> Randomly Assign All
+                                                </button>
+                                            </div>
+                                            <button type="submit" class="btn btn-danger mt-3 w-25">
+                                                <i class="fas fa-times"></i> Clear All
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block right-column %}
+                <div class="col text-white" id="side-bar-right">
+                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <div class="container" id="profile-info">
+                        <div class="row">
+                            {% if check %}
+                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4 border-2 text-black">
+                        <h1 class="display-6 text-center fw-semibold" id="due-date">
+                            Due Date</h1>
+                    </div>
+                </div>
+            {% endblock %}
         </div>
     </div>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}
-

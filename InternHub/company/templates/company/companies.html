@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'main/home.html' %}
 {% load static %}
 
 {% block title %}Companies{% endblock %}
@@ -8,17 +8,150 @@
 {% endblock %}
 
 {% block body %}
-    <div>
-        <ul>
-            {% for company in companies %}
-                <li>
-                    {{ company.name }}
-                    {{ company.field }}
-                    {% for department in company.departments.all %}
-                        {{ department.name }}
-                    {% endfor %}
-                </li>
-            {% endfor %}
-        </ul>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            {% block left-column %}
+                <div class="bg-dark col-auto col-md-4 col-lg-3 min-vh-100" id="left-column">
+                    <div class="bg-dark p2">
+                        <a href="/" class="d-flex text-decoration-none align-items-center mt-4 text-white">
+                            <b class="display-4">
+                                <span class="display-4 ms-3 d-none d-sm-inline fw-bold">InternHub</span>
+                            </b>
+                        </a>
+                        <hr class="bg-white border-2 border-top border-white">
+                        <div class="container">
+                            <div class="content">
+                                <ul class="nav nav-pills flex-column mt-4">
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button onclick="navigateToAnotherPage('/')" class="nav-link text-white w-100"
+                                                style="padding-left: 12px;">
+                                            <i class="fs-5 fa-regular fa-house"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline"
+                                                  id="sidebar-span">Home</span>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item py-2 py-sm-2 rounded">
+                                        <button class="btn btn-toggle align-items-center
+                                            rounded collapsed text-white w-100"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#company-collapse"
+                                                aria-expanded="true"
+                                                id="main-button">
+                                            <i class="fs-5 fa-regular fa-building"></i>
+                                            <span class="fs-3 ms-3 d-none d-sm-inline" id="sidebar-span">Company</span>
+                                        </button>
+                                        <div class="collapse" id="company-collapse">
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                                                id="dropdown-ul">
+                                                <li>
+                                                    <button onclick="navigateToAnotherPage('/company/companies/')"
+                                                            class="btn text-white rounded fs-4 w-100">Company List
+                                                    </button>
+                                                </li>
+                                                {% if request.user.role == 'STUDENT' %}
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/request-cava/')"
+                                                                class="btn text-white rounded fs-4 w-100">
+                                                            Company Approval Validation Applications
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/request-company')"
+                                                                class="btn text-white rounded fs-4 w-100">Company
+                                                            Requests
+                                                        </button>
+                                                    </li>
+                                                {% endif %}
+                                                {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/cava-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">
+                                                            Company Approval Validation Applications
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button onclick="navigateToAnotherPage('/company/company-requests/')"
+                                                                class="btn text-white rounded fs-4 w-100">Company
+                                                            Requests
+                                                        </button>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav nav-pills flex-column mt-4">
+                                <li class="nav-item py-2 py-sm-2 rounded">
+                                    <a href="{% url 'users:logout' %}" class="nav-link text-white">
+                                        <i class="fs-5 fa-solid fa-right-from-bracket"></i>
+                                        <span class="fs-4 ms-3 d-none d-sm-inline" id="side-bar-span">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block middle-column %}
+                <div class="col-auto col-6" id="middle-column">
+                    <div class="row">
+                        <div class="col-4">
+                        </div>
+                        <div class="col-auto">
+                            <div id="company-list-div" class="d-flex justify-content-between align-items-center">
+                                <h1 class="display-6 text-center fw-semibold" id="titles">Company List</h1>
+                            </div>
+                        </div>
+                        <div class="col align-items-center d-flex justify-content-end">
+                            {% if request.user.role != 'STUDENT' and request.user.role != 'INSTRUCTOR' %}
+                                <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
+                                        onclick="navigateToAnotherPage('/company/add-company/')">
+                                    Add New Company
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <hr class="my-4 border-2 text-dark">
+                    <div class="card border-0" style="height: 85vh;">
+                        <div class="card-body overflow-auto">
+                            <ul class="list-group">
+                                {% for company in companies %}
+                                    <li class="list-group-item border-0 border-bottom rounded-0 mb-3">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1 fs-5">{{ company.name }} \ {{ company.field }}</h5>
+                                            {% for dep in company.departments.all %}
+                                                <small class="text-muted d-block text-end">{{ dep.name }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        <!-- TODO: implement email, currently hard-coded -->
+                                        <a href="mailto:alper.gocmen@ug.bilkent.edu.tr" class="text-muted">company@internhub.com</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            {% block right-column %}
+                <div class="col text-white" id="side-bar-right">
+                    <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
+                    <hr class="my-4 border-2 text-black">
+                    <div class="container" id="profile-info">
+                        <div class="row">
+                            {% if check %}
+                                <span class="fs-3 text-black fw-semibold align-left"> {{ full_name }} </span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.user_id }}</span>
+                                <span class="fs-4 text-black fw-semibold align-left"> {{ user.department }}</span>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4 border-2 text-black">
+                        <h1 class="display-6 text-center fw-semibold" id="due-date">
+                            Due Date</h1>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
     </div>
+    <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}

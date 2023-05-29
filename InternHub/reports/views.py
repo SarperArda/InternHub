@@ -1,238 +1,176 @@
-from django.shortcuts import render, redirect
-from django.views.generic.edit import FormView, UpdateView, CreateView, View
-from django.views.generic.base import TemplateView
-from reports.forms import ConfidentialCompanyForm
-from reports.forms import SummerTrainingGradingForm
+from django.views.generic.edit import FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import WorkAndReportEvaluationForm, InternshipAssignmentForm
-from .models import Internship,Feedback
-from .forms import WorkAndReportEvaluationForm, ExtensionForm
-from .forms import StudentReportForm
-from .forms import FeedbackForm
-from users.models import Student
-from .models import StudentReport, WorkAndReportEvaluation,Submission, InstructorFeedback
-from django.views.generic import ListView
-from django.views.generic import UpdateView, CreateView, View
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from .models import StudentReport, WorkAndReportEvaluation
-from .models import InstructorFeedback
-from django.views.generic import ListView
-from django.core.exceptions import ObjectDoesNotExist
-from django.urls import reverse
-from users.models import DepartmentSecretary, Instructor
-from users.decorators import allowed_users
-from main import decorators
 from django.shortcuts import redirect, get_object_or_404
-from django.views import View
-from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic.detail import DetailView
-from django.utils.decorators import method_decorator
-from django.utils import timezone
-from users.views import RoleRequiredMixin
-from reports.models import Status
+from django.urls import reverse
 from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.generic import ListView
+from django.views.generic import UpdateView, CreateView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import FormView
+
+from InternHub.manager import StatisticManager
+from announcements.models import Notification
+from reports.forms import ConfidentialCompanyForm
 from reports.models import SubmissionStatus
+from users.decorators import allowed_users
+from users.models import Instructor
+from users.views import RoleRequiredMixin
+from .forms import FeedbackForm
+from .forms import InternshipAssignmentForm
+from .forms import StudentReportForm
+from .forms import WorkAndReportEvaluationForm, ExtensionForm
+from .models import Internship, Feedback, ConfidentialCompany, Statistic
+from .models import StudentReport, WorkAndReportEvaluation
+from .models import Submission, ExtensionRequest
+
+
 # Create your views here.
 
 
-class CreateConfidentialForm(LoginRequiredMixin, FormView):
+class CreateConfidentialForm(CreateView):
     form_class = ConfidentialCompanyForm
     template_name = 'reports/create_confidential_form.html'
-    success_url = '/company/companies/'
+    model = ConfidentialCompany
+    success_url = reverse_lazy('reports:view_internships')
+
+    def get_success_url(self):
+        confidential = self.object
+        if confidential.grade < 7 or confidential.is_work_related == 'No' or confidential.supervisor_background == 'No':
+            confidential.status = 'REJECTED'
+        else:
+            confidential.status = 'ACCEPTED'
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        if internship.confidential_company_form:
+            internship.confidential_company_form.delete()
+        internship.confidential_company_form = confidential
+        print(internship.confidential_company_form.grade)
+        internship.save()
+        return self.success_url
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        internship_id = self.kwargs["internship_id"]
-        if Internship.objects.filter(id = internship_id).exists():
-            internship = Internship.objects.get(id = internship_id)
-            if not internship.student.DoesNotExist:
-                context['student_name'] = internship.student.first_name
-                context['student_surname'] = internship.student.last_name
-                context['department'] = internship.student.department.name
+        internship_id = self.kwargs["pk"]
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        if Internship.objects.filter(id=internship_id).exists():
+            internship = Internship.objects.get(id=internship_id)
+            context['student_name'] = (internship.student)
+            context['department'] = internship.student.department.name
+            if internship.instructor is not None:
+                context['instructor_name'] = (internship.instructor)
             else:
-                context['student_name'] = "Does not exist"
-                context['student_surname'] = "Does not exist"
-                context['department'] = "Does not exist"
-            if not internship.instructor is None:
-                context['instructor_name'] = internship.instructor.first_name
-                context['instructor_surname'] = internship.instructor.last_name
-            else:
-                context['instructor_name'] = "Does not exist"
-                context['instructor_surname'] = "Does not exist"
-            if not internship.course is None:
-                context['course'] = internship.course
-            else:
-                context['course'] = "Does not exist"
-        else:
-            context['student_name'] = "Not reachable"
-            context['student_surname'] = "Not reachable"
-            context['instructor_name'] = "Not reachable"
-            context['department'] = "Not reachable"
-            context['instructor_surname'] = "Not reachable"
-            context['course'] = "Not reachable"
+                context['instructor_name'] = "Not Assigned Yet"
+            context['course'] = internship.student.department.code + " " + internship.course.code
         return context
 
-    """
-    def form_valid(self, form):
-        # Checking if the report is satisfactory.
 
-        if form.cleaned_data['grade'] < 7:
-            status = 'REJECTED'
-        elif not form.cleaned_data['is_work_related']:
-            status = 'REJECTED'
-        elif not form.cleaned_data['supervisor_background']:
-            status = 'REJECTED'
-        else:
-            status = 'ACCEPTED'
-
-        # Getting the user_id and course from the form.
-        user_id = form.cleaned_data['student_id']
-        course = form.cleaned_data['course']
-
-        # Getting the internship object.
-        internship = Internship.objects.get(
-            student=Student.objects.get(user_id=user_id), course=course)
-
-        # If the form is not valid, return the form with the errors.
-        if form.errors != {}:
-            return super().form_invalid(form)
-
-        # If there are no errors, save the form and update the internship status.
-        form.save()
-        internship.confidential_company_form.status = status
-        return super().form_valid(form)
-    """
-
-#not completed
-class CreateSummerTrainingGradingForm(LoginRequiredMixin, FormView):
-    form_class = SummerTrainingGradingForm
-    template_name = 'reports/create_summer_training_form.html'
-    success_url = '/student/students/' # not good name
-
-    def form_valid(self, form):
-        # Checking if the report is satisfactory.
-
-        if form.cleaned_data['sum_score_evaluation_except_one'] < 7:
-            status = 'REJECTED'
-        elif form.cleaned_data['sum_score_evaluation_except_one'] < 30:
-            status = 'REJECTED'
-        elif not form.cleaned_data['score_evaluation_report']:
-            status = 'REJECTED'
-        else:
-            status = 'ACCEPTED'
-
-        # Getting the user_id from the form.
-        user_id = form.cleaned_data['student_id']
-    
-        # If the form is not valid, return the form with the errors.
-        if form.errors != {}:
-            return super().form_invalid(form)
-
-        # If there are no errors, save the form.
-        form.save()
-        return super().form_valid(form)
-
-class CreateWorkAndReportEvaluationForm(LoginRequiredMixin, FormView):
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-    success_url = '/reports/create-work-and-report-ev-form/1'
-
-    #def get_context_data(self, **kwargs):
-    #    super().get_context_data()
-class WorkAndReportEvaluationFormCreation(CreateView):
+class WorkAndReportEvaluationFormCreation(LoginRequiredMixin, RoleRequiredMixin, CreateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
+    allowed_roles = ['INSTRUCTOR']
 
+    # Create a new WorkAndReportEvaluation instance
     def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+        work_and_report_evaluation = self.object
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        # Set the internship's work_and_report_evaluation field
+        work_and_report_evaluation.calculate_total_grade()
+        internship.work_and_report_evaluation_form = work_and_report_evaluation
+        print(internship.work_and_report_evaluation_form.total_work_grade)
+        internship.save()
+        return reverse('reports:view_internships')
 
-class WorkAndReportEvaluationFormUpdate(UpdateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        internship = Internship.objects.all().filter(pk=self.kwargs.get('pk')).first()
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+        context['department'] = internship.student.department.name
+        context['course'] = internship.student.department.code + " " + internship.course.code
+        context['form'] = self.get_form()
+        return context
+
+
+class WorkAndReportEvaluationFormUpdate(LoginRequiredMixin, RoleRequiredMixin, UpdateView):
     model = WorkAndReportEvaluation
     form_class = WorkAndReportEvaluationForm
     template_name = 'reports/create_work_and_report_ev_form.html'
+    allowed_roles = ['INSTRUCTOR']
 
     def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
+        work_and_report_evaluation = self.object
+        work_and_report_evaluation.calculate_total_grade()
+        internship = Internship.objects.all().filter(pk=work_and_report_evaluation.internship.pk).first()
+        print(internship.work_and_report_evaluation_form.total_work_grade)
+        return reverse('reports:edit_wre', kwargs={'pk': work_and_report_evaluation.internship.pk})
 
-class EditWorkAndReportEvaluation(View):
+    def get_context_data(self, **kwargs):
+        work_and_report_evaluation = self.object
+        context = super().get_context_data(**kwargs)
+        internship = Internship.objects.all().filter(pk=work_and_report_evaluation.internship.pk).first()
+        context['student_name'] = internship.student.first_name + " " + internship.student.last_name
+        context['department'] = internship.student.department.name
+        context['course'] = internship.student.department.code + " " + internship.course.code
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        context['form'] = self.get_form()
+        return context
+
+
+class EditWorkAndReportEvaluation(LoginRequiredMixin, RoleRequiredMixin, View):
+    allowed_roles = ['INSTRUCTOR']
+
     def get(self, request, **kwargs):
-        try:
-            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
-                #print(self.kwargs['pk'])
-                # Redirect to update view
-                return redirect('reports:update_wre', pk=self.kwargs['pk'])
-            else:
-                return redirect('reports:create_wre', pk=self.kwargs['pk'])
-        except ObjectDoesNotExist:
-            # Redirect to create view
+        target_form = Internship.objects.filter(pk=self.kwargs['pk']).first().work_and_report_evaluation_form
+        if target_form:
+            real_pk = target_form.pk
+            # Redirect to update view
+            return redirect('reports:update_wre', pk=real_pk)
+        else:
             return redirect('reports:create_wre', pk=self.kwargs['pk'])
-class CreateSubmitReport(LoginRequiredMixin, FormView):
-    def get(self, request):
-        form = StudentReportForm()
-        return render(request, 'reports/submit_report.html',{
-            'form': form
-        })
-    def post(self, request):
-        submitted_form = StudentReportForm(request.POST, request.FILES)
-        if submitted_form.is_valid():
-            report = StudentReport(report=request.FILES['student_report'])
-            report.save()
-            return HttpResponseRedirect('/reports/submit-report/')
-        return render(request, 'reports/submit_report.html', {
-            'form': submitted_form
-        })
-class CreateSubmitReport(LoginRequiredMixin, RoleRequiredMixin, FormView):
-    form_class = StudentReportForm
-    template_name = 'reports/submit_report.html'
-    success_url = reverse_lazy('reports:view_internships')
-    allowed_roles = ['STUDENT']
-    
-    def form_valid(self, form, *args, **kwargs):
-        submitted_report = form.save(commit=False)
-        submitted_report.creation_date = timezone.now()
 
-        #DUE DATE MUST BE CHANGED
-        submitted_report.due_date = timezone.now() + timezone.timedelta(days=7)
-
-        internship_pk = self.kwargs.get('pk')
-        submitted_report.internship = get_object_or_404(Internship, pk=internship_pk)
-            
-        submitted_report.status = Status.PENDING
-        submitted_report.save()
-
-        return super().form_valid(form)
 
 class ReportsView(ListView):
     model = StudentReport
     template_name = 'reports/view_reports.html'
     context_object_name = 'reports'
 
-class MainView(LoginRequiredMixin,FormView):
-    template_name = 'reports/main.html'
 
-    def get(self, request):
-        return render(request, 'reports/main.html')
-
-class InternshipAssignmentView(FormView, LoginRequiredMixin):
+class InternshipAssignmentView(FormView, RoleRequiredMixin, LoginRequiredMixin):
     form_class = InternshipAssignmentForm
     template_name = 'reports/internship_assignment.html'
-
+    allowed_roles = ['DEPARTMENT_SECRETARY']
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['instructor'].queryset = Instructor.objects.filter(department=self.request.user.department)
-        form.fields['internships'].queryset = Internship.objects.filter(student__department=self.request.user.department)
+        form.fields['instructor'].queryset = Instructor.objects.filter(
+            department=self.request.user.department)
+        form.fields['internships'].queryset = Internship.objects.filter(
+            student__department=self.request.user.department)
         return form
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
         return context
 
     def get_success_url(self):
-        return reverse('main:home')
+        return reverse('reports:assign_internships')
 
     def form_valid(self, form):
         action = self.request.POST.get('action')
@@ -246,8 +184,10 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
                 internship.save()
 
         elif action == 'RandomlyAssign':
-            instructors = Instructor.objects.filter(department=self.request.user.department)
-            internships = Internship.objects.filter(student__department=self.request.user.department)
+            instructors = Instructor.objects.filter(
+                department=self.request.user.department)
+            internships = Internship.objects.filter(
+                student__department=self.request.user.department)
             instructor_count = instructors.count()
             internship_count = len(internships)
             internship_per_instructor = internship_count // instructor_count
@@ -255,7 +195,6 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
             instructor_index = 0
             # Iterate over the internships and assign instructors
             for internship in internships:
-                import random
                 instructor = instructors[instructor_index]
                 internship.instructor = instructor
                 internship.save()
@@ -264,9 +203,21 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
                 instructor_index += 1
                 if instructor_index >= instructor_count:
                     instructor_index = 0
+                Notification.create_notification(
+                    title="New Internship Assignment",
+                    content=f"Secretary {str(self.request.user)} has assigned a new instructor {str(internship.instructor)} for {internship.student.department.code}{internship.course}.",
+                    receiver=internship.student,
+                )
+
+                Notification.create_notification(
+                    title="New Internship Assignment",
+                    content=f"Secretary {str(self.request.user)} has assigned a new student {str(internship.student)} for {internship.student.department.code}{internship.course}.",
+                    receiver=internship.instructor,
+                )
 
         elif action == 'Clear':
-            internships = Internship.objects.filter(student__department=self.request.user.department)
+            internships = Internship.objects.filter(
+                student__department=self.request.user.department)
             for internship in internships:
                 internship.instructor = None
                 internship.save()
@@ -277,50 +228,7 @@ class InternshipAssignmentView(FormView, LoginRequiredMixin):
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-class InternshipListView(ListView, LoginRequiredMixin):
-    pass
 
-class WorkAndReportEvaluationFormCreation(CreateView):
-    model = WorkAndReportEvaluation
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-
-    def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
-
-class WorkAndReportEvaluationFormUpdate(UpdateView):
-    model = WorkAndReportEvaluation
-    form_class = WorkAndReportEvaluationForm
-    template_name = 'reports/create_work_and_report_ev_form.html'
-
-    def get_success_url(self):
-        return reverse('reports:edit_wre', kwargs={'pk' : self.kwargs['pk'] })
-
-class EditWorkAndReportEvaluation(View):
-    def get(self, request, **kwargs):
-        try:
-            if WorkAndReportEvaluation.objects.filter(pk=self.kwargs['pk']).exists():
-                #print(self.kwargs['pk'])
-                # Redirect to update view
-                return redirect('reports:update_wre', pk=self.kwargs['pk'])
-            else:
-                return redirect('reports:create_wre', pk=self.kwargs['pk'])
-        except ObjectDoesNotExist:
-            # Redirect to create view
-            return redirect('reports:create_wre', pk=self.kwargs['pk'])
-
-class CreateFeedback(LoginRequiredMixin, FormView):
-    template_name = 'reports/submit_feedback.html'
-    form_class = FeedbackForm
-    success_url = '/reports/view-internships/'
-
-    def form_valid(self, form):
-        feedback = InstructorFeedback(feedback=form.FILES['instructor_feedback'])
-        feedback.save()
-        return super().form_valid(form)
-    
-
-    
 class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
     template_name = 'reports/view_internships.html'
     model = Internship
@@ -335,70 +243,357 @@ class ListInternshipsView(LoginRequiredMixin, RoleRequiredMixin, ListView):
             return Internship.objects.filter(instructor__user_id=self.request.user.user_id)
         else:
             return Internship.objects.filter(student__department=self.request.user.department)
-        
+
     def get_context_data(self):
         context = super().get_context_data()
         context['form'] = ExtensionForm()
-        return context
-    
-    def post(self, request, *args, **kwargs):
-        form = ExtensionForm(request.POST)
-        if form.is_valid():
-            due_date = form.cleaned_data['due_date']
-            internships = self.get_queryset()
-            for internship in internships:
-                if internship.student_report is not None:
-                    internship.student_report.due_date = due_date
-                    internship.student_report.save()
-                else:
-                    internship.student_report = Submission()
-                    internship.student_report.due_date = due_date
-                    internship.student_report.save()
-                    internship.save()
-            return redirect('reports:view_internships')  # Redirect to the same page to display updated due dates
+        context['submission_statuses'] = {}
+        context['feedback_needed'] = {}
+        context['feedback_recieved'] = {}
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
 
-        # Re-render the page with the same context if form is not valid
-        return self.get(request, *args, **kwargs)
-    
+        for internship in context['internships']:
+            if internship.submissions.exists():
+                last_submission = internship.submissions.all().latest('id')
+                submissions = internship.submissions.all().order_by('-id')
+                second_last_submission = submissions[1] if submissions.count() > 1 else None
+
+                if last_submission.file == "" and second_last_submission is not None:
+                    context['feedback_recieved'][internship.pk] = True
+                else:
+                    context['feedback_recieved'][internship.pk] = False
+
+                context['submission_statuses'][internship.pk] = last_submission.get_status_display()
+                # Check if feedback is needed for the last submission
+                feedback_needed = bool(
+                    last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
+                context['feedback_needed'][internship.pk] = feedback_needed
+            else:
+                context['submission_statuses'][internship.pk] = None
+                context['feedback_needed'][internship.pk] = False
+        return context
+
+    def post(self, request, *args, **kwargs):
+        action = request.POST.get('action')
+        if action == 'Unsatisfactory':
+            internship_id = request.POST.get('internship_id')
+            internship = Internship.objects.get(pk=internship_id)
+            internship.status = SubmissionStatus.UNSATISFACTORY
+            internship.save()
+            Notification.create_notification(
+                title="Unsatisfactory Internship",
+                content=f"Your internship {internship.student.department.code}{internship.course} has been marked as unsatisfactory by {str(self.request.user)}.",
+                receiver=internship.student,
+            )
+        elif action == 'Extend':
+            form = ExtensionForm(request.POST)
+            if form.is_valid():
+                due_date = form.cleaned_data['extension_date']
+                internships = self.get_queryset().filter(status=SubmissionStatus.PENDING)
+                for internship in internships:
+                    # Get the existing submission with status "PENDING"
+                    report = internship.submissions.filter(
+                        status=SubmissionStatus.PENDING).first()
+                    # Create a new submission if it doesn't exist
+                    if report is None:
+                        report = Submission.objects.create(
+                            internship=internship, due_date=due_date)
+                        Notification.create_notification(
+                            title="New Submission",
+                            content=f"Instructor {str(self.request.user)} has assigned a new submission for {internship.student.department.code}{internship.course}.",
+                            receiver=internship.student,
+                        )
+                    else:
+                        Notification.create_notification(
+                            title="New Due Date",
+                            content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                            receiver=internship.student,
+                        )
+                        report.due_date = due_date
+                        report.save()
+                    # Add the submission to the internship if it doesn't exist
+                    if report.id is None:
+                        internship.submissions.add(report)
+
+                # Redirect to the view page
+                return redirect('reports:view_internships')
+
+            # Re-render the page with the same context if form is not valid
+            return self.get(request, *args, **kwargs)
+        return redirect('reports:view_internships')
 
 
 class InternshipDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
     template_name = 'reports/internship_detail.html'
     model = Internship
     context_object_name = 'internship'
-    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY']
-    
+    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY', 'STUDENT']
 
     def post(self, request, *args, **kwargs):
         internship = self.get_object()
         action = request.POST.get('action')
-        report = internship.student_report
-
-        # Todo Send notification
-        if action == 'approve':
-            report.status = SubmissionStatus.SATISFACTORY
-            
-
-        elif action == 'reject':
-            report.status = SubmissionStatus.REVISION_REQUIRED
-            ##ToDo: Create Feedback and set due date for new  save 
-        
-        elif action == 'extend':
-            form = ExtensionForm(request.POST)
+        report_form = StudentReportForm(request.POST, request.FILES)
+        # Form for the due date and feedback
+        form = ExtensionForm(request.POST)
+        if action == 'extend':
+            # handle the extend action here
             if form.is_valid():
                 due_date = form.cleaned_data['due_date']
-                if report is not None:
-                    report.due_date = due_date
-                    report.save()
-                else:
-                    report = Submission()
-                    report.due_date = due_date
-                    report.save()
-                    internship.save()
-
+                last_submission = internship.submissions.latest(
+                    'creation_date')
+                last_submission.due_date = due_date
+                last_submission.save()
+                Notification.create_notification(
+                    title="New Due Date",
+                    content=f"Instructor {str(self.request.user)} has submitted a new due date for {internship.student.department.code}{internship.course} at {due_date}.",
+                    receiver=internship.student,
+                )
+            else:
+                return self.get(request, *args, **kwargs)
         return redirect('reports:view_internships')
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = ExtensionForm()
+        context['report_form'] = StudentReportForm()
+        submissions = self.get_object().submissions.all()
+        context['submissions'] = submissions.order_by('-id')
+        context['last_submission'] = submissions.last()
+        context['submission_set'] = self.get_object().submissions.exists()
+        context['now'] = timezone.now()
+        context['action'] = self.request.POST.get('action')
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
+
+class ListSubmissionView(LoginRequiredMixin, RoleRequiredMixin, ListView):
+    template_name = 'reports/submissions_list.html'
+    model = Internship
+    context_object_name = 'internships'
+    allowed_roles = ['INSTRUCTOR', 'DEPARTMENT_SECRETARY', 'STUDENT']
+
+    def get_queryset(self):
+        if self.request.user.role == 'STUDENT':
+            return Internship.objects.filter(student__user_id=self.request.user.user_id).order_by('id')
+        elif self.request.user.role == 'INSTRUCTOR':
+            return Internship.objects.filter(instructor__user_id=self.request.user.user_id).order_by('id')
+        else:  # if the user is a DEPARTMENT_SECRETARY
+            return Internship.objects.filter(student__department=self.request.user.department).order_by('id')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        internships = self.get_queryset()
+        context['internships'] = internships
+        context['latest_submissions'] = {}
+        context['feedback_needed'] = {}
+        context['feedback_recieved'] = {}
+        context['feedback_form'] = FeedbackForm()
+        context['form'] = StudentReportForm()
+        context['extension_form'] = ExtensionForm()
+        context['date_passed'] = {}
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+
+        for internship in internships:
+            if internship.submissions.exists():
+                context['latest_submissions'][internship.pk] = internship.submissions.order_by('-id').first()
+                last_submission = internship.submissions.all().latest('id')
+                submissions = internship.submissions.all().order_by('-id')
+                second_last_submission = submissions[1] if submissions.count() > 1 else None
+
+                if last_submission.file == "" and second_last_submission is not None:
+                    context['feedback_recieved'][internship.pk] = True
+                else:
+                    context['feedback_recieved'][internship.pk] = False
+                if last_submission.due_date < timezone.now():
+                    context['date_passed'][internship.pk] = True
+                # Check if feedback is needed for the last submission
+                feedback_needed = bool(
+                    last_submission.file.name) and last_submission.status == SubmissionStatus.PENDING
+                context['feedback_needed'][internship.pk] = feedback_needed
+            else:
+                context['latest_submissions'][internship.pk] = None
+                context['feedback_needed'][internship.pk] = False
+        return context
+
+    def post(self, request, *args, **kwargs):
+        internship_id = request.POST.get('internship_id')
+        internship = get_object_or_404(Internship, id=internship_id)
+        latest_submission = internship.submissions.latest('id')
+        action = request.POST.get('action')
+
+        if action == 'extension_request':
+            extension_form = ExtensionForm(request.POST)
+            if extension_form.is_valid() and not hasattr(latest_submission, 'extension'):
+                # Process the extension request
+                date = extension_form.cleaned_data['extension_date']
+                ExtensionRequest.objects.create(
+                    submission=latest_submission, extension_date=date)
+                Notification.create_notification(
+                    title="Extension Request",
+                    content=f"Student {str(self.request.user)} has requested an extension for {internship.student.department.code} {internship.course} at {date}.",
+                    receiver=internship.instructor,
+                )
+                latest_submission.save()
+        elif action == 'satisfactory':
+            latest_submission.status = SubmissionStatus.SATISFACTORY
+            internship.status = SubmissionStatus.SATISFACTORY
+            latest_submission.save()
+            internship.save()
+            Notification.create_notification(
+                title="Satisfactory Report",
+                content=f"Your report for {internship.student.department.code} {internship.course} has been marked as satisfactory.",
+                receiver=internship.student,
+            )
+        elif action == 'revision_required':
+            feedback_form = FeedbackForm(request.POST, request.FILES)
+            if feedback_form.is_valid():
+                # Process the feedback upload
+                feedback_description = feedback_form.cleaned_data['description']
+                due_date = feedback_form.cleaned_data['due_date']
+
+                # Update the status of the last submission to revision required
+                last_submission = internship.submissions.latest('creation_date')
+                last_submission.status = SubmissionStatus.REVISION_REQUIRED
+
+                # Create a new feedback object and initialize it with the last submission
+                feedback = Feedback.objects.create(
+                    submission_field=last_submission)
+                feedback.file = request.FILES['file']
+                feedback.description = feedback_description
+
+                feedback.save()
+                last_submission.save()
+
+                Notification.create_notification(
+                    title="Revision Required",
+                    content=f"Your report for {internship.student.department.code} {internship.course} has been marked as revision required.",
+                    receiver=internship.student,
+                )
+                # Create a new submission with the provided due date
+                new_submission = Submission.objects.create(
+                    internship=internship, due_date=due_date, status=SubmissionStatus.PENDING)
+
+        elif action == 'submit_report':
+            form = StudentReportForm(request.POST, request.FILES)
+
+            if form.is_valid():
+                existing_report = Submission.objects.filter(
+                    internship=internship, status=SubmissionStatus.PENDING).first()
+
+                if existing_report and timezone.now() <= existing_report.due_date:
+                    existing_report.file = form.cleaned_data['file']
+                    existing_report.creation_date = timezone.now()
+                    existing_report.save()
+
+                    Notification.create_notification(
+                        title="Report Submitted",
+                        content=f"Your report for {internship.student.department.code} {internship.course} has been submitted.",
+                        receiver=internship.student,
+                    )
+
+                    Notification.create_notification(
+                        title="Report Submitted",
+                        content=f"Student {str(self.request.user)} has submitted a report for {internship.student.department.code} {internship.course}.",
+                        receiver=internship.instructor,
+                    )
+
+                # Handle the file upload and any other necessary logic
+        elif action == 'approve_extension':
+            latest_submission.due_date = latest_submission.extension.extension_date
+            latest_submission.extension.delete()
+            latest_submission.save()
+            Notification.create_notification(
+                title="Extension Approved",
+                content=f"Your extension request for {internship.student.department.code} {internship.course} has been approved.",
+                receiver=internship.student,
+            )
+        elif action == 'reject_extension':
+            latest_submission.extension.delete()
+            Notification.create_notification(
+                title="Extension Rejected",
+                content=f"Your extension request for {internship.student.department.code} {internship.course} has been rejected.",
+                receiver=internship.student,
+            )
+        return redirect('reports:submission_list')
+
+
+class ListFeedbackView(LoginRequiredMixin, RoleRequiredMixin, ListView):
+    model = Feedback
+    template_name = 'reports/feedback_list.html'
+    context_object_name = 'feedbacks'
+    allowed_roles = ['STUDENT', 'INSTRUCTOR']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        return context
+
+    def get_queryset(self):
+        if self.request.user.role == 'STUDENT':
+            return Feedback.objects.filter(
+                submission_field__internship__student__user_id=self.request.user.user_id).order_by('-id')
+        elif self.request.user.role == 'INSTRUCTOR':
+            return Feedback.objects.filter(
+                submission_field__internship__instructor__user_id=self.request.user.user_id).order_by('-id')
+
+
+# class StatisticsDetailView(LoginRequiredMixin, RoleRequiredMixin, DetailView)
+
+class StatisticView(LoginRequiredMixin, RoleRequiredMixin, DetailView):
+    model = Statistic
+    template_name = 'reports/statistics.html'
+    context_object_name = 'statistic'
+    allowed_roles = ['DEAN', 'CHAIR']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['full_name'] = str(self.request.user)
+        context['user'] = user
+        context['check'] = True
+        statistic = Statistic.objects.get(id=self.kwargs['pk'])
+
+        if user.role == 'CHAIR':
+            context['chair_department'] = Statistic.objects.all().filter(department=user.department).first().pk
+        if statistic.department.code == 'CS':
+            context['cs'] = statistic.pk
+            context['me'] = statistic.pk + 1
+            context['ee'] = statistic.pk + 2
+            context['ie'] = statistic.pk + 3
+        if statistic.department.code == 'ME':
+            context['me'] = statistic.pk
+            context['cs'] = statistic.pk - 1
+            context['ee'] = statistic.pk + 1
+            context['ie'] = statistic.pk + 2
+        if statistic.department.code == 'EEE':
+            context['ee'] = statistic.pk
+            context['cs'] = statistic.pk - 2
+            context['me'] = statistic.pk - 1
+            context['ie'] = statistic.pk + 1
+        if statistic.department.code == 'IE':
+            context['ie'] = statistic.pk
+            context['cs'] = statistic.pk - 3
+            context['me'] = statistic.pk - 2
+            context['ee'] = statistic.pk - 1
+
+        StatisticManager.update_statistics()
+        if statistic.calculate_report_grade_average() is None:
+            statistic.report_grade_average = 0
+        if statistic.calculate_work_grade_average() is None:
+            statistic.work_evaluation_grade_average = 0
+        if statistic.calculate_company_evaluation_grade_average() is None:
+            statistic.company_evaluation_grade_average = 0
+        context['statistic'] = statistic
         return context
