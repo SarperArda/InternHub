@@ -1,13 +1,12 @@
 from django import forms
-from users.models import EngineeringDepartment, Course, Student, Instructor
-from company.models import Company
-from reports.models import Internship, Submission, Feedback, ExtensionRequest
-from django.core.exceptions import ValidationError
-from datetime import datetime
+
+from reports.models import Submission, Feedback, ExtensionRequest
+from users.models import Student
 from .models import WorkAndReportEvaluation, ConfidentialCompany
 
 yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
-satisfactory_choices = ('Satisfactory','Satisfactory'), ('Revision Required','Revision Required'), ('Unsatisfactory','Unsatisfactory') 
+satisfactory_choices = ('Satisfactory', 'Satisfactory'), ('Revision Required', 'Revision Required'), (
+    'Unsatisfactory', 'Unsatisfactory')
 
 
 class ConfidentialCompanyForm(forms.ModelForm):
@@ -20,10 +19,10 @@ class ConfidentialCompanyForm(forms.ModelForm):
             "supervisor_background",
         ]
         labels = {
-            "company_name" :  "Company Name",
-            "grade" : "Average of the grades on the Summer Training Evaluation Form ",
-            "is_work_related" : "Is the work done related to related engineering department? ",
-            "supervisor_background" : """
+            "company_name": "Company Name",
+            "grade": "Average of the grades on the Summer Training Evaluation Form ",
+            "is_work_related": "Is the work done related to related engineering department? ",
+            "supervisor_background": """
                                         Is the supervisor is an engineer with a related department title
                                         or has similar background with that engineer?
                                       """
@@ -83,6 +82,8 @@ class ConfidentialCompanyForm(forms.ModelForm):
                 'student_id', f'Internship does not exist ({department.code}{course.code})')
             return
         """
+
+
 class SummerTrainingGradingForm(forms.ModelForm):
     instructor_name = forms.CharField(max_length=100)
     instructor_surname = forms.CharField(max_length=100)
@@ -98,15 +99,15 @@ class SummerTrainingGradingForm(forms.ModelForm):
     score_evaluation_one = forms.IntegerField(
         label='Assessment/quality score of Evaluation of the Work - item (1)',
         min_value=0, max_value=10
-        )
+    )
     sum_score_evaluation_except_one = forms.IntegerField(
         label='Sum of the Assessment/quality score of Evaluation of the Work - items (2)-(7)',
         min_value=0, max_value=60
-        )
+    )
     score_evaluation_report = forms.IntegerField(
-        label= 'The Assessment/quality score of Report',
+        label='The Assessment/quality score of Report',
         min_value=0, max_value=10
-        )
+    )
     partC_evaluation = forms.ChoiceField(
         label='Overall Evaluation',
         choices=[choice for choice in satisfactory_choices if choice[0] != 'Revision Required'],
@@ -114,20 +115,20 @@ class SummerTrainingGradingForm(forms.ModelForm):
         required=True,
     )
     date_submission = forms.DateTimeField()
+
     def clean(self):
         cleaned_data = super().clean()
 
         # Getting data from the form
         student_id = cleaned_data.get('student_id')
-        name = cleaned_data.get('name')
-        surname = cleaned_data.get('surname')
 
         # Checking if the student exists and if the internship exists.
         try:
-            student = Student.objects.get(user_id=student_id)
+            Student.objects.get(user_id=student_id)
         except Student.DoesNotExist:
             self.add_error('student_id', 'Student does not exist')
             return
+
 
 class WorkAndReportEvaluationForm(forms.ModelForm):
     class Meta:
@@ -159,11 +160,11 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
 
         ]
         labels = {
-            "grade_of_performing_work" : """
+            "grade_of_performing_work": """
                                             Able to perform a work at the level expected from a summer training
                                             in the area of department: 
                                             (This is the evaluation of all work done in summer training)
-                                         """ ,
+                                         """,
             "exp_is_able_to_perform_work": "Pages on which evidence is found for given grade above",
 
             "grade_of_solving_engineering_problems": """
@@ -198,20 +199,20 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
                                             organization and style
                                             (the Summer training report itself to be evaluated)
                                           """,
-            "exp_is_able_to_prepare_reports" : "Pages on which evidence is found for given grade above",
+            "exp_is_able_to_prepare_reports": "Pages on which evidence is found for given grade above",
 
         }
 
         error_messages = {
             "grade_of_performing_work": {
-                "max_value" : "Grade cannot be greater than 10",
-                "min_value" : "Grade cannot be less than 0",
+                "max_value": "Grade cannot be greater than 10",
+                "min_value": "Grade cannot be less than 0",
             },
             "grade_of_solving_engineering_problems": {
                 "max_value": "Grade cannot be greater than 10",
                 "min_value": "Grade cannot be less than 0",
             },
-            "grade_of_recognizing_ethics":  {
+            "grade_of_recognizing_ethics": {
                 "max_value": "Grade cannot be greater than 10",
                 "min_value": "Grade cannot be less than 0"
             },
@@ -236,10 +237,13 @@ class WorkAndReportEvaluationForm(forms.ModelForm):
                 "min_value": "Grade cannot be less than 0"
             },
         }
+
+
 class StudentReportForm(forms.ModelForm):
     class Meta:
         model = Submission
         fields = ['file']
+
 
 class FeedbackForm(forms.ModelForm):
     due_date = forms.DateTimeField(
@@ -251,9 +255,11 @@ class FeedbackForm(forms.ModelForm):
         widget=forms.Textarea,
         required=False,
     )
+
     class Meta:
         model = Feedback
         fields = ['due_date', 'file', 'description']
+
 
 class ExtensionForm(forms.ModelForm):
     extension_date = forms.DateTimeField(
@@ -265,10 +271,10 @@ class ExtensionForm(forms.ModelForm):
     class Meta:
         model = ExtensionRequest
         fields = ['extension_date']
-class InternshipAssignmentForm(forms.Form):
 
+
+class InternshipAssignmentForm(forms.Form):
     instructor = forms.ModelChoiceField(queryset=None, label="Choose instructor to whom Internship will be assigned",
                                         required=False)
     internships = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple,
                                                  label="Choose internships to be assigned", required=False)
-

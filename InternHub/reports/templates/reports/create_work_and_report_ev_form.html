@@ -4,7 +4,61 @@
 {% block title %}Work and Evaluation Form{% endblock %}
 
 {% block styling %}
-    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'main/home.css' %}">
+    <style>
+        .form p {
+            margin-bottom: 1rem;
+        }
+
+        .form label {
+            font-weight: bold;
+        }
+
+        .form input[type="number"],
+        .form input[type="text"] {
+            display: inline-block;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form input[type="number"]:focus,
+        .form input[type="text"]:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form button[type="submit"] {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 0.25rem;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .form a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .form a:hover {
+            text-decoration: underline;
+        }
+    </style>
 {% endblock %}
 
 
@@ -32,14 +86,14 @@
                                         </button>
                                     </li>
                                     <li class="nav-item py-2 py-sm-2 rounded">
-                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')" class="nav-link text-white w-100"
+                                        <button onclick="navigateToAnotherPage('/reports/view-internships/')"
+                                                class="nav-link text-white w-100"
                                                 style="padding-left: 12px;">
                                             <i class="fs-5 fa-regular fa-house"></i>
                                             <span class="fs-3 ms-3 d-none d-sm-inline"
                                                   id="sidebar-span">Internships</span>
                                         </button>
                                     </li>
-                                    
                                 </ul>
                             </div>
                             <ul class="nav nav-pills flex-column mt-4">
@@ -61,22 +115,34 @@
                         <hr class="my-4 border-2 text-dark">
                         <div class="card border-0" style="height: 85vh;">
                             <div class="card-body overflow-auto">
-
                                 <div class="form-page">
                                     <div class="form">
-                                        <h1>InternHub</h1>
                                         <form method="post" class="form">
+                                            <button class="btn btn-secondary mb-3">
+                                                <i class="fa-regular fa-arrow-left"></i> Back to List
+                                            </button>
                                             {% csrf_token %}
-                                            <p> Student Name:  {{ student_name }}</p>
-                                            <p> Department:  {{ department }}</p>
-                                            <p> Course: {{ course }}</p>
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th class="fw-bold">Student Name:</th>
+                                                    <td>{{ student_name }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Department:</th>
+                                                    <td>{{ department }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="fw-bold">Course:</th>
+                                                    <td>{{ course }}</td>
+                                                </tr>
+                                            </table>
                                             {{ form.as_p }}
-                                            <button type="submit">Submit!</button>
-                                            <a href="{% url 'reports:view_internships'%}"> Back to List</a>
+                                            <button type="submit">
+                                                <i class="fa-regular fa-check"></i> Submit form
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -104,4 +170,3 @@
     </div>
     <script src="{% static 'main/home.js' %}"></script>
 {% endblock %}
-

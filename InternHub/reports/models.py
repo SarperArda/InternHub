@@ -1,8 +1,10 @@
-from django.db import models
-from users.models import Student, Course, Instructor
-from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+
+from company.models import Company, CompanyApprovalValidationApplication, EvaluationByStudent
 from users.models import EngineeringDepartment
+from users.models import Student, Course, Instructor
+
 # Create your models here.
 
 yes_no_choices = ('Yes', 'Yes'), ('No', 'No')
@@ -39,7 +41,6 @@ class Submission(Task):
     due_date = models.DateTimeField()
 
 
-
 class Feedback(Task):
     submission_field = models.OneToOneField(
         Submission, on_delete=models.CASCADE, null=True, related_name='feedback')
@@ -64,9 +65,11 @@ class ConfidentialCompany(models.Model):
     supervisor_background = models.CharField(
         max_length=3, choices=yes_no_choices)
 
+
 class ExtensionRequest(models.Model):
     extension_date = models.DateTimeField()
     submission = models.OneToOneField(Submission, on_delete=models.CASCADE, null=True, related_name='extension')
+
 
 class WorkAndReportEvaluation(models.Model):
     grade_of_performing_work = models.IntegerField(
@@ -101,7 +104,7 @@ class WorkAndReportEvaluation(models.Model):
         max_length=100, blank=True, null=True)
     exp_is_able_to_prepare_reports = models.CharField(
         max_length=100, blank=True, null=True)
-    
+
     total_work_grade = models.IntegerField(null=True)
 
     def calculate_total_grade(self):
@@ -124,6 +127,8 @@ class WorkAndReportEvaluation(models.Model):
             return self.total_work_grade
         else:
             return None
+
+
 class Internship(models.Model):
     # Models
     student = models.ForeignKey(
@@ -167,7 +172,6 @@ class InstructorFeedback(models.Model):
 
 
 class Statistic(models.Model):
-
     report_grade_average = models.FloatField(null=True)
     work_evaluation_grade_average = models.FloatField(null=True)
     company_evaluation_grade_average = models.FloatField(null=True)
@@ -180,7 +184,8 @@ class Statistic(models.Model):
         report_grade_average = 0
         count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
-            if internship.work_and_report_evaluation_form and internship.work_and_report_evaluation_form.grade_of_preparing_reports :
+            if internship.work_and_report_evaluation_form and \
+                    internship.work_and_report_evaluation_form.grade_of_preparing_reports:
                 report_grade_average += internship.work_and_report_evaluation_form.grade_of_preparing_reports
                 count = count + 1
         if count:
@@ -188,12 +193,14 @@ class Statistic(models.Model):
         else:
             return None
         return report_grade_average
+
     def calculate_work_grade_average(self):
         work_grade_average = 0
         count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
             print("Inside the loop")
-            if internship.work_and_report_evaluation_form and internship.work_and_report_evaluation_form.calculate_total_grade():
+            if internship.work_and_report_evaluation_form and \
+                    internship.work_and_report_evaluation_form.calculate_total_grade():
                 work_grade_average += internship.work_and_report_evaluation_form.calculate_total_grade()
                 print("Work grade average: ", work_grade_average)
                 count += 1
@@ -206,9 +213,8 @@ class Statistic(models.Model):
         else:
             return None
 
-
     def calculate_company_evaluation_grade_average(self):
-        confidential_company= 0
+        confidential_company = 0
         count = 0
         for internship in Internship.objects.all().filter(student__department=self.department):
             if internship.confidential_company_form:
@@ -231,11 +237,12 @@ class Statistic(models.Model):
                 satisfactory += 1
             else:
                 unsatisfactory += 1
-            print("Internship with ", internship,  " department: ", internship.student.department)
+            print("Internship with ", internship, " department: ", internship.student.department)
             if internship.confidential_company_form:
                 print("Internship with confidential company grade ", internship.confidential_company_form.grade)
             if internship.work_and_report_evaluation_form:
-                print("Internship with work and report evaluation grade", internship.work_and_report_evaluation_form.total_work_grade)
+                print("Internship with work and report evaluation grade",
+                      internship.work_and_report_evaluation_form.total_work_grade)
         return satisfactory, pending, unsatisfactory
 
     def save(self, *args, **kwargs):
@@ -246,7 +253,6 @@ class Statistic(models.Model):
         self.report_grade_average = self.calculate_report_grade_average()
         self.work_evaluation_grade_average = self.calculate_work_grade_average()
         self.company_evaluation_grade_average = self.calculate_company_evaluation_grade_average()
-        self.internship_satisfaction_number, self.internship_pending_number, self.internship_unsatisfaction_number = self.calculate_internship_statuses()
+        self.internship_satisfaction_number, self.internship_pending_number, \
+            self.internship_unsatisfaction_number = self.calculate_internship_statuses()
         print(self.report_grade_average, self.work_evaluation_grade_average, self.company_evaluation_grade_average)
-
-
