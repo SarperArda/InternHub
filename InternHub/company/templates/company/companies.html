@@ -104,10 +104,12 @@
                             </div>
                         </div>
                         <div class="col align-items-center d-flex justify-content-end">
-                            <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
-                                    onclick="navigateToAnotherPage('/company/add-company/')">
-                                Add New Company
-                            </button>
+                            {% if request.user.role != 'STUDENT' and request.user.role != 'INSTRUCTOR' %}
+                                <button class="btn btn-secondary btn-lg mt-2" id="add-company-button"
+                                        onclick="navigateToAnotherPage('/company/add-company/')">
+                                    Add New Company
+                                </button>
+                            {% endif %}
                         </div>
                     </div>
                     <hr class="my-4 border-2 text-dark">
@@ -131,7 +133,6 @@
                     </div>
                 </div>
             {% endblock %}
-
             {% block right-column %}
                 <div class="col text-white" id="side-bar-right">
                     <h1 class="display-6 fw-semibold text-center" id="titles">Profile</h1>
