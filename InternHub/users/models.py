@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from .decorators import decorate_get_all
 import json
 from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
+from InternHub.settings import EMAIL_HOST_USER
 
 
 
@@ -94,7 +96,7 @@ class UserManager(BaseUserManager):
                 instructor.save()
     @staticmethod
     def create_students():
-        with open('fixtures/students.json') as file:
+        with open('fixtures/mail_test.json') as file:
             data = json.load(file)
             hashed_password = make_password('admin')
             for user in data:
@@ -103,6 +105,11 @@ class UserManager(BaseUserManager):
                 user['fields']['department'] = department
                 student = Student(**user['fields'], password=hashed_password)
                 student.save()
+                subject = 'Welcome to InternHub'
+                message = f'Hi {student.first_name},\n\n your id is {student.user_id} and your password is {student.password}'
+                email_from = EMAIL_HOST_USER
+                recipient_list = [student.email, ]
+                send_mail(subject, message, email_from, recipient_list)
 
     @staticmethod
     def create_department_secretaries():

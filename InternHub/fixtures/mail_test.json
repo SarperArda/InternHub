@@ -1,0 +1,16 @@
+[
+    {
+        "model": "users.student",
+        "fields": {
+          "first_name": "Sarper Arda",
+          "last_name": "Bakır",
+          "email": "supersarper2000@gmail.com",
+          "user_id": "11111111",
+          "department": 1,
+          "is_admin": false,
+          "is_active": true,
+          "is_staff": false,
+          "is_superuser": false
+        }
+    }
+]

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,23 @@ MEDIA_URL = '/uploads/'
 FIXTURE_DIRS = (
     path.join(BASE_DIR, 'fixtures/'),
 )
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'bilkentermedia@gmail.com'
+EMAIL_HOST_PASSWORD = 'bil06_sa_be_er_ka_tu'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'bilkentermedia@gmail.com'
+
+# Set the paths to the SSL certificate and key files
+SSL_CERTIFICATE = 'ssl/cert.pem'
+SSL_KEY = 'ssl/key.pem'
+
+# Update the Django development server settings
+if DEBUG:
+    # Use HTTPS for the development server
+    # Set the path to the SSL certificate and key files
+    import os
+    os.environ['HTTPS'] = 'on'
+    os.environ['SSL_CERTIFICATE'] = SSL_CERTIFICATE
+    os.environ['SSL_KEY'] = SSL_KEY

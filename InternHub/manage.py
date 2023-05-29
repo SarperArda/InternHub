@@ -14,8 +14,15 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
-    execute_from_command_line(sys.argv)
-
+    if os.getenv('HTTPS') == 'on':
+        execute_from_command_line(['manage.py', 'runsslserver', '0.0.0.0:8000'])
+    else:
+        execute_from_command_line(sys.argv)
 
 if __name__ == '__main__':
     main()
+
+if os.getenv('HTTPS') == 'on':
+    import ssl
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    ssl_context.load_cert_chain(os.getenv('SSL_CERTIFICATE'), os.getenv('SSL_KEY'))
