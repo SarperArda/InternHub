@@ -7,14 +7,14 @@ class AnnouncementForm(forms.ModelForm):
         model = Announcement
         fields = ['title', 'content']
         labels = {
-            "title": "Your Title",
-            "content": "Your Announcement"
+            "title": "Announcement Title",
+            "content": "Announcement Content"
         }
         error_messages = {
             "title": {
                 "required": "Please enter a title."
             },
             "content": {
-                "required": "Please enter an announcement."
+                "required": "Please enter a content."
             }
         }

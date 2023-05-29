@@ -263,7 +263,7 @@
                 <div class="col-auto col-6" id="middle-column">
                     <div id="announcement-div">
 
-                        {% if request.user.role == 'DEPARTMENT_SECRETARY' %}
+                        {% if request.user.role == 'DEPARTMENT_SECRETARY' or request.user.role == 'DEAN' or request.user.role == 'CHAIR' %}
                         <div class="row">
                             <div class="col-4">
                             </div>
