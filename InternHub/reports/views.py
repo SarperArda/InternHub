@@ -37,6 +37,8 @@ from reports.models import SubmissionStatus
 from announcements.models import Notification
 from users.models import Student, User, DepartmentSecretary, Instructor
 from InternHub.manager import StatisticManager
+
+
 # Create your views here.
 
 
@@ -175,7 +177,7 @@ class InternshipAssignmentView(FormView, RoleRequiredMixin, LoginRequiredMixin):
         return context
 
     def get_success_url(self):
-        return reverse('main:home')
+        return reverse('reports:assign_internships')
 
     def form_valid(self, form):
         action = self.request.POST.get('action')

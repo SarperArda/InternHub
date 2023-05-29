@@ -272,4 +272,3 @@ class InternshipAssignmentForm(forms.Form):
                                         required=False)
     internships = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple,
                                                  label="Choose internships to be assigned", required=False)
-
