@@ -45,5 +45,5 @@ class HomeView(LoginRequiredMixin, View):
             return render(request, 'main/home.html',
                           {'announcements': announcements, 'full_name': full_name, 'user': user,
                            'internships': internships, 'check': check, 'contacts_set': contacts_set,
-                             'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk, 'eePk': eePk, 'iePk': iePk, 'due_dates': due_dates})  
+                             'notifications': notifications, 'statistics': statistics, 'csPk': csPk, 'mePk': mePk, 'eePk': eePk, 'iePk': iePk, 'due_date': due_date})  
         return render(request, 'main/home.html', {'user': user, 'announcements': announcements, 'notifications': notifications, 'full_name': full_name})
